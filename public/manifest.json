@@ -1,7 +1,7 @@
 {
-  "id": "/loudness-audio-worklet-processor/",
-  "start_url": "/loudness-audio-worklet-processor/",
-  "scope": "/loudness-audio-worklet-processor/",
+  "id": "/loudness-worklet/",
+  "start_url": "/loudness-worklet/",
+  "scope": "/loudness-worklet/",
   "name": "Loudness Meter",
   "short_name": "Loudness Meter",
   "description": "A loudness meter, based on the ITU-R BS.1770-5 standard.",

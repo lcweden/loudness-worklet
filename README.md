@@ -1,13 +1,13 @@
 # Loudness Audio Worklet Processor
 
 [![npm version](https://img.shields.io/npm/v/loudness-worklet.svg)](https://www.npmjs.com/package/loudness-worklet)
-[![license](https://img.shields.io/github/license/lcweden/loudness-audio-worklet-processor.svg)](LICENSE)
+[![license](https://img.shields.io/github/license/lcweden/loudness-worklet.svg)](LICENSE)
 
 A loudness meter for the `Web Audio API`, based on the [ITU-R BS.1770-5](https://www.itu.int/rec/R-REC-BS.1770) standard and implemented as an AudioWorkletProcessor.
 
-[![screenshot](https://github.com/lcweden/loudness-audio-worklet-processor/blob/main/public/screenshots/meter.png)](https://lcweden.github.io/loudness-audio-worklet-processor/)
+[![screenshot](https://github.com/lcweden/loudness-worklet/blob/main/public/screenshots/meter.png)](https://lcweden.github.io/loudness-worklet/)
 
-<p align="center"><a href="https://lcweden.github.io/loudness-audio-worklet-processor/">Demo</a></p>
+<p align="center"><a href="https://lcweden.github.io/loudness-worklet/">Demo</a></p>
 
 ## Features
 
@@ -23,14 +23,14 @@ A loudness meter for the `Web Audio API`, based on the [ITU-R BS.1770-5](https:/
 Import directly in your code:
 
 ```javascript
-const module = "https://lcweden.github.io/loudness-audio-worklet-processor/loudness.worklet.js";
+const module = "https://lcweden.github.io/loudness-worklet/loudness.worklet.js";
 await audioContext.audioWorklet.addModule(module);
 const worklet = new AudioWorkletNode(audioContext, "loudness-processor");
 ```
 
 ### Download
 
-1. Download the pre-built file: [loudness.worklet.js](https://lcweden.github.io/loudness-audio-worklet-processor/loudness.worklet.js).
+1. Download the pre-built file: [loudness.worklet.js](https://lcweden.github.io/loudness-worklet/loudness.worklet.js).
 2. Place `loudness.worklet.js` in your project directory (e.g., `/public/`).
 
 ```javascript
@@ -121,7 +121,7 @@ This example shows the easiest way to get started with the Loudness Audio Workle
     <button>Share Screen</button>
     <pre></pre>
     <script>
-      const module = "https://lcweden.github.io/loudness-audio-worklet-processor/loudness.worklet.js";
+      const module = "https://lcweden.github.io/loudness-worklet/loudness.worklet.js";
       const button = document.querySelector("button");
       const pre = document.querySelector("pre");
 

@@ -35,7 +35,7 @@ function LoudnessProvider(props: LoudnessProviderProps) {
   const getSnapshot = createMemo(() => getSnapshots().at(-1));
 
   const local = new URL("../../src/index.ts", import.meta.url);
-  const remote = new URL("https://lcweden.github.io/loudness-audio-worklet-processor/loudness.worklet.js");
+  const remote = new URL("https://lcweden.github.io/loudness-worklet/loudness.worklet.js");
   const service = new LoudnessService(dev ? local : remote);
   const context = new AudioContext();
 

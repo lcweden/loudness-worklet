@@ -41,7 +41,7 @@ export default defineConfig((config) => {
         root: "demo",
         publicDir: "../public",
         build: { outDir: "../dist", emptyOutDir: true, target: "esnext" },
-        base: "/loudness-audio-worklet-processor/"
+        base: "/loudness-worklet/"
       };
     }
   }
@@ -60,7 +60,7 @@ export default defineConfig((config) => {
       if (isPreview) {
         return {
           preview: { host: "127.0.0.1" },
-          base: "/loudness-audio-worklet-processor/"
+          base: "/loudness-worklet/"
         };
       } else {
         return {

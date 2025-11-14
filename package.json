@@ -35,13 +35,13 @@
   ],
   "license": "MIT",
   "author": "lcweden",
-  "homepage": "https://lcweden.github.io/loudness-audio-worklet-processor/",
+  "homepage": "https://lcweden.github.io/loudness-worklet/",
   "repository": {
     "type": "git",
-    "url": "https://github.com/lcweden/loudness-audio-worklet-processor.git"
+    "url": "https://github.com/lcweden/loudness-worklet.git"
   },
   "bugs": {
-    "url": "https://github.com/lcweden/loudness-audio-worklet-processor/issues"
+    "url": "https://github.com/lcweden/loudness-worklet/issues"
   },
   "scripts": {
     "dev": "vite --mode dev",
