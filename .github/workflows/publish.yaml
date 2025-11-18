@@ -9,6 +9,11 @@ on:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
+# OIDC authentication
+permissions:
+  id-token: write  # Required for OIDC
+  contents: read
+
 jobs:
   # Single publish job since we're just publishing
   publish:
@@ -16,19 +21,24 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
           node-version: lts/*
           cache: "npm"
           registry-url: "https://registry.npmjs.org/"
+      
+      - name: Update npm to latest
+        run: npm install -g npm@latest
+      
       - name: Clean npm cache and install dependencies
         run: |
           rm -rf node_modules package-lock.json
           npm install
+      
       - name: Build
         run: npm run lib
+
       - name: Publish to NPM
         run: npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
