@@ -1,4 +1,4 @@
-import { createUniqueId, JSX } from "solid-js";
+import { createUniqueId, type JSX } from "solid-js";
 
 type DrawerProps = {
   children?: JSX.Element;
@@ -18,7 +18,11 @@ function Drawer(props: DrawerProps) {
       <input id={id} type="checkbox" class="drawer-toggle" />
       <section class="drawer-content">{props.children}</section>
       <section class="drawer-side" style={{ "scrollbar-gutter": "stable" }}>
-        <label for={id} aria-label="close sidebar" class="drawer-overlay"></label>
+        <label
+          for={id}
+          aria-label="close sidebar"
+          class="drawer-overlay"
+        ></label>
         {props.sidebar}
       </section>
     </div>

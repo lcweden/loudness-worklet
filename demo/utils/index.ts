@@ -37,7 +37,9 @@ function formatChannels(count: number): string {
 
 function matchesAcceptedMimeType(accept: string, file: File): boolean {
   const fileType = file.type.toLowerCase();
-  const acceptTypes = accept.split(",").map((type) => type.trim().toLowerCase());
+  const acceptTypes = accept
+    .split(",")
+    .map((type) => type.trim().toLowerCase());
 
   for (const acceptType of acceptTypes) {
     if (acceptType === "*") return true;
@@ -56,4 +58,10 @@ function replace<T>(array: T[], target: T, value: T): T[] {
   return array.map((item) => (item === target ? value : item));
 }
 
-export { formatChannels, formatFileSize, formatSampleRate, matchesAcceptedMimeType, replace };
+export {
+  formatChannels,
+  formatFileSize,
+  formatSampleRate,
+  matchesAcceptedMimeType,
+  replace,
+};

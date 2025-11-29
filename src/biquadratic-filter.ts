@@ -46,8 +46,11 @@ class BiquadraticFilter {
    * @returns { void }
    */
   set(a: number[], b: number[]): void {
-    this.#a.set(((a.length = 2), a));
-    this.#b.set(((b.length = 3), b));
+    a.length = 2;
+    this.#a.set(a);
+
+    b.length = 3;
+    this.#b.set(b);
   }
 
   /**

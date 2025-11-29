@@ -13,7 +13,10 @@ interface LoudnessWorkletProcessorOptions {
 const name = "loudness-processor";
 
 class LoudnessWorkletNode extends AudioWorkletNode {
-  constructor(context: BaseAudioContext, options?: LoudnessWorkletProcessorOptions) {
+  constructor(
+    context: BaseAudioContext,
+    options?: LoudnessWorkletProcessorOptions,
+  ) {
     super(context, name, options);
   }
 
@@ -24,7 +27,7 @@ class LoudnessWorkletNode extends AudioWorkletNode {
 
 async function createLoudnessWorklet(
   context: BaseAudioContext,
-  options?: LoudnessWorkletProcessorOptions
+  options?: LoudnessWorkletProcessorOptions,
 ): Promise<AudioWorkletNode> {
   await addModule(context);
   return new AudioWorkletNode(context, name, options);

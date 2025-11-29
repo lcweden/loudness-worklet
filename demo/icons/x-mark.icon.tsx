@@ -1,4 +1,4 @@
-import { JSX, mergeProps, splitProps } from "solid-js";
+import { type JSX, mergeProps, splitProps } from "solid-js";
 
 function XMarkIcon(iconProps: JSX.IntrinsicElements["svg"]) {
   const [local, others] = splitProps(iconProps, ["class"]);
@@ -13,7 +13,11 @@ function XMarkIcon(iconProps: JSX.IntrinsicElements["svg"]) {
       stroke="currentColor"
       {...others}
     >
-      <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+      <path
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        d="M6 18 18 6M6 6l12 12"
+      />
     </svg>
   );
 }

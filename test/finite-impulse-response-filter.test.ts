@@ -262,7 +262,9 @@ describe("FiniteImpulseResponseFilter", () => {
     });
 
     it("should produce consistent results with repeated inputs", () => {
-      const consistentFilter = new FiniteImpulseResponseFilter([0.25, 0.25, 0.25, 0.25]);
+      const consistentFilter = new FiniteImpulseResponseFilter([
+        0.25, 0.25, 0.25, 0.25,
+      ]);
 
       // Process same value multiple times
       consistentFilter.process(4);
@@ -313,7 +315,9 @@ describe("FiniteImpulseResponseFilter", () => {
 
     it("should implement simple low-pass filter", () => {
       // Simple 5-point moving average (low-pass characteristic)
-      const lpFilter = new FiniteImpulseResponseFilter([0.2, 0.2, 0.2, 0.2, 0.2]);
+      const lpFilter = new FiniteImpulseResponseFilter([
+        0.2, 0.2, 0.2, 0.2, 0.2,
+      ]);
 
       // Fill with ones
       for (let i = 0; i < 5; i++) {

@@ -1,4 +1,4 @@
-import { JSX, splitProps } from "solid-js";
+import { type JSX, splitProps } from "solid-js";
 
 type FilePickerProps = {
   children?: JSX.Element;

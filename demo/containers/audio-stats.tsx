@@ -3,9 +3,19 @@ import { createLoudness } from "../hooks";
 import { formatChannels, formatFileSize, formatSampleRate } from "../utils";
 
 function AudioStats() {
-  const { start, getFile, getAudioBuffer, getIsProcessing, getIsFinished, getSnapshot, getError } = createLoudness();
+  const {
+    start,
+    getFile,
+    getAudioBuffer,
+    getIsProcessing,
+    getIsFinished,
+    getSnapshot,
+    getError,
+  } = createLoudness();
   const getPercentage = createMemo<number>(handlePercentageChange);
-  const getState = createMemo<"READY" | "PROCESSING" | "FINISHED">(handleStateChange);
+  const getState = createMemo<"READY" | "PROCESSING" | "FINISHED">(
+    handleStateChange,
+  );
 
   function handlePercentageChange() {
     const buffer = getAudioBuffer();
@@ -31,8 +41,12 @@ function AudioStats() {
             <div class="flex flex-col gap-1">
               <p class="truncate text-lg tracking-wider">{file.name}</p>
               <div class="flex items-center gap-2">
-                <span class="badge badge-sm badge-neutral badge-soft">{file.type}</span>
-                <p class="text-base-content/60 text-sm">{formatFileSize(file.size)}</p>
+                <span class="badge badge-sm badge-neutral badge-soft">
+                  {file.type}
+                </span>
+                <p class="text-base-content/60 text-sm">
+                  {formatFileSize(file.size)}
+                </p>
               </div>
             </div>
 
@@ -47,7 +61,7 @@ function AudioStats() {
                       classList={{
                         "badge-info": getState() === "READY",
                         "badge-warning": getState() === "PROCESSING",
-                        "badge-success": getState() === "FINISHED"
+                        "badge-success": getState() === "FINISHED",
                       }}
                     >
                       {getState()}
@@ -67,13 +81,20 @@ function AudioStats() {
                             `${buffer.duration.toFixed(1)} s`,
                             buffer.length,
                             formatSampleRate(buffer.sampleRate),
-                            formatChannels(buffer.numberOfChannels)
+                            formatChannels(buffer.numberOfChannels),
                           ]}
                         >
                           {(value, index) => (
                             <div class="space-y-0.5">
                               <p class="text-base-content/60 text-xs">
-                                {["Duration", "Length", "Sample Rate", "Channel"][index()]}
+                                {
+                                  [
+                                    "Duration",
+                                    "Length",
+                                    "Sample Rate",
+                                    "Channel",
+                                  ][index()]
+                                }
                               </p>
                               <p class="text-xs">{value}</p>
                             </div>
@@ -84,14 +105,24 @@ function AudioStats() {
                   </Show>
 
                   <div class="mt-6">
-                    <button class="btn btn-block btn-primary" disabled={getIsProcessing()} onclick={start}>
-                      {getState() === "PROCESSING" ? <span class="loading loading-spinner loading-sm" /> : "Start"}
+                    <button
+                      class="btn btn-block btn-primary"
+                      disabled={getIsProcessing()}
+                      onclick={start}
+                    >
+                      {getState() === "PROCESSING" ? (
+                        <span class="loading loading-spinner loading-sm" />
+                      ) : (
+                        "Start"
+                      )}
                     </button>
                   </div>
                 </>
               }
             >
-              {(error) => <p class="text-error mt-2 text-xs">{error.message}</p>}
+              {(error) => (
+                <p class="text-error mt-2 text-xs">{error.message}</p>
+              )}
             </Show>
           </div>
         </div>

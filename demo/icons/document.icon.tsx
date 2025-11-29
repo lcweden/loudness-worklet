@@ -1,4 +1,4 @@
-import { JSX, mergeProps, splitProps } from "solid-js";
+import { type JSX, mergeProps, splitProps } from "solid-js";
 
 function DocumentIcon(iconProps: JSX.IntrinsicElements["svg"]) {
   const [local, others] = splitProps(iconProps, ["class"]);

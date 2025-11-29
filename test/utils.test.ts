@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { formatChannels, formatFileSize, formatSampleRate, matchesAcceptedMimeType } from "../demo/utils/index";
+import {
+  formatChannels,
+  formatFileSize,
+  formatSampleRate,
+  matchesAcceptedMimeType,
+} from "../demo/utils/index";
 
 describe("formatFileSize", () => {
   it("formats bytes correctly", () => {
@@ -58,7 +63,9 @@ describe("matchesAcceptedMimeType", () => {
 
   it("should return true for an exact match within a list", () => {
     const file = mockFile("audio/mpeg");
-    expect(matchesAcceptedMimeType("audio/wav, audio/mpeg, audio/ogg", file)).toBe(true);
+    expect(
+      matchesAcceptedMimeType("audio/wav, audio/mpeg, audio/ogg", file),
+    ).toBe(true);
   });
 
   it("should return true for a generic wildcard '*'", () => {
@@ -88,7 +95,9 @@ describe("matchesAcceptedMimeType", () => {
 
   it("should handle whitespace in accept string", () => {
     const file = mockFile("audio/wav");
-    expect(matchesAcceptedMimeType(" audio/mpeg,  audio/wav ", file)).toBe(true);
+    expect(matchesAcceptedMimeType(" audio/mpeg,  audio/wav ", file)).toBe(
+      true,
+    );
   });
 
   it("should be case-insensitive", () => {

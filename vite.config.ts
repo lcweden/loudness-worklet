@@ -1,8 +1,14 @@
 import tailwindcss from "@tailwindcss/vite";
 import fs from "node:fs/promises";
-import { defineConfig, Plugin } from "vite";
+import { defineConfig, type Plugin } from "vite";
 import solid from "vite-plugin-solid";
-import { author, description, license, repository, version } from "./package.json";
+import {
+  author,
+  description,
+  license,
+  repository,
+  version,
+} from "./package.json";
 
 export default defineConfig((config) => {
   const { command, mode, isPreview } = config;
@@ -13,11 +19,15 @@ export default defineConfig((config) => {
         root: "src",
         build: {
           target: "esnext",
-          lib: { entry: "index.ts", formats: ["es"], fileName: "loudness.worklet" },
+          lib: {
+            entry: "index.ts",
+            formats: ["es"],
+            fileName: "loudness.worklet",
+          },
           outDir: "../public",
-          emptyOutDir: false
+          emptyOutDir: false,
         },
-        plugins: [addBanner()]
+        plugins: [addBanner()],
       };
     }
 
@@ -29,9 +39,9 @@ export default defineConfig((config) => {
           target: "esnext",
           lib: { entry: "index.ts", formats: ["es"], fileName: "index" },
           outDir: "../dist",
-          emptyOutDir: true
+          emptyOutDir: true,
         },
-        base: "./"
+        base: "./",
       };
     }
 
@@ -41,7 +51,7 @@ export default defineConfig((config) => {
         root: "demo",
         publicDir: "../public",
         build: { outDir: "../dist", emptyOutDir: true, target: "esnext" },
-        base: "/loudness-worklet/"
+        base: "/loudness-worklet/",
       };
     }
   }
@@ -52,7 +62,7 @@ export default defineConfig((config) => {
         plugins: [solid(), tailwindcss()],
         root: "playground",
         publicDir: "../public",
-        server: { host: "127.0.0.1" }
+        server: { host: "127.0.0.1" },
       };
     }
 
@@ -60,7 +70,7 @@ export default defineConfig((config) => {
       if (isPreview) {
         return {
           preview: { host: "127.0.0.1" },
-          base: "/loudness-worklet/"
+          base: "/loudness-worklet/",
         };
       } else {
         return {
@@ -68,7 +78,7 @@ export default defineConfig((config) => {
           root: "demo",
           publicDir: "../public",
           server: { host: "127.0.0.1" },
-          base: "/"
+          base: "/",
         };
       }
     }
@@ -102,10 +112,14 @@ function addBanner(): Plugin {
       const filePath = new URL(workletFile, `file://${options.dir}/`);
       try {
         const fileContent = await fs.readFile(filePath, "utf-8");
-        await fs.writeFile(filePath, `${banner}\r\n\r\n${fileContent}`, "utf-8");
+        await fs.writeFile(
+          filePath,
+          `${banner}\r\n\r\n${fileContent}`,
+          "utf-8",
+        );
       } catch (error) {
         console.error("Error adding banner:", error);
       }
-    }
+    },
   };
 }

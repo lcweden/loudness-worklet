@@ -1,5 +1,14 @@
-import { Accessor, createContext, createEffect, createMemo, createSignal, JSX, on, Setter } from "solid-js";
-import { AudioLoudnessSnapshot } from "../../types";
+import {
+  type Accessor,
+  createContext,
+  createEffect,
+  createMemo,
+  createSignal,
+  type JSX,
+  on,
+  type Setter,
+} from "solid-js";
+import type { AudioLoudnessSnapshot } from "../../types";
 import { createEnvironment } from "../hooks";
 import { LoudnessService } from "../services";
 
@@ -27,15 +36,21 @@ function LoudnessProvider(props: LoudnessProviderProps) {
   const { dev } = createEnvironment();
   const [getMode] = createSignal<"FILE" | "LIVE">("FILE");
   const [getFile, setFile] = createSignal<File | null>(null);
-  const [getAudioBuffer, setAudioBuffer] = createSignal<AudioBuffer | null>(null);
+  const [getAudioBuffer, setAudioBuffer] = createSignal<AudioBuffer | null>(
+    null,
+  );
   const [getIsProcessing, setIsProcessing] = createSignal<boolean>(false);
   const [getIsFinished, setIsFinished] = createSignal<boolean>(false);
-  const [getSnapshots, setSnapshots] = createSignal<Array<AudioLoudnessSnapshot>>([]);
+  const [getSnapshots, setSnapshots] = createSignal<
+    Array<AudioLoudnessSnapshot>
+  >([]);
   const [getError, setError] = createSignal<Error | null>(null);
   const getSnapshot = createMemo(() => getSnapshots().at(-1));
 
   const local = new URL("../../src/index.ts", import.meta.url);
-  const remote = new URL("https://lcweden.github.io/loudness-worklet/loudness.worklet.js");
+  const remote = new URL(
+    "https://lcweden.github.io/loudness-worklet/loudness.worklet.js",
+  );
   const service = new LoudnessService(dev ? local : remote);
   const context = new AudioContext();
 
@@ -86,7 +101,7 @@ function LoudnessProvider(props: LoudnessProviderProps) {
           setError(new Error("Failed to load audio file", { cause: error }));
         }
       }
-    })
+    }),
   );
 
   return (
@@ -102,7 +117,7 @@ function LoudnessProvider(props: LoudnessProviderProps) {
         getSnapshots,
         getSnapshot,
         getError,
-        setFile
+        setFile,
       }}
     >
       {props.children}

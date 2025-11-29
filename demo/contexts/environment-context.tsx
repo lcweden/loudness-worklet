@@ -1,4 +1,4 @@
-import { createContext, JSX } from "solid-js";
+import { createContext, type JSX } from "solid-js";
 
 type EnvironmentContextType = {
   base: string;
@@ -19,7 +19,11 @@ function EnvironmentProvider(props: EnvironmentProviderProps) {
   const dev = import.meta.env.DEV;
   const prod = import.meta.env.PROD;
 
-  return <EnvironmentContext.Provider value={{ base, mode, dev, prod }}>{props.children}</EnvironmentContext.Provider>;
+  return (
+    <EnvironmentContext.Provider value={{ base, mode, dev, prod }}>
+      {props.children}
+    </EnvironmentContext.Provider>
+  );
 }
 
 export { EnvironmentContext, EnvironmentProvider };
