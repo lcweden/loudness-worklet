@@ -1,9 +1,5 @@
 const CACHE_NAME = "v1.4.2";
-const REQUESTS = [
-  "/loudness-worklet/",
-  "/loudness-worklet/index.html",
-  "/loudness-worklet/manifest.json"
-];
+const REQUESTS = ["/loudness-worklet/", "/loudness-worklet/index.html", "/loudness-worklet/manifest.json"];
 
 function handleInstall(event) {
   event.waitUntil(
