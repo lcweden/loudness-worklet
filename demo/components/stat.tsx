@@ -1,4 +1,4 @@
-import { JSX } from "solid-js";
+import type { JSX } from "solid-js";
 
 type StatProps = {
   class?: string;
@@ -14,7 +14,7 @@ function Stat(props: StatProps) {
       <div
         class="stat"
         classList={{
-          "place-items-center": props.centered
+          "place-items-center": props.centered,
         }}
       >
         <div class="stat-title">{props.title}</div>

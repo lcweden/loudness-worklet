@@ -12,7 +12,10 @@ function App() {
 
     if (dev || !isServiceWorkerSupported) return;
 
-    const serviceWorkerURL = new URL(`${base}service-worker.js`, import.meta.url);
+    const serviceWorkerURL = new URL(
+      `${base}service-worker.js`,
+      import.meta.url,
+    );
     const serviceWorkerOptions = { type: "module" as WorkerType, scope: base };
     navigator.serviceWorker.register(serviceWorkerURL, serviceWorkerOptions);
   });

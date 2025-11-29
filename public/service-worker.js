@@ -1,12 +1,16 @@
 const CACHE_NAME = "v1.4.2";
-const REQUESTS = ["/loudness-worklet/", "/loudness-worklet/index.html", "/loudness-worklet/manifest.json"];
+const REQUESTS = [
+  "/loudness-worklet/",
+  "/loudness-worklet/index.html",
+  "/loudness-worklet/manifest.json",
+];
 
 function handleInstall(event) {
   event.waitUntil(
     (async () => {
       const cache = await caches.open(CACHE_NAME);
       await cache.addAll(REQUESTS);
-    })()
+    })(),
   );
 }
 
@@ -20,7 +24,7 @@ function handleActivate(event) {
           await caches.delete(key);
         }
       }
-    })()
+    })(),
   );
 }
 
@@ -28,7 +32,10 @@ function handleFetch(event) {
   event.respondWith(
     (async () => {
       try {
-        if (event.request.method !== "GET" || new URL(event.request.url).origin !== self.location.origin) {
+        if (
+          event.request.method !== "GET" ||
+          new URL(event.request.url).origin !== self.location.origin
+        ) {
           return await fetch(event.request);
         }
 
@@ -47,10 +54,10 @@ function handleFetch(event) {
         return new Response("Offline or fetch failed", {
           status: 503,
           statusText: "Service Unavailable",
-          headers: { "Content-Type": "text/plain" }
+          headers: { "Content-Type": "text/plain" },
         });
       }
-    })()
+    })(),
   );
 }
 

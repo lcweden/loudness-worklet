@@ -1,4 +1,4 @@
-import { JSX, splitProps } from "solid-js";
+import { type JSX, splitProps } from "solid-js";
 import { matchesAcceptedMimeType } from "../utils";
 import { FilePicker } from "./file-picker";
 
@@ -20,7 +20,11 @@ function DropZone(props: DropZoneProps) {
 
     if (!files) return;
 
-    local.onfiles?.(Array.from(files).filter((file) => matchesAcceptedMimeType(others.accept || "", file)));
+    local.onfiles?.(
+      Array.from(files).filter((file) =>
+        matchesAcceptedMimeType(others.accept || "", file),
+      ),
+    );
   }
 
   function handleChange(event: Event) {

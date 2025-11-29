@@ -13,15 +13,23 @@ function Home() {
             download="loudness.worklet.js"
           >
             Download Javascript File
-            <div class="badge badge-neutral badge-soft badge-sm rounded-full tabular-nums">v{version}</div>
+            <div class="badge badge-neutral badge-soft badge-sm rounded-full tabular-nums">
+              v{version}
+            </div>
           </a>
-          <h1 class="text-6xl font-semibold tracking-tight text-balance">Loudness Meter</h1>
+          <h1 class="text-6xl font-semibold tracking-tight text-balance">
+            Loudness Meter
+          </h1>
           <p class="text-base-content/50 text-lg font-medium text-pretty">
-            Web based loudness meter using the Web Audio API, providing real-time loudness analysis, ITU-R BS.1770
-            compliance.
+            Web based loudness meter using the Web Audio API, providing
+            real-time loudness analysis, ITU-R BS.1770 compliance.
           </p>
           <div class="flex items-center justify-center gap-1">
-            <a class="btn btn-neutral space-x-1" href={repository.url} target="_blank">
+            <a
+              class="btn btn-neutral space-x-1"
+              href={repository.url}
+              target="_blank"
+            >
               <img class="size-4" src={githubIcon} alt="GitHub" />
               <span>View on GitHub</span>
             </a>

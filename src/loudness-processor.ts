@@ -1,4 +1,4 @@
-import { Metrics, Repeat } from "../types";
+import type { Metrics, Repeat } from "../types";
 import { BiquadraticFilter } from "./biquadratic-filter";
 import { CircularBuffer } from "./circular-buffer";
 import {
@@ -15,7 +15,7 @@ import {
   MOMENTARY_WINDOW_SEC,
   SHORT_TERM_HOP_INTERVAL_SEC,
   SHORT_TERM_WINDOW_SEC,
-  TRUE_PEAK_COEFFICIENTS
+  TRUE_PEAK_COEFFICIENTS,
 } from "./constants";
 import { FiniteImpulseResponseFilter } from "./finite-impulse-response-filter";
 
@@ -55,16 +55,24 @@ class LoudnessProcessor extends AudioWorkletProcessor {
     for (let index = 0; index < numberOfInputs; index++) {
       this.momentaryEnergyRunningSums[index] = 0;
       this.momentarySampleAccumulators[index] = 0;
-      this.momentaryEnergyBuffers[index] = new CircularBuffer(Math.round(sampleRate * MOMENTARY_WINDOW_SEC));
+      this.momentaryEnergyBuffers[index] = new CircularBuffer(
+        Math.round(sampleRate * MOMENTARY_WINDOW_SEC),
+      );
       this.momentaryLoudnessHistories[index] = this.capacity
-        ? new CircularBuffer(Math.ceil(this.capacity / MOMENTARY_HOP_INTERVAL_SEC))
-        : new Array();
+        ? new CircularBuffer(
+            Math.ceil(this.capacity / MOMENTARY_HOP_INTERVAL_SEC),
+          )
+        : [];
       this.shortTermEnergyRunningSums[index] = 0;
       this.shortTermSampleAccumulators[index] = 0;
-      this.shortTermEnergyBuffers[index] = new CircularBuffer(Math.round(sampleRate * SHORT_TERM_WINDOW_SEC));
+      this.shortTermEnergyBuffers[index] = new CircularBuffer(
+        Math.round(sampleRate * SHORT_TERM_WINDOW_SEC),
+      );
       this.shortTermLoudnessHistories[index] = this.capacity
-        ? new CircularBuffer(Math.ceil(this.capacity / SHORT_TERM_HOP_INTERVAL_SEC))
-        : new Array();
+        ? new CircularBuffer(
+            Math.ceil(this.capacity / SHORT_TERM_HOP_INTERVAL_SEC),
+          )
+        : [];
       this.metrics[index] = {
         momentaryLoudness: Number.NEGATIVE_INFINITY,
         shortTermLoudness: Number.NEGATIVE_INFINITY,
@@ -72,7 +80,7 @@ class LoudnessProcessor extends AudioWorkletProcessor {
         maximumMomentaryLoudness: Number.NEGATIVE_INFINITY,
         maximumShortTermLoudness: Number.NEGATIVE_INFINITY,
         maximumTruePeakLevel: Number.NEGATIVE_INFINITY,
-        loudnessRange: Number.NEGATIVE_INFINITY
+        loudnessRange: Number.NEGATIVE_INFINITY,
       };
     }
   }
@@ -86,23 +94,51 @@ class LoudnessProcessor extends AudioWorkletProcessor {
       const channels = inputs[inputIdx];
       const channelCount = channels.length;
       const sampleCount = channels[0].length;
-      const channelWeights = Object.values(CHANNEL_WEIGHT_FACTORS[channelCount] || CHANNEL_WEIGHT_FACTORS[1]);
-      const attenuation = Math.pow(10, -ATTENUATION_DB / 20);
+      const channelWeights = Object.values(
+        CHANNEL_WEIGHT_FACTORS[channelCount] || CHANNEL_WEIGHT_FACTORS[1],
+      );
+      const attenuation = 10 ** (-ATTENUATION_DB / 20);
 
-      if (!this.kWeightingFilters[inputIdx] || this.kWeightingFilters[inputIdx].length !== channelCount) {
-        this.kWeightingFilters[inputIdx] = Array.from({ length: channelCount }, () => [
-          new BiquadraticFilter(K_WEIGHTING_COEFFICIENTS.highshelf.a, K_WEIGHTING_COEFFICIENTS.highshelf.b),
-          new BiquadraticFilter(K_WEIGHTING_COEFFICIENTS.highpass.a, K_WEIGHTING_COEFFICIENTS.highpass.b)
-        ]);
+      if (
+        !this.kWeightingFilters[inputIdx] ||
+        this.kWeightingFilters[inputIdx].length !== channelCount
+      ) {
+        this.kWeightingFilters[inputIdx] = Array.from(
+          { length: channelCount },
+          () => [
+            new BiquadraticFilter(
+              K_WEIGHTING_COEFFICIENTS.highshelf.a,
+              K_WEIGHTING_COEFFICIENTS.highshelf.b,
+            ),
+            new BiquadraticFilter(
+              K_WEIGHTING_COEFFICIENTS.highpass.a,
+              K_WEIGHTING_COEFFICIENTS.highpass.b,
+            ),
+          ],
+        );
       }
 
-      if (!this.truePeakFilters[inputIdx] || this.truePeakFilters[inputIdx].length !== channelCount) {
-        this.truePeakFilters[inputIdx] = Array.from({ length: channelCount }, () => [
-          new FiniteImpulseResponseFilter(TRUE_PEAK_COEFFICIENTS.lowpass.phase0),
-          new FiniteImpulseResponseFilter(TRUE_PEAK_COEFFICIENTS.lowpass.phase1),
-          new FiniteImpulseResponseFilter(TRUE_PEAK_COEFFICIENTS.lowpass.phase2),
-          new FiniteImpulseResponseFilter(TRUE_PEAK_COEFFICIENTS.lowpass.phase3)
-        ]);
+      if (
+        !this.truePeakFilters[inputIdx] ||
+        this.truePeakFilters[inputIdx].length !== channelCount
+      ) {
+        this.truePeakFilters[inputIdx] = Array.from(
+          { length: channelCount },
+          () => [
+            new FiniteImpulseResponseFilter(
+              TRUE_PEAK_COEFFICIENTS.lowpass.phase0,
+            ),
+            new FiniteImpulseResponseFilter(
+              TRUE_PEAK_COEFFICIENTS.lowpass.phase1,
+            ),
+            new FiniteImpulseResponseFilter(
+              TRUE_PEAK_COEFFICIENTS.lowpass.phase2,
+            ),
+            new FiniteImpulseResponseFilter(
+              TRUE_PEAK_COEFFICIENTS.lowpass.phase3,
+            ),
+          ],
+        );
       }
 
       for (let sampleIdx = 0; sampleIdx < sampleCount; sampleIdx++) {
@@ -110,7 +146,8 @@ class LoudnessProcessor extends AudioWorkletProcessor {
 
         for (let channelIdx = 0; channelIdx < channelCount; channelIdx++) {
           const sample = channels[channelIdx][sampleIdx];
-          const [highshelfFilter, highpassFilter] = this.kWeightingFilters[inputIdx][channelIdx];
+          const [highshelfFilter, highpassFilter] =
+            this.kWeightingFilters[inputIdx][channelIdx];
           const highshelfOutput = highshelfFilter.process(sample);
           const kWeightedSample = highpassFilter.process(highshelfOutput);
           const sampleEnergy = kWeightedSample ** 2;
@@ -118,7 +155,8 @@ class LoudnessProcessor extends AudioWorkletProcessor {
 
           sumOfSquaredChannelWeightedSamples += sampleEnergy * channelWeight;
 
-          const attenuatedSample = channels[channelIdx][sampleIdx] * attenuation;
+          const attenuatedSample =
+            channels[channelIdx][sampleIdx] * attenuation;
           const oversample = sampleRate >= 96000 ? 2 : 4;
           const truePeaks = [];
 
@@ -127,48 +165,67 @@ class LoudnessProcessor extends AudioWorkletProcessor {
             truePeaks.push(Math.abs(filter.process(attenuatedSample)));
           }
 
-          const maximumTruePeakLevel = 20 * Math.log10(Math.max(...truePeaks)) + ATTENUATION_DB;
-          const previousMaximumTruePeakLevel = this.metrics[inputIdx].maximumTruePeakLevel;
+          const maximumTruePeakLevel =
+            20 * Math.log10(Math.max(...truePeaks)) + ATTENUATION_DB;
+          const previousMaximumTruePeakLevel =
+            this.metrics[inputIdx].maximumTruePeakLevel;
 
-          this.metrics[inputIdx].maximumTruePeakLevel = Math.max(previousMaximumTruePeakLevel, maximumTruePeakLevel);
+          this.metrics[inputIdx].maximumTruePeakLevel = Math.max(
+            previousMaximumTruePeakLevel,
+            maximumTruePeakLevel,
+          );
         }
 
         const energy = sumOfSquaredChannelWeightedSamples;
 
-        const previousMomentaryEnergy = this.momentaryEnergyBuffers[inputIdx].peek() ?? 0;
-        const previousMomentaryEnergyForSum = this.momentaryEnergyBuffers[inputIdx].isFull()
+        const previousMomentaryEnergy =
+          this.momentaryEnergyBuffers[inputIdx].peek() ?? 0;
+        const previousMomentaryEnergyForSum = this.momentaryEnergyBuffers[
+          inputIdx
+        ].isFull()
           ? previousMomentaryEnergy
           : 0;
 
-        this.momentaryEnergyRunningSums[inputIdx] += energy - previousMomentaryEnergyForSum;
+        this.momentaryEnergyRunningSums[inputIdx] +=
+          energy - previousMomentaryEnergyForSum;
         this.momentaryEnergyBuffers[inputIdx].push(energy);
 
-        const previousShortTermEnergy = this.shortTermEnergyBuffers[inputIdx].peek() ?? 0;
-        const previousShortTermEnergyForSum = this.shortTermEnergyBuffers[inputIdx].isFull()
+        const previousShortTermEnergy =
+          this.shortTermEnergyBuffers[inputIdx].peek() ?? 0;
+        const previousShortTermEnergyForSum = this.shortTermEnergyBuffers[
+          inputIdx
+        ].isFull()
           ? previousShortTermEnergy
           : 0;
 
-        this.shortTermEnergyRunningSums[inputIdx] += energy - previousShortTermEnergyForSum;
+        this.shortTermEnergyRunningSums[inputIdx] +=
+          energy - previousShortTermEnergyForSum;
         this.shortTermEnergyBuffers[inputIdx].push(energy);
 
         if (this.momentaryEnergyBuffers[inputIdx].isFull()) {
-          const meanEnergy = this.momentaryEnergyRunningSums[inputIdx] / this.momentaryEnergyBuffers[inputIdx].capacity;
+          const meanEnergy =
+            this.momentaryEnergyRunningSums[inputIdx] /
+            this.momentaryEnergyBuffers[inputIdx].capacity;
           const momentaryLoudness = this.#energyToLoudness(meanEnergy);
 
           this.metrics[inputIdx].momentaryLoudness = momentaryLoudness;
           this.metrics[inputIdx].maximumMomentaryLoudness = Math.max(
             this.metrics[inputIdx].maximumMomentaryLoudness,
-            momentaryLoudness
+            momentaryLoudness,
           );
         }
       }
 
       this.momentarySampleAccumulators[inputIdx] += sampleCount;
-      const momentaryHopSize = Math.round(sampleRate * MOMENTARY_HOP_INTERVAL_SEC);
+      const momentaryHopSize = Math.round(
+        sampleRate * MOMENTARY_HOP_INTERVAL_SEC,
+      );
 
       while (this.momentarySampleAccumulators[inputIdx] >= momentaryHopSize) {
         if (this.momentaryEnergyBuffers[inputIdx].isFull()) {
-          const meanEnergy = this.momentaryEnergyRunningSums[inputIdx] / this.momentaryEnergyBuffers[inputIdx].capacity;
+          const meanEnergy =
+            this.momentaryEnergyRunningSums[inputIdx] /
+            this.momentaryEnergyBuffers[inputIdx].capacity;
           const momentaryLoudness = this.#energyToLoudness(meanEnergy);
 
           this.momentaryLoudnessHistories[inputIdx].push(momentaryLoudness);
@@ -178,17 +235,21 @@ class LoudnessProcessor extends AudioWorkletProcessor {
       }
 
       this.shortTermSampleAccumulators[inputIdx] += sampleCount;
-      const shortTermHopSize = Math.round(sampleRate * SHORT_TERM_HOP_INTERVAL_SEC);
+      const shortTermHopSize = Math.round(
+        sampleRate * SHORT_TERM_HOP_INTERVAL_SEC,
+      );
 
       while (this.shortTermSampleAccumulators[inputIdx] >= shortTermHopSize) {
         if (this.shortTermEnergyBuffers[inputIdx].isFull()) {
-          const meanEnergy = this.shortTermEnergyRunningSums[inputIdx] / this.shortTermEnergyBuffers[inputIdx].capacity;
+          const meanEnergy =
+            this.shortTermEnergyRunningSums[inputIdx] /
+            this.shortTermEnergyBuffers[inputIdx].capacity;
           const shortTermLoudness = this.#energyToLoudness(meanEnergy);
 
           this.metrics[inputIdx].shortTermLoudness = shortTermLoudness;
           this.metrics[inputIdx].maximumShortTermLoudness = Math.max(
             this.metrics[inputIdx].maximumShortTermLoudness,
-            shortTermLoudness
+            shortTermLoudness,
           );
 
           this.shortTermLoudnessHistories[inputIdx].push(shortTermLoudness);
@@ -198,23 +259,42 @@ class LoudnessProcessor extends AudioWorkletProcessor {
       }
 
       if (this.momentaryLoudnessHistories[inputIdx].length > 2) {
-        const absoluteGatedLoudnesses = Array.from(this.momentaryLoudnessHistories[inputIdx]).filter(
-          (v) => v > LUFS_ABSOLUTE_THRESHOLD
-        );
+        const absoluteGatedLoudnesses = Array.from(
+          this.momentaryLoudnessHistories[inputIdx],
+        ).filter((v) => v > LUFS_ABSOLUTE_THRESHOLD);
 
         if (absoluteGatedLoudnesses.length > 2) {
-          const absoluteGatedEnergies = absoluteGatedLoudnesses.map(this.#loudnessToEnergy);
-          const sumOfAbsoluteGatedEnergy = absoluteGatedEnergies.reduce((a, b) => a + b, 0);
-          const absoluteGatedMeanEnergy = sumOfAbsoluteGatedEnergy / absoluteGatedEnergies.length;
-          const absoluteGatedLoudness = this.#energyToLoudness(absoluteGatedMeanEnergy);
-          const relativeThreshold = absoluteGatedLoudness + LUFS_RELATIVE_THRESHOLD_FACTOR;
-          const relativeGatedLoudnesses = absoluteGatedLoudnesses.filter((v) => v > relativeThreshold);
+          const absoluteGatedEnergies = absoluteGatedLoudnesses.map(
+            this.#loudnessToEnergy,
+          );
+          const sumOfAbsoluteGatedEnergy = absoluteGatedEnergies.reduce(
+            (a, b) => a + b,
+            0,
+          );
+          const absoluteGatedMeanEnergy =
+            sumOfAbsoluteGatedEnergy / absoluteGatedEnergies.length;
+          const absoluteGatedLoudness = this.#energyToLoudness(
+            absoluteGatedMeanEnergy,
+          );
+          const relativeThreshold =
+            absoluteGatedLoudness + LUFS_RELATIVE_THRESHOLD_FACTOR;
+          const relativeGatedLoudnesses = absoluteGatedLoudnesses.filter(
+            (v) => v > relativeThreshold,
+          );
 
           if (relativeGatedLoudnesses.length > 2) {
-            const relativeGatedEnergies = relativeGatedLoudnesses.map(this.#loudnessToEnergy);
-            const sumOfRelativeGatedEnergy = relativeGatedEnergies.reduce((a, b) => a + b, 0);
-            const relativeGatedMeanEnergy = sumOfRelativeGatedEnergy / relativeGatedEnergies.length;
-            const integratedLoudness = this.#energyToLoudness(relativeGatedMeanEnergy);
+            const relativeGatedEnergies = relativeGatedLoudnesses.map(
+              this.#loudnessToEnergy,
+            );
+            const sumOfRelativeGatedEnergy = relativeGatedEnergies.reduce(
+              (a, b) => a + b,
+              0,
+            );
+            const relativeGatedMeanEnergy =
+              sumOfRelativeGatedEnergy / relativeGatedEnergies.length;
+            const integratedLoudness = this.#energyToLoudness(
+              relativeGatedMeanEnergy,
+            );
 
             this.metrics[inputIdx].integratedLoudness = integratedLoudness;
           }
@@ -222,26 +302,43 @@ class LoudnessProcessor extends AudioWorkletProcessor {
       }
 
       if (this.shortTermLoudnessHistories[inputIdx].length > 2) {
-        const absoluteGatedLoudnesses = Array.from(this.shortTermLoudnessHistories[inputIdx]).filter(
-          (v) => v > LRA_ABSOLUTE_THRESHOLD
-        );
+        const absoluteGatedLoudnesses = Array.from(
+          this.shortTermLoudnessHistories[inputIdx],
+        ).filter((v) => v > LRA_ABSOLUTE_THRESHOLD);
 
         if (absoluteGatedLoudnesses.length > 2) {
-          const absoluteGatedEnergies = absoluteGatedLoudnesses.map(this.#loudnessToEnergy);
-          const sumOfAbsoluteGatedEnergy = absoluteGatedEnergies.reduce((a, b) => a + b, 0);
-          const absoluteGatedMeanEnergy = sumOfAbsoluteGatedEnergy / absoluteGatedEnergies.length;
-          const absoluteGatedLoudness = this.#energyToLoudness(absoluteGatedMeanEnergy);
-          const relativeThreshold = absoluteGatedLoudness + LRA_RELATIVE_THRESHOLD_FACTOR;
-          const relativeGatedLoudnesses = absoluteGatedLoudnesses.filter((v) => v > relativeThreshold);
+          const absoluteGatedEnergies = absoluteGatedLoudnesses.map(
+            this.#loudnessToEnergy,
+          );
+          const sumOfAbsoluteGatedEnergy = absoluteGatedEnergies.reduce(
+            (a, b) => a + b,
+            0,
+          );
+          const absoluteGatedMeanEnergy =
+            sumOfAbsoluteGatedEnergy / absoluteGatedEnergies.length;
+          const absoluteGatedLoudness = this.#energyToLoudness(
+            absoluteGatedMeanEnergy,
+          );
+          const relativeThreshold =
+            absoluteGatedLoudness + LRA_RELATIVE_THRESHOLD_FACTOR;
+          const relativeGatedLoudnesses = absoluteGatedLoudnesses.filter(
+            (v) => v > relativeThreshold,
+          );
 
           if (relativeGatedLoudnesses.length > 2) {
-            const sortedLoudnesses = relativeGatedLoudnesses.toSorted((a, b) => a - b);
+            const sortedLoudnesses = relativeGatedLoudnesses.toSorted(
+              (a, b) => a - b,
+            );
             const [lowerPercentile, upperPercentile] = [
               LOUDNESS_RANGE_LOWER_PERCENTILE,
-              LOUDNESS_RANGE_UPPER_PERCENTILE
+              LOUDNESS_RANGE_UPPER_PERCENTILE,
             ].map((percentile) => {
-              const lowerIndex = Math.floor(percentile * (sortedLoudnesses.length - 1));
-              const upperIndex = Math.ceil(percentile * (sortedLoudnesses.length - 1));
+              const lowerIndex = Math.floor(
+                percentile * (sortedLoudnesses.length - 1),
+              );
+              const upperIndex = Math.ceil(
+                percentile * (sortedLoudnesses.length - 1),
+              );
 
               if (upperIndex === lowerIndex) {
                 return sortedLoudnesses[lowerIndex];
@@ -269,7 +366,11 @@ class LoudnessProcessor extends AudioWorkletProcessor {
 
   #postMessage() {
     if (currentTime - this.lastTime >= Number(this.interval)) {
-      const snapshot = { currentFrame, currentTime, currentMetrics: this.metrics };
+      const snapshot = {
+        currentFrame,
+        currentTime,
+        currentMetrics: this.metrics,
+      };
       this.port.postMessage(snapshot);
       this.lastTime = currentTime;
     }
@@ -288,7 +389,7 @@ class LoudnessProcessor extends AudioWorkletProcessor {
   }
 
   #loudnessToEnergy(loudness: number): number {
-    return Math.pow(10, (loudness + 0.691) / 10);
+    return 10 ** ((loudness + 0.691) / 10);
   }
 }
 

@@ -22,10 +22,15 @@ function Playground() {
   function handleFileLoad(event: ProgressEvent<FileReader>) {
     const reader = event.target as FileReader;
     const arrayBuffer = reader.result as ArrayBuffer;
-    new AudioContext().decodeAudioData(arrayBuffer).then(setAudioBuffer).catch(setError);
+    new AudioContext()
+      .decodeAudioData(arrayBuffer)
+      .then(setAudioBuffer)
+      .catch(setError);
   }
 
-  function handleAudioWorkletMessage(event: MessageEvent<AudioLoudnessSnapshot>) {
+  function handleAudioWorkletMessage(
+    event: MessageEvent<AudioLoudnessSnapshot>,
+  ) {
     setSnapshot(event.data);
   }
 
@@ -35,17 +40,23 @@ function Playground() {
     if (!audioBuffer) return;
 
     const { length, sampleRate, numberOfChannels } = audioBuffer;
-    const context = new OfflineAudioContext(numberOfChannels, length, sampleRate);
+    const context = new OfflineAudioContext(
+      numberOfChannels,
+      length,
+      sampleRate,
+    );
     const module = new URL("../src/index.ts", import.meta.url);
     context.audioWorklet
       .addModule(module)
       .then(() => {
-        const source = new AudioBufferSourceNode(context, { buffer: audioBuffer });
+        const source = new AudioBufferSourceNode(context, {
+          buffer: audioBuffer,
+        });
         const worklet = new AudioWorkletNode(context, "loudness-processor", {
           processorOptions: {
             capacity: length / sampleRate,
-            interval: 0.1
-          }
+            interval: 0.1,
+          },
         });
 
         worklet.port.onmessage = handleAudioWorkletMessage;
@@ -71,15 +82,29 @@ function Playground() {
         <h2>Loudness Measurement</h2>
         <dl>
           <dt>Momentary Loudness (LUFS)</dt>
-          <dd>{getSnapshot()?.currentMetrics[0].momentaryLoudness.toFixed(1) ?? "-"}</dd>
+          <dd>
+            {getSnapshot()?.currentMetrics[0].momentaryLoudness.toFixed(1) ??
+              "-"}
+          </dd>
           <dt>Short-Term Loudness (LUFS)</dt>
-          <dd>{getSnapshot()?.currentMetrics[0].shortTermLoudness.toFixed(1) ?? "-"}</dd>
+          <dd>
+            {getSnapshot()?.currentMetrics[0].shortTermLoudness.toFixed(1) ??
+              "-"}
+          </dd>
           <dt>Integrated Loudness (LUFS)</dt>
-          <dd>{getSnapshot()?.currentMetrics[0].integratedLoudness.toFixed(1) ?? "-"}</dd>
+          <dd>
+            {getSnapshot()?.currentMetrics[0].integratedLoudness.toFixed(1) ??
+              "-"}
+          </dd>
           <dt>Loudness Range (LRA)</dt>
-          <dd>{getSnapshot()?.currentMetrics[0].loudnessRange.toFixed(1) ?? "-"}</dd>
+          <dd>
+            {getSnapshot()?.currentMetrics[0].loudnessRange.toFixed(1) ?? "-"}
+          </dd>
           <dt>Maximum True Peak Level (dBTP)</dt>
-          <dd>{getSnapshot()?.currentMetrics[0].maximumTruePeakLevel.toFixed(1) ?? "-"}</dd>
+          <dd>
+            {getSnapshot()?.currentMetrics[0].maximumTruePeakLevel.toFixed(1) ??
+              "-"}
+          </dd>
         </dl>
         <details open>
           <summary>Raw Data</summary>
@@ -90,7 +115,8 @@ function Playground() {
         <h2>ITU-R BS.1770-5 Reference</h2>
         <ul>
           <li>
-            <strong>LUFS</strong>: Loudness Units relative to Full Scale, standardized loudness measure.
+            <strong>LUFS</strong>: Loudness Units relative to Full Scale,
+            standardized loudness measure.
           </li>
           <li>
             <strong>Momentary</strong>: 400ms sliding window loudness.
@@ -102,14 +128,20 @@ function Playground() {
             <strong>Integrated</strong>: Overall loudness over the program.
           </li>
           <li>
-            <strong>Loudness Range</strong>: Statistical measure of loudness variation.
+            <strong>Loudness Range</strong>: Statistical measure of loudness
+            variation.
           </li>
           <li>
-            <strong>True Peak</strong>: Maximum sample-accurate peak, considering inter-sample peaks.
+            <strong>True Peak</strong>: Maximum sample-accurate peak,
+            considering inter-sample peaks.
           </li>
         </ul>
         <p>
-          <a href="https://www.itu.int/rec/R-REC-BS.1770/en" target="_blank" rel="noopener">
+          <a
+            href="https://www.itu.int/rec/R-REC-BS.1770/en"
+            target="_blank"
+            rel="noopener"
+          >
             ITU-R BS.1770-5 Official Recommendation
           </a>
         </p>
@@ -117,11 +149,16 @@ function Playground() {
       <section>
         <h2>ITU-R BS.2217 Reference</h2>
         <p>
-          This Report contains a table of compliance test files and related information for verifying that a meter meets
-          the specifications within Recommendation ITU-R BS.1770.
+          This Report contains a table of compliance test files and related
+          information for verifying that a meter meets the specifications within
+          Recommendation ITU-R BS.1770.
         </p>
         <p>
-          <a href="https://www.itu.int/pub/R-REP-BS.2217" target="_blank" rel="noopener">
+          <a
+            href="https://www.itu.int/pub/R-REP-BS.2217"
+            target="_blank"
+            rel="noopener"
+          >
             Compliance material for Recommendation ITU-R BS.1770
           </a>
         </p>

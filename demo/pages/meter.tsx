@@ -16,7 +16,11 @@ function Meter() {
             </DrawerToggle>
           }
           end={
-            <a class="btn btn-neutral btn-sm btn-square" href={repository.url} target="_blank">
+            <a
+              class="btn btn-neutral btn-sm btn-square"
+              href={repository.url}
+              target="_blank"
+            >
               <img class="size-5" src={githubIcon} alt="GitHub" />
             </a>
           }

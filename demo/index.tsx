@@ -11,5 +11,5 @@ render(
       </LoudnessProvider>
     </EnvironmentProvider>
   ),
-  document.getElementById("app")!
+  document.getElementById("app")!,
 );

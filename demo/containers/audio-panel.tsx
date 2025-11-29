@@ -26,7 +26,7 @@ function AudioPanel() {
       document.startViewTransition(() => {
         files ? setFile(files[0]) : setFile(null);
       });
-    })
+    }),
   );
 
   return (
@@ -53,10 +53,13 @@ function AudioPanel() {
               <div class="flex flex-col items-center justify-center pt-5 pb-6">
                 <DocumentPlusIcon class="mb-4 size-8" />
                 <p class="mb-2 text-sm">
-                  <span class="font-semibold">Click to upload</span> or drag and drop
+                  <span class="font-semibold">Click to upload</span> or drag and
+                  drop
                 </p>
                 <p class="mb-2 text-xs">Audio or Video Files</p>
-                <p class="text-base-content/70 text-xs font-thin">All processing is done locally in your browser</p>
+                <p class="text-base-content/70 text-xs font-thin">
+                  All processing is done locally in your browser
+                </p>
               </div>
             </DropZone>
           }
@@ -71,7 +74,11 @@ function AudioPanel() {
         title={
           <li class="text-base-content/60 flex flex-row items-center justify-between py-2 pl-4 text-xs tracking-wide">
             Selected Files
-            <button class="btn btn-xs btn-ghost" disabled={getIsProcessing()} onclick={handleFileClear}>
+            <button
+              class="btn btn-xs btn-ghost"
+              disabled={getIsProcessing()}
+              onclick={handleFileClear}
+            >
               Clear
             </button>
           </li>
@@ -89,7 +96,10 @@ function AudioPanel() {
         }
       >
         {(item) => (
-          <button classList={{ "menu-active": item.name === getFile()?.name }} onclick={() => setFile(item)}>
+          <button
+            classList={{ "menu-active": item.name === getFile()?.name }}
+            onclick={() => setFile(item)}
+          >
             <span class="block truncate text-left">{item.name}</span>
           </button>
         )}

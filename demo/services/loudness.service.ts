@@ -1,4 +1,4 @@
-import { AudioLoudnessSnapshot } from "../../types";
+import type { AudioLoudnessSnapshot } from "../../types";
 
 class LoudnessService {
   module: URL;
@@ -9,18 +9,22 @@ class LoudnessService {
 
   async measure(
     audioBuffer: AudioBuffer,
-    onmessage: (event: MessageEvent<AudioLoudnessSnapshot>) => void
+    onmessage: (event: MessageEvent<AudioLoudnessSnapshot>) => void,
   ): Promise<AudioBuffer> {
     const { numberOfChannels, length, sampleRate } = audioBuffer;
-    const context = new OfflineAudioContext(numberOfChannels, length, sampleRate);
+    const context = new OfflineAudioContext(
+      numberOfChannels,
+      length,
+      sampleRate,
+    );
     await context.audioWorklet.addModule(this.module);
 
     const source = new AudioBufferSourceNode(context, { buffer: audioBuffer });
     const worklet = new AudioWorkletNode(context, "loudness-processor", {
       processorOptions: {
         capacity: length / sampleRate,
-        interval: 0.01
-      }
+        interval: 0.01,
+      },
     });
 
     worklet.port.onmessage = onmessage;
