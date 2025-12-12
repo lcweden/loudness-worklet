@@ -1,0 +1,28 @@
+{
+  "name": "@loudness-worklet/core",
+  "private": true,
+  "type": "module",
+  "main": "./dist/loudness.worklet.js",
+  "exports": {
+    ".": {
+      "default": "./dist/loudness.worklet.js"
+    }
+  },
+  "files": [
+    "dist",
+    "types"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "test": "vitest run",
+    "build": "tsc -b && vite build"
+  },
+  "devDependencies": {
+    "@types/audioworklet": "^0.0.91",
+    "solid-js": "^1.9.10",
+    "typescript": "^5.9.3",
+    "vite": "^7.2.4",
+    "vite-plugin-solid": "^2.10.2",
+    "vitest": "^4.0.14"
+  }
+}
