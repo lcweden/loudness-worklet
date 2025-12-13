@@ -1,5 +1,5 @@
-import source from "../../core/dist/loudness.worklet.js?raw";
-import type { LoudnessMetrics, LoudnessSnapshot } from "../../core/types";
+import type { LoudnessMetrics, LoudnessSnapshot } from "@loudness-worklet/core";
+import source from "@loudness-worklet/core?raw";
 
 interface LoudnessWorkletProcessorOptions {
   numberOfInputs?: AudioWorkletNodeOptions["numberOfInputs"];

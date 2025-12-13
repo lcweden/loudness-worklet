@@ -63,7 +63,9 @@ describe("CircularBuffer", () => {
 
   it("iterator matches slice", () => {
     const buf = new CircularBuffer<string>(3);
-    ["a", "b", "c", "d"].forEach((x) => { buf.push(x); }); // now b,c,d
+    ["a", "b", "c", "d"].forEach((x) => {
+      buf.push(x);
+    }); // now b,c,d
     assert.deepStrictEqual([...buf], buf.slice(0, buf.length));
   });
 });

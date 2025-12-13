@@ -59,8 +59,8 @@ class LoudnessProcessor extends AudioWorkletProcessor {
       );
       this.momentaryLoudnessHistories[index] = this.capacity
         ? new CircularBuffer(
-          Math.ceil(this.capacity / MOMENTARY_HOP_INTERVAL_SEC),
-        )
+            Math.ceil(this.capacity / MOMENTARY_HOP_INTERVAL_SEC),
+          )
         : [];
       this.shortTermEnergyRunningSums[index] = 0;
       this.shortTermSampleAccumulators[index] = 0;
@@ -69,8 +69,8 @@ class LoudnessProcessor extends AudioWorkletProcessor {
       );
       this.shortTermLoudnessHistories[index] = this.capacity
         ? new CircularBuffer(
-          Math.ceil(this.capacity / SHORT_TERM_HOP_INTERVAL_SEC),
-        )
+            Math.ceil(this.capacity / SHORT_TERM_HOP_INTERVAL_SEC),
+          )
         : [];
       this.metrics[index] = {
         momentaryLoudness: Number.NEGATIVE_INFINITY,
@@ -346,7 +346,7 @@ class LoudnessProcessor extends AudioWorkletProcessor {
               return (
                 sortedLoudnesses[lowerIndex] +
                 (sortedLoudnesses[upperIndex] - sortedLoudnesses[lowerIndex]) *
-                (percentile * (sortedLoudnesses.length - 1) - lowerIndex)
+                  (percentile * (sortedLoudnesses.length - 1) - lowerIndex)
               );
             });
 
