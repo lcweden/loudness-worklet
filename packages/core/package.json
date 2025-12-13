@@ -3,18 +3,26 @@
   "private": true,
   "type": "module",
   "main": "./dist/loudness.worklet.js",
+  "types": "./dist/loudness.worklet.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/loudness.worklet.d.ts",
       "default": "./dist/loudness.worklet.js"
     }
   },
+  "imports": {
+    "#constants": "./src/constants.ts",
+    "#filters": "./src/filters/index.ts",
+    "#processors": "./src/processors/index.ts",
+    "#utils": "./src/utils/index.ts",
+    "#types": "./src/types/index.ts"
+  },
   "files": [
-    "dist",
-    "types"
+    "dist"
   ],
   "scripts": {
     "dev": "vite",
-    "test": "vitest run",
+    "test": "node --test",
     "build": "tsc -b && vite build"
   },
   "devDependencies": {
@@ -22,7 +30,7 @@
     "solid-js": "^1.9.10",
     "typescript": "^5.9.3",
     "vite": "^7.2.4",
-    "vite-plugin-solid": "^2.10.2",
-    "vitest": "^4.0.14"
+    "vite-plugin-dts": "^4.5.4",
+    "vite-plugin-solid": "^2.10.2"
   }
 }

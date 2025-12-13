@@ -1,5 +1,6 @@
-import { beforeEach, describe, expect, it } from "vitest";
-import { BiquadraticFilter } from "../src/biquadratic-filter";
+import assert from "node:assert/strict";
+import { beforeEach, describe, it } from "node:test";
+import { BiquadraticFilter } from "../src/filters/biquadratic-filter.ts";
 
 describe("BiquadraticFilter", () => {
   let filter: BiquadraticFilter;
@@ -13,12 +14,12 @@ describe("BiquadraticFilter", () => {
   describe("constructor", () => {
     it("should create a new filter with given coefficients", () => {
       const newFilter = new BiquadraticFilter([0.5, 0.25], [1, 0.5, 0.25]);
-      expect(newFilter).toBeInstanceOf(BiquadraticFilter);
+      assert.ok(newFilter instanceof BiquadraticFilter);
     });
 
     it("should initialize with zero state", () => {
       const output = filter.process(0);
-      expect(output).toBe(0);
+      assert.strictEqual(output, 0);
     });
   });
 
@@ -26,13 +27,13 @@ describe("BiquadraticFilter", () => {
     it("should pass through input when using identity coefficients", () => {
       const input = 0.5;
       const output = filter.process(input);
-      expect(output).toBeCloseTo(input, 10);
+      assert.ok(Math.abs(output - input) < 1e-10);
     });
 
     it("should process multiple samples correctly", () => {
       const inputs = [1, 2, 3, 4, 5];
       const outputs = inputs.map((input) => filter.process(input));
-      expect(outputs).toEqual(inputs);
+      assert.deepStrictEqual(outputs, inputs);
     });
 
     it("should apply low-pass filter coefficients correctly", () => {
@@ -45,8 +46,8 @@ describe("BiquadraticFilter", () => {
       const output = lpFilter.process(1);
 
       // Output should be smoothed (less than input due to averaging)
-      expect(output).toBeGreaterThan(0);
-      expect(output).toBeLessThanOrEqual(1);
+      assert.ok(output > 0);
+      assert.ok(output <= 1);
     });
 
     it("should maintain filter state between calls", () => {
@@ -56,18 +57,18 @@ describe("BiquadraticFilter", () => {
       const out2 = testFilter.process(0);
 
       // Second output should be affected by first input due to feedback
-      expect(out2).not.toBe(0);
-      expect(out2).toBeCloseTo(-0.5 * out1, 10);
+      assert.notStrictEqual(out2, 0);
+      assert.ok(Math.abs(out2 - -0.5 * out1) < 1e-10);
     });
 
     it("should handle negative inputs correctly", () => {
       const output = filter.process(-0.5);
-      expect(output).toBeCloseTo(-0.5, 10);
+      assert.ok(Math.abs(output - -0.5) < 1e-10);
     });
 
     it("should handle zero inputs correctly", () => {
       const output = filter.process(0);
-      expect(output).toBe(0);
+      assert.strictEqual(output, 0);
     });
   });
 
@@ -76,27 +77,27 @@ describe("BiquadraticFilter", () => {
       // Set to identity filter
       filter.set([0, 0], [1, 0, 0]);
       let output = filter.process(1);
-      expect(output).toBeCloseTo(1, 10);
+      assert.ok(Math.abs(output - 1) < 1e-10);
 
       // Change coefficients
       filter.reset();
       filter.set([0, 0], [0.5, 0, 0]);
       output = filter.process(1);
-      expect(output).toBeCloseTo(0.5, 10);
+      assert.ok(Math.abs(output - 0.5) < 1e-10);
     });
 
     it("should handle coefficient arrays with extra elements", () => {
       // The set method truncates arrays to correct length
       filter.set([0.1, 0.2, 0.3, 0.4], [1, 0.5, 0.25, 0.1, 0.05]);
       const output = filter.process(1);
-      expect(output).toBeDefined();
-      expect(typeof output).toBe("number");
+      assert.notStrictEqual(output, undefined);
+      assert.strictEqual(typeof output, "number");
     });
 
     it("should work with new coefficients immediately", () => {
       filter.set([0, 0], [2, 0, 0]);
       const output = filter.process(1);
-      expect(output).toBeCloseTo(2, 10);
+      assert.ok(Math.abs(output - 2) < 1e-10);
     });
   });
 
@@ -114,7 +115,7 @@ describe("BiquadraticFilter", () => {
       // After reset, same input should give same output as initial state
       filter.set([0, 0], [1, 0, 0]);
       const output = filter.process(0);
-      expect(output).toBe(0);
+      assert.strictEqual(output, 0);
     });
 
     it("should reset internal buffers to zero", () => {
@@ -129,7 +130,7 @@ describe("BiquadraticFilter", () => {
 
       // Process zero - should get zero if state is truly reset
       const output = testFilter.process(0);
-      expect(output).toBe(0);
+      assert.strictEqual(output, 0);
     });
 
     it("should allow filter to work normally after reset", () => {
@@ -138,19 +139,19 @@ describe("BiquadraticFilter", () => {
       filter.reset();
 
       const output = filter.process(1);
-      expect(output).toBeCloseTo(1, 10);
+      assert.ok(Math.abs(output - 1) < 1e-10);
     });
   });
 
   describe("edge cases", () => {
     it("should handle very small numbers", () => {
       const output = filter.process(1e-10);
-      expect(output).toBeCloseTo(1e-10, 15);
+      assert.ok(Math.abs(output - 1e-10) < 1e-15);
     });
 
     it("should handle very large numbers", () => {
       const output = filter.process(1e10);
-      expect(output).toBeCloseTo(1e10, -5);
+      assert.ok(Math.abs(output - 1e10) < 50000);
     });
 
     it("should handle rapid coefficient changes", () => {
@@ -160,7 +161,7 @@ describe("BiquadraticFilter", () => {
       filter.set([0, 0], [0.5, 0, 0]);
       const output = filter.process(1);
 
-      expect(output).toBeCloseTo(0.5, 10);
+      assert.ok(Math.abs(output - 0.5) < 1e-10);
     });
 
     it("should produce stable output with feedback coefficients", () => {
@@ -174,9 +175,9 @@ describe("BiquadraticFilter", () => {
       }
 
       // Output should be finite and not NaN
-      expect(output).toBeDefined();
-      expect(Number.isFinite(output)).toBe(true);
-      expect(Number.isNaN(output)).toBe(false);
+      assert.notStrictEqual(output, undefined);
+      assert.strictEqual(Number.isFinite(output), true);
+      assert.strictEqual(Number.isNaN(output), false);
     });
   });
 });

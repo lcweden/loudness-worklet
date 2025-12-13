@@ -1,5 +1,6 @@
-import { beforeEach, describe, expect, it } from "vitest";
-import { FiniteImpulseResponseFilter } from "../src/finite-impulse-response-filter";
+import assert from "node:assert/strict";
+import { beforeEach, describe, it } from "node:test";
+import { FiniteImpulseResponseFilter } from "../src/filters/finite-impulse-response-filter.ts";
 
 describe("FiniteImpulseResponseFilter", () => {
   let filter: FiniteImpulseResponseFilter;
@@ -12,36 +13,36 @@ describe("FiniteImpulseResponseFilter", () => {
   describe("constructor", () => {
     it("should create a new filter with given coefficients", () => {
       const newFilter = new FiniteImpulseResponseFilter([1, 0.5, 0.25]);
-      expect(newFilter).toBeInstanceOf(FiniteImpulseResponseFilter);
+      assert.ok(newFilter instanceof FiniteImpulseResponseFilter);
     });
 
     it("should initialize with zero state", () => {
       const output = filter.process(0);
-      expect(output).toBe(0);
+      assert.strictEqual(output, 0);
     });
 
     it("should accept single coefficient", () => {
       const singleCoeffFilter = new FiniteImpulseResponseFilter([2]);
       const output = singleCoeffFilter.process(1);
-      expect(output).toBe(2);
+      assert.strictEqual(output, 2);
     });
 
     it("should accept multiple coefficients", () => {
       const multiCoeffFilter = new FiniteImpulseResponseFilter([1, 2, 3, 4, 5]);
-      expect(multiCoeffFilter).toBeInstanceOf(FiniteImpulseResponseFilter);
+      assert.ok(multiCoeffFilter instanceof FiniteImpulseResponseFilter);
     });
   });
 
   describe("process - single sample", () => {
     it("should pass through input with identity coefficient [1]", () => {
       const output = filter.process(0.5);
-      expect(output).toBeCloseTo(0.5, 10);
+      assert.ok(Math.abs(output - 0.5) < 1e-10);
     });
 
     it("should scale input with gain coefficient", () => {
       const gainFilter = new FiniteImpulseResponseFilter([2]);
       const output = gainFilter.process(0.5);
-      expect(output).toBeCloseTo(1.0, 10);
+      assert.ok(Math.abs(output - 1.0) < 1e-10);
     });
 
     it("should implement moving average with equal coefficients", () => {
@@ -53,30 +54,30 @@ describe("FiniteImpulseResponseFilter", () => {
       const output = avgFilter.process(3); // buffer: [3, 2, 1]
 
       // Average of [3, 2, 1] = 2
-      expect(output).toBeCloseTo(2, 10);
+      assert.ok(Math.abs(output - 2) < 1e-10);
     });
 
     it("should maintain filter state between calls", () => {
       const delayFilter = new FiniteImpulseResponseFilter([0, 1]); // 1-sample delay
 
       const out1 = delayFilter.process(1); // output previous buffer[1] = 0
-      expect(out1).toBe(0);
+      assert.strictEqual(out1, 0);
 
       const out2 = delayFilter.process(2); // output previous buffer[1] = 1
-      expect(out2).toBe(1);
+      assert.strictEqual(out2, 1);
 
       const out3 = delayFilter.process(3); // output previous buffer[1] = 2
-      expect(out3).toBe(2);
+      assert.strictEqual(out3, 2);
     });
 
     it("should handle negative inputs correctly", () => {
       const output = filter.process(-0.5);
-      expect(output).toBeCloseTo(-0.5, 10);
+      assert.ok(Math.abs(output - -0.5) < 1e-10);
     });
 
     it("should handle zero inputs correctly", () => {
       const output = filter.process(0);
-      expect(output).toBe(0);
+      assert.strictEqual(output, 0);
     });
 
     it("should apply weighted sum correctly", () => {
@@ -86,7 +87,7 @@ describe("FiniteImpulseResponseFilter", () => {
       weightedFilter.process(2); // buffer: [2, 1, 0] -> 1.0 + 0.3 = 1.3
       const output = weightedFilter.process(3); // buffer: [3, 2, 1] -> 1.5 + 0.6 + 0.2 = 2.3
 
-      expect(output).toBeCloseTo(2.3, 10);
+      assert.ok(Math.abs(output - 2.3) < 1e-10);
     });
 
     it("should handle long coefficient arrays", () => {
@@ -100,7 +101,7 @@ describe("FiniteImpulseResponseFilter", () => {
 
       const output = longFilter.process(1);
       // Sum of 100 samples * 0.01 = 1.0
-      expect(output).toBeCloseTo(1.0, 10);
+      assert.ok(Math.abs(output - 1.0) < 1e-10);
     });
   });
 
@@ -109,18 +110,18 @@ describe("FiniteImpulseResponseFilter", () => {
       const inputs = [1, 2, 3, 4, 5];
       const outputs = filter.process(inputs);
 
-      expect(outputs).toEqual(inputs);
-      expect(outputs).toHaveLength(5);
+      assert.deepStrictEqual(outputs, inputs);
+      assert.strictEqual(outputs.length, 5);
     });
 
     it("should process empty array", () => {
       const outputs = filter.process([]);
-      expect(outputs).toEqual([]);
+      assert.deepStrictEqual(outputs, []);
     });
 
     it("should process single-element array", () => {
       const outputs = filter.process([1]);
-      expect(outputs).toEqual([1]);
+      assert.deepStrictEqual(outputs, [1]);
     });
 
     it("should maintain state across array processing", () => {
@@ -132,17 +133,17 @@ describe("FiniteImpulseResponseFilter", () => {
       // [2, 1] -> 1.5
       // [3, 2] -> 2.5
       // [4, 3] -> 3.5
-      expect(outputs[0]).toBeCloseTo(0.5, 10);
-      expect(outputs[1]).toBeCloseTo(1.5, 10);
-      expect(outputs[2]).toBeCloseTo(2.5, 10);
-      expect(outputs[3]).toBeCloseTo(3.5, 10);
+      assert.ok(Math.abs(outputs[0] - 0.5) < 1e-10);
+      assert.ok(Math.abs(outputs[1] - 1.5) < 1e-10);
+      assert.ok(Math.abs(outputs[2] - 2.5) < 1e-10);
+      assert.ok(Math.abs(outputs[3] - 3.5) < 1e-10);
     });
 
     it("should handle negative values in array", () => {
       const inputs = [-1, -2, -3];
       const outputs = filter.process(inputs);
 
-      expect(outputs).toEqual(inputs);
+      assert.deepStrictEqual(outputs, inputs);
     });
 
     it("should handle mixed positive and negative values", () => {
@@ -150,18 +151,21 @@ describe("FiniteImpulseResponseFilter", () => {
       const inputs = [1, -1, 2, -2];
       const outputs = avgFilter.process(inputs);
 
-      expect(outputs[0]).toBeCloseTo(0.5, 10); // [1, 0]
-      expect(outputs[1]).toBeCloseTo(0, 10); // [-1, 1]
-      expect(outputs[2]).toBeCloseTo(0.5, 10); // [2, -1]
-      expect(outputs[3]).toBeCloseTo(0, 10); // [-2, 2]
+      assert.ok(Math.abs(outputs[0] - 0.5) < 1e-10); // [1, 0]
+      assert.ok(Math.abs(outputs[1] - 0) < 1e-10); // [-1, 1]
+      assert.ok(Math.abs(outputs[2] - 0.5) < 1e-10); // [2, -1]
+      assert.ok(Math.abs(outputs[3] - 0) < 1e-10); // [-2, 2]
     });
 
     it("should process large arrays efficiently", () => {
       const largeArray = Array(1000).fill(1);
       const outputs = filter.process(largeArray);
 
-      expect(outputs).toHaveLength(1000);
-      expect(outputs.every((v) => v === 1)).toBe(true);
+      assert.strictEqual(outputs.length, 1000);
+      assert.strictEqual(
+        outputs.every((v) => v === 1),
+        true,
+      );
     });
   });
 
@@ -179,7 +183,7 @@ describe("FiniteImpulseResponseFilter", () => {
 
       // After reset, should output 0 (buffer is cleared)
       const output = delayFilter.process(5);
-      expect(output).toBe(0);
+      assert.strictEqual(output, 0);
     });
 
     it("should reset buffer to all zeros", () => {
@@ -195,7 +199,7 @@ describe("FiniteImpulseResponseFilter", () => {
 
       // First output should only use new input (buffer is zeros)
       const output = avgFilter.process(1);
-      expect(output).toBe(1); // 1*1 + 1*0 + 1*0 = 1
+      assert.strictEqual(output, 1); // 1*1 + 1*0 + 1*0 = 1
     });
 
     it("should allow filter to work normally after reset", () => {
@@ -203,7 +207,7 @@ describe("FiniteImpulseResponseFilter", () => {
       filter.reset();
 
       const output = filter.process(1);
-      expect(output).toBeCloseTo(1, 10);
+      assert.ok(Math.abs(output - 1) < 1e-10);
     });
 
     it("should work correctly with multiple resets", () => {
@@ -215,25 +219,25 @@ describe("FiniteImpulseResponseFilter", () => {
       testFilter.reset();
 
       const output = testFilter.process(2);
-      expect(output).toBe(2); // Only current input
+      assert.strictEqual(output, 2); // Only current input
     });
   });
 
   describe("edge cases", () => {
     it("should handle very small numbers", () => {
       const output = filter.process(1e-10);
-      expect(output).toBeCloseTo(1e-10, 15);
+      assert.ok(Math.abs(output - 1e-10) < 1e-15);
     });
 
     it("should handle very large numbers", () => {
       const output = filter.process(1e10);
-      expect(output).toBeCloseTo(1e10, -5);
+      assert.ok(Math.abs(output - 1e10) < 50000);
     });
 
     it("should handle zero coefficients", () => {
       const zeroFilter = new FiniteImpulseResponseFilter([0, 0, 0]);
       const output = zeroFilter.process(100);
-      expect(output).toBe(0);
+      assert.strictEqual(output, 0);
     });
 
     it("should handle negative coefficients", () => {
@@ -241,7 +245,7 @@ describe("FiniteImpulseResponseFilter", () => {
       negFilter.process(2); // buffer: [2, 0] -> -2
       const output = negFilter.process(4); // buffer: [4, 2] -> -4 - 1 = -5
 
-      expect(output).toBeCloseTo(-5, 10);
+      assert.ok(Math.abs(output - -5) < 1e-10);
     });
 
     it("should handle alternating signs in coefficients", () => {
@@ -251,14 +255,14 @@ describe("FiniteImpulseResponseFilter", () => {
       altFilter.process(1); // [1, 1, 1, 0] -> 1
       const output = altFilter.process(1); // [1, 1, 1, 1] -> 0
 
-      expect(output).toBe(0);
+      assert.strictEqual(output, 0);
     });
 
     it("should handle fractional coefficients", () => {
       const fracFilter = new FiniteImpulseResponseFilter([0.1, 0.2, 0.3, 0.4]);
       const output = fracFilter.process([1, 1, 1, 1]);
 
-      expect(output[3]).toBeCloseTo(1.0, 10); // 0.1 + 0.2 + 0.3 + 0.4 = 1.0
+      assert.ok(Math.abs(output[3] - 1.0) < 1e-10); // 0.1 + 0.2 + 0.3 + 0.4 = 1.0
     });
 
     it("should produce consistent results with repeated inputs", () => {
@@ -273,7 +277,7 @@ describe("FiniteImpulseResponseFilter", () => {
       const output = consistentFilter.process(4);
 
       // Average of [4, 4, 4, 4] = 4
-      expect(output).toBeCloseTo(4, 10);
+      assert.ok(Math.abs(output - 4) < 1e-10);
     });
 
     it("should handle impulse response correctly", () => {
@@ -284,10 +288,10 @@ describe("FiniteImpulseResponseFilter", () => {
       const out3 = impulseFilter.process(0);
       const out4 = impulseFilter.process(0);
 
-      expect(out1).toBeCloseTo(1, 10); // [1, 0, 0]
-      expect(out2).toBeCloseTo(0.5, 10); // [0, 1, 0]
-      expect(out3).toBeCloseTo(0.25, 10); // [0, 0, 1]
-      expect(out4).toBeCloseTo(0, 10); // [0, 0, 0]
+      assert.ok(Math.abs(out1 - 1) < 1e-10); // [1, 0, 0]
+      assert.ok(Math.abs(out2 - 0.5) < 1e-10); // [0, 1, 0]
+      assert.ok(Math.abs(out3 - 0.25) < 1e-10); // [0, 0, 1]
+      assert.ok(Math.abs(out4 - 0) < 1e-10); // [0, 0, 0]
     });
   });
 
@@ -300,7 +304,7 @@ describe("FiniteImpulseResponseFilter", () => {
       delayFilter.process(3);
       const output = delayFilter.process(4);
 
-      expect(output).toBe(1); // Output is input from 3 samples ago
+      assert.strictEqual(output, 1); // Output is input from 3 samples ago
     });
 
     it("should implement differentiator", () => {
@@ -310,7 +314,7 @@ describe("FiniteImpulseResponseFilter", () => {
       diffFilter.process(3); // [3, 1] -> 2
       const output = diffFilter.process(6); // [6, 3] -> 3
 
-      expect(output).toBe(3); // Difference between consecutive samples
+      assert.strictEqual(output, 3); // Difference between consecutive samples
     });
 
     it("should implement simple low-pass filter", () => {
@@ -325,7 +329,7 @@ describe("FiniteImpulseResponseFilter", () => {
       }
 
       const output = lpFilter.process(1);
-      expect(output).toBeCloseTo(1, 10); // Average of ones is one
+      assert.ok(Math.abs(output - 1) < 1e-10); // Average of ones is one
     });
 
     it("should sum coefficients correctly for DC gain", () => {
@@ -338,7 +342,7 @@ describe("FiniteImpulseResponseFilter", () => {
       gainFilter.process(1);
       const output = gainFilter.process(1);
 
-      expect(output).toBeCloseTo(2, 10); // Sum of coefficients
+      assert.ok(Math.abs(output - 2) < 1e-10); // Sum of coefficients
     });
   });
 });

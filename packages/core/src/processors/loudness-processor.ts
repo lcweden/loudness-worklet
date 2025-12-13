@@ -1,6 +1,3 @@
-import type { LoudnessMetrics, Repeat } from "../types";
-import { BiquadraticFilter } from "./biquadratic-filter";
-import { CircularBuffer } from "./circular-buffer";
 import {
   ATTENUATION_DB,
   CHANNEL_WEIGHT_FACTORS,
@@ -16,8 +13,10 @@ import {
   SHORT_TERM_HOP_INTERVAL_SEC,
   SHORT_TERM_WINDOW_SEC,
   TRUE_PEAK_COEFFICIENTS,
-} from "./constants";
-import { FiniteImpulseResponseFilter } from "./finite-impulse-response-filter";
+} from "#constants";
+import { BiquadraticFilter, FiniteImpulseResponseFilter } from "#filters";
+import type { LoudnessMetrics, Repeat } from "#types";
+import { CircularBuffer } from "#utils";
 
 /**
  * Loudness Algorithm Implementation (ITU-R BS.1770-5)
@@ -60,8 +59,8 @@ class LoudnessProcessor extends AudioWorkletProcessor {
       );
       this.momentaryLoudnessHistories[index] = this.capacity
         ? new CircularBuffer(
-            Math.ceil(this.capacity / MOMENTARY_HOP_INTERVAL_SEC),
-          )
+          Math.ceil(this.capacity / MOMENTARY_HOP_INTERVAL_SEC),
+        )
         : [];
       this.shortTermEnergyRunningSums[index] = 0;
       this.shortTermSampleAccumulators[index] = 0;
@@ -70,8 +69,8 @@ class LoudnessProcessor extends AudioWorkletProcessor {
       );
       this.shortTermLoudnessHistories[index] = this.capacity
         ? new CircularBuffer(
-            Math.ceil(this.capacity / SHORT_TERM_HOP_INTERVAL_SEC),
-          )
+          Math.ceil(this.capacity / SHORT_TERM_HOP_INTERVAL_SEC),
+        )
         : [];
       this.metrics[index] = {
         momentaryLoudness: Number.NEGATIVE_INFINITY,
@@ -347,7 +346,7 @@ class LoudnessProcessor extends AudioWorkletProcessor {
               return (
                 sortedLoudnesses[lowerIndex] +
                 (sortedLoudnesses[upperIndex] - sortedLoudnesses[lowerIndex]) *
-                  (percentile * (sortedLoudnesses.length - 1) - lowerIndex)
+                (percentile * (sortedLoudnesses.length - 1) - lowerIndex)
               );
             });
 

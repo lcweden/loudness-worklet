@@ -1,6 +1,6 @@
 import { createEffect, createSignal } from "solid-js";
 import { render } from "solid-js/web";
-import type { LoudnessSnapshot } from "./types";
+import type { LoudnessSnapshot } from "#types";
 
 function Playground() {
   const [getAudioBuffer, setAudioBuffer] = createSignal<AudioBuffer>();
@@ -28,9 +28,7 @@ function Playground() {
       .catch(setError);
   }
 
-  function handleAudioWorkletMessage(
-    event: MessageEvent<LoudnessSnapshot>,
-  ) {
+  function handleAudioWorkletMessage(event: MessageEvent<LoudnessSnapshot>) {
     setSnapshot(event.data);
   }
 
@@ -45,7 +43,7 @@ function Playground() {
       length,
       sampleRate,
     );
-    const module = new URL("./src/index.ts", import.meta.url).pathname;
+    const module = new URL("../src/index.ts", import.meta.url).pathname;
     context.audioWorklet
       .addModule(module)
       .then(() => {
