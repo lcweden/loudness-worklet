@@ -15,7 +15,7 @@ import {
   TRUE_PEAK_COEFFICIENTS,
 } from "#constants";
 import { BiquadraticFilter, FiniteImpulseResponseFilter } from "#filters";
-import type { LoudnessMetrics, Repeat } from "#types";
+import type { LoudnessMeasurements, Repeat } from "#types";
 import { CircularBuffer } from "#utils";
 
 /**
@@ -28,7 +28,7 @@ class LoudnessProcessor extends AudioWorkletProcessor {
   capacity: number | null = null;
   interval: number | null = null;
   lastTime: number = 0;
-  metrics: LoudnessMetrics[] = [];
+  measurements: LoudnessMeasurements[] = [];
   kWeightingFilters: Repeat<BiquadraticFilter, 2>[][] = [];
   truePeakFilters: Repeat<FiniteImpulseResponseFilter, 4>[][] = [];
   momentaryEnergyBuffers: CircularBuffer<number>[] = [];
@@ -72,7 +72,7 @@ class LoudnessProcessor extends AudioWorkletProcessor {
             Math.ceil(this.capacity / SHORT_TERM_HOP_INTERVAL_SEC),
           )
         : [];
-      this.metrics[index] = {
+      this.measurements[index] = {
         momentaryLoudness: Number.NEGATIVE_INFINITY,
         shortTermLoudness: Number.NEGATIVE_INFINITY,
         integratedLoudness: Number.NEGATIVE_INFINITY,
@@ -167,9 +167,9 @@ class LoudnessProcessor extends AudioWorkletProcessor {
           const maximumTruePeakLevel =
             20 * Math.log10(Math.max(...truePeaks)) + ATTENUATION_DB;
           const previousMaximumTruePeakLevel =
-            this.metrics[inputIdx].maximumTruePeakLevel;
+            this.measurements[inputIdx].maximumTruePeakLevel;
 
-          this.metrics[inputIdx].maximumTruePeakLevel = Math.max(
+          this.measurements[inputIdx].maximumTruePeakLevel = Math.max(
             previousMaximumTruePeakLevel,
             maximumTruePeakLevel,
           );
@@ -207,9 +207,9 @@ class LoudnessProcessor extends AudioWorkletProcessor {
             this.momentaryEnergyBuffers[inputIdx].capacity;
           const momentaryLoudness = this.#energyToLoudness(meanEnergy);
 
-          this.metrics[inputIdx].momentaryLoudness = momentaryLoudness;
-          this.metrics[inputIdx].maximumMomentaryLoudness = Math.max(
-            this.metrics[inputIdx].maximumMomentaryLoudness,
+          this.measurements[inputIdx].momentaryLoudness = momentaryLoudness;
+          this.measurements[inputIdx].maximumMomentaryLoudness = Math.max(
+            this.measurements[inputIdx].maximumMomentaryLoudness,
             momentaryLoudness,
           );
         }
@@ -245,9 +245,9 @@ class LoudnessProcessor extends AudioWorkletProcessor {
             this.shortTermEnergyBuffers[inputIdx].capacity;
           const shortTermLoudness = this.#energyToLoudness(meanEnergy);
 
-          this.metrics[inputIdx].shortTermLoudness = shortTermLoudness;
-          this.metrics[inputIdx].maximumShortTermLoudness = Math.max(
-            this.metrics[inputIdx].maximumShortTermLoudness,
+          this.measurements[inputIdx].shortTermLoudness = shortTermLoudness;
+          this.measurements[inputIdx].maximumShortTermLoudness = Math.max(
+            this.measurements[inputIdx].maximumShortTermLoudness,
             shortTermLoudness,
           );
 
@@ -295,7 +295,7 @@ class LoudnessProcessor extends AudioWorkletProcessor {
               relativeGatedMeanEnergy,
             );
 
-            this.metrics[inputIdx].integratedLoudness = integratedLoudness;
+            this.measurements[inputIdx].integratedLoudness = integratedLoudness;
           }
         }
       }
@@ -351,7 +351,7 @@ class LoudnessProcessor extends AudioWorkletProcessor {
             });
 
             const loudnessRange = upperPercentile - lowerPercentile;
-            this.metrics[inputIdx].loudnessRange = loudnessRange;
+            this.measurements[inputIdx].loudnessRange = loudnessRange;
           }
         }
       }
@@ -368,7 +368,7 @@ class LoudnessProcessor extends AudioWorkletProcessor {
       const snapshot = {
         currentFrame,
         currentTime,
-        currentMetrics: this.metrics,
+        currentMeasurements: this.measurements,
       };
       this.port.postMessage(snapshot);
       this.lastTime = currentTime;

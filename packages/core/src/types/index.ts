@@ -4,7 +4,7 @@ type Repeat<
   Result extends unknown[] = [],
 > = Result["length"] extends C ? Result : Repeat<T, C, [...Result, T]>;
 
-type LoudnessMetrics = {
+type LoudnessMeasurements = {
   momentaryLoudness: number;
   shortTermLoudness: number;
   integratedLoudness: number;
@@ -17,7 +17,7 @@ type LoudnessMetrics = {
 type LoudnessSnapshot = {
   currentFrame: number;
   currentTime: number;
-  currentMetrics: LoudnessMetrics[];
+  currentMeasurements: LoudnessMeasurements[];
 };
 
-export type { LoudnessSnapshot, LoudnessMetrics, Repeat };
+export type { LoudnessSnapshot, LoudnessMeasurements, Repeat };

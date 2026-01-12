@@ -2,13 +2,11 @@
   "id": "/loudness-worklet/",
   "start_url": "/loudness-worklet/",
   "scope": "/loudness-worklet/",
-  "name": "Loudness Meter",
-  "short_name": "Loudness Meter",
+  "name": "Loudness Worklet",
+  "short_name": "Loudness Worklet",
   "description": "A loudness meter, based on the ITU-R BS.1770-5 standard.",
   "display": "standalone",
   "display_override": ["standalone", "window-controls-overlay"],
-  "background_color": "#FBF8F9",
-  "theme_color": "#FBF8F9",
   "icons": [
     {
       "src": "icons/512.png",

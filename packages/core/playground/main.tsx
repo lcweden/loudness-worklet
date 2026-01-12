@@ -81,27 +81,32 @@ function Playground() {
         <dl>
           <dt>Momentary Loudness (LUFS)</dt>
           <dd>
-            {getSnapshot()?.currentMetrics[0].momentaryLoudness.toFixed(1) ??
-              "-"}
+            {getSnapshot()?.currentMeasurements[0].momentaryLoudness.toFixed(
+              1,
+            ) ?? "-"}
           </dd>
           <dt>Short-Term Loudness (LUFS)</dt>
           <dd>
-            {getSnapshot()?.currentMetrics[0].shortTermLoudness.toFixed(1) ??
-              "-"}
+            {getSnapshot()?.currentMeasurements[0].shortTermLoudness.toFixed(
+              1,
+            ) ?? "-"}
           </dd>
           <dt>Integrated Loudness (LUFS)</dt>
           <dd>
-            {getSnapshot()?.currentMetrics[0].integratedLoudness.toFixed(1) ??
-              "-"}
+            {getSnapshot()?.currentMeasurements[0].integratedLoudness.toFixed(
+              1,
+            ) ?? "-"}
           </dd>
           <dt>Loudness Range (LRA)</dt>
           <dd>
-            {getSnapshot()?.currentMetrics[0].loudnessRange.toFixed(1) ?? "-"}
+            {getSnapshot()?.currentMeasurements[0].loudnessRange.toFixed(1) ??
+              "-"}
           </dd>
           <dt>Maximum True Peak Level (dBTP)</dt>
           <dd>
-            {getSnapshot()?.currentMetrics[0].maximumTruePeakLevel.toFixed(1) ??
-              "-"}
+            {getSnapshot()?.currentMeasurements[0].maximumTruePeakLevel.toFixed(
+              1,
+            ) ?? "-"}
           </dd>
         </dl>
         <details open>

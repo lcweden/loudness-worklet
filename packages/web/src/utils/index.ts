@@ -1,21 +1,5 @@
-function formatFileSize(size: number, digits: number = 1): string {
-  if (size < 1024) {
-    return size.toFixed(digits) + " B";
-  } else if (size < 1024 * 1024) {
-    return (size / 1024).toFixed(digits) + " KB";
-  } else if (size < 1024 * 1024 * 1024) {
-    return (size / 1024 / 1024).toFixed(digits) + " MB";
-  } else {
-    return (size / 1024 / 1024 / 1024).toFixed(digits) + " GB";
-  }
-}
-
-function formatSampleRate(sampleRate: number, digits: number = 1): string {
-  return (sampleRate / 1000).toFixed(digits) + " kHz";
-}
-
-function formatChannels(count: number): string {
-  switch (count) {
+function formatChannels(numberOfChannels: number): string {
+  switch (numberOfChannels) {
     case 1:
       return "Mono";
     case 2:
@@ -31,37 +15,33 @@ function formatChannels(count: number): string {
     case 24:
       return "22.2 Surround";
     default:
-      return `${count} channels`;
+      return `${numberOfChannels} channels`;
   }
 }
 
-function matchesAcceptedMimeType(accept: string, file: File): boolean {
-  const fileType = file.type.toLowerCase();
-  const acceptTypes = accept
-    .split(",")
-    .map((type) => type.trim().toLowerCase());
+function formatTime(seconds: number): string {
+  const h = Math.floor(seconds / 3600)
+    .toString()
+    .padStart(2, "0");
+  const m = Math.floor((seconds % 3600) / 60)
+    .toString()
+    .padStart(2, "0");
+  const s = Math.floor(seconds % 60)
+    .toString()
+    .padStart(2, "0");
+  return `${h}:${m}:${s}`;
+}
 
-  for (const acceptType of acceptTypes) {
-    if (acceptType === "*") return true;
-    if (acceptType === fileType) return true;
-
-    if (acceptType.endsWith("/*")) {
-      const base = acceptType.split("/")[0];
-      if (fileType.startsWith(base + "/")) return true;
-    }
+function formatFileSize(size: number, digits: number = 1): string {
+  if (size < 1024) {
+    return `${size.toFixed(digits)} B`;
+  } else if (size < 1024 * 1024) {
+    return `${(size / 1024).toFixed(digits)} KB`;
+  } else if (size < 1024 * 1024 * 1024) {
+    return `${(size / 1024 / 1024).toFixed(digits)} MB`;
+  } else {
+    return `${(size / 1024 / 1024 / 1024).toFixed(digits)} GB`;
   }
-
-  return false;
 }
 
-function replace<T>(array: T[], target: T, value: T): T[] {
-  return array.map((item) => (item === target ? value : item));
-}
-
-export {
-  formatChannels,
-  formatFileSize,
-  formatSampleRate,
-  matchesAcceptedMimeType,
-  replace,
-};
+export { formatChannels, formatTime, formatFileSize };
