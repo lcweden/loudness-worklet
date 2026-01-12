@@ -1,5 +1,8 @@
-import source from "../../core/dist/loudness.worklet.js?raw";
-import type { LoudnessMetrics, LoudnessSnapshot } from "../../core/types";
+import type {
+  LoudnessMeasurements,
+  LoudnessSnapshot,
+} from "@loudness-worklet/core";
+import source from "@loudness-worklet/core?raw";
 
 interface LoudnessWorkletProcessorOptions {
   numberOfInputs?: AudioWorkletNodeOptions["numberOfInputs"];
@@ -46,4 +49,4 @@ async function addModule(context: BaseAudioContext): Promise<void> {
 
 export { createLoudnessWorklet, LoudnessWorkletNode };
 export type { LoudnessWorkletProcessorOptions };
-export type { LoudnessMetrics, LoudnessSnapshot };
+export type { LoudnessMeasurements, LoudnessSnapshot };

@@ -1,13 +1,15 @@
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "vite";
 import solid from "vite-plugin-solid";
-import pkg from "../../package.json";
+import { homepage, repository, version } from "../../package.json";
 
 export default defineConfig({
+  cacheDir: "../../node_modules/.vite",
   plugins: [solid(), tailwindcss()],
   define: {
-    __APP_VERSION__: JSON.stringify(pkg.version),
-    __REPO_URL__: JSON.stringify(pkg.repository.url),
+    __VERSION__: JSON.stringify(version),
+    __REPO_URL__: JSON.stringify(repository.url),
+    __HOME_PAGE__: JSON.stringify(homepage),
   },
   server: {
     host: true,
@@ -17,4 +19,5 @@ export default defineConfig({
     outDir: "dist",
     emptyOutDir: true,
   },
+  base: "/loudness-worklet/",
 });

@@ -244,20 +244,20 @@ const worklet = new AudioWorkletNode(context, "loudness-processor", {
 Measurement results are sent back to the main thread via `port.onmessage` with the following format:
 
 ```typescript
+type LoudnessMeasurements = {
+  momentaryLoudness: number;
+  shortTermLoudness: number;
+  integratedLoudness: number;
+  maximumMomentaryLoudness: number;
+  maximumShortTermLoudness: number;
+  maximumTruePeakLevel: number;
+  loudnessRange: number;
+};
+
 type LoudnessSnapshot = {
   currentFrame: number;
   currentTime: number;
-  currentMetrics: [
-    {
-      momentaryLoudness: number;
-      shortTermLoudness: number;
-      integratedLoudness: number;
-      maximumMomentaryLoudness: number;
-      maximumShortTermLoudness: number;
-      maximumTruePeakLevel: number;
-      loudnessRange: number;
-    }
-  ];
+  currentMeasurements: LoudnessMeasurements[];
 };
 ```
 
