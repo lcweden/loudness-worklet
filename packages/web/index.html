@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="google-site-verification" content="VfJCbWp57f-tsi11HjR4npShZ0L0KU5_bFLREfdRUgo" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="manifest" href="manifest.json">
+  <title>Loudness Worklet</title>
+</head>
+
+<body>
+  <div id="app"></div>
+  <script>
+    const scriptURL = "/loudness-worklet/sw.js"
+    const scope = "/loudness-worklet/";
+    const type = "module";
+
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register(scriptURL, { scope, type });
+    }
+  </script>
+  <script type="module" src="./src/main.tsx"></script>
+</body>
+
+</html>

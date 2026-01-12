@@ -1,13 +1,14 @@
 {
-  "image": "mcr.microsoft.com/devcontainers/typescript-node:1-22-bookworm",
+  "image": "mcr.microsoft.com/devcontainers/typescript-node:24-bookworm",
   "customizations": {
     "vscode": {
-      "extensions": ["esbenp.prettier-vscode", "bradlc.vscode-tailwindcss"],
+      "extensions": ["bradlc.vscode-tailwindcss", "biomejs.biome"],
       "settings": {
         "editor.formatOnSave": true,
-        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.defaultFormatter": "biomejs.biome",
         "editor.codeActionsOnSave": {
-          "source.organizeImports": "explicit"
+          "source.organizeImports.biome": "explicit",
+          "source.fixAll.biome": "explicit"
         },
         "css.lint.unknownAtRules": "ignore"
       }

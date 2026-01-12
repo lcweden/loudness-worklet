@@ -41,14 +41,17 @@ jobs:
           rm -rf node_modules package-lock.json
           npm install
       - name: Build
-        run: npm run build
+        run: |
+          npm run build -w @loudness-worklet/core
+          npm run build -w @loudness-worklet/lib
+          npm run build -w @loudness-worklet/web
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Upload dist folder
-          path: "./dist"
+          # Upload web dist folder
+          path: "./packages/web/dist"
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
