@@ -7,8 +7,6 @@ A loudness meter for the `Web Audio API`, based on the [ITU-R BS.1770-5](https:/
 
 [![screenshot](https://github.com/lcweden/loudness-worklet/blob/main/packages/web/public/screenshots/meter.png)](https://lcweden.github.io/loudness-worklet/)
 
-<p align="center"><a href="https://lcweden.github.io/loudness-worklet/">Demo</a></p>
-
 ## Features
 
 - **Loudness Measurement**: Compliant with the **ITU-R BS.1770-5** standard.
