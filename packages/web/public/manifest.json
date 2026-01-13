@@ -4,7 +4,7 @@
   "scope": "/loudness-worklet/",
   "name": "Loudness Worklet",
   "short_name": "Loudness Worklet",
-  "description": "A loudness meter, based on the ITU-R BS.1770-5 standard.",
+  "description": "A lightweight, ITU-R BS.1770-5 compliant loudness meter running on Audio Worklet. Measure Integrated LUFS, Momentary, and True Peak in real-time.",
   "display": "standalone",
   "display_override": ["standalone", "window-controls-overlay"],
   "icons": [
