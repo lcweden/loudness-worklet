@@ -117,7 +117,7 @@ function Dashboard(props: Props) {
                 <FileSlidersIcon size={14} />
                 <select
                   class="w-fit max-w-32 cursor-pointer select-none appearance-none truncate bg-transparent outline-0"
-                  disabled={getProgress() < 100}
+                  disabled={getProgress() < 99}
                   onchange={handleFileSelect}
                 >
                   <Show
