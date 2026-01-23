@@ -1,5 +1,6 @@
 import type {
   LoudnessMeasurements,
+  LoudnessProcessorOptions,
   LoudnessSnapshot,
 } from "@loudness-worklet/core";
 import source from "@loudness-worklet/core?raw";
@@ -8,10 +9,7 @@ interface LoudnessWorkletProcessorOptions {
   numberOfInputs?: AudioWorkletNodeOptions["numberOfInputs"];
   numberOfOutputs?: AudioWorkletNodeOptions["numberOfOutputs"];
   outputChannelCount?: AudioWorkletNodeOptions["outputChannelCount"];
-  processorOptions?: {
-    interval?: number;
-    capacity?: number;
-  };
+  processorOptions?: LoudnessProcessorOptions;
 }
 
 const name = "loudness-processor";
@@ -49,4 +47,8 @@ async function addModule(context: BaseAudioContext): Promise<void> {
 
 export { createLoudnessWorklet, LoudnessWorkletNode };
 export type { LoudnessWorkletProcessorOptions };
-export type { LoudnessMeasurements, LoudnessSnapshot };
+export type {
+  LoudnessMeasurements,
+  LoudnessSnapshot,
+  LoudnessProcessorOptions,
+};

@@ -50,10 +50,10 @@ function Playground() {
         const source = new AudioBufferSourceNode(context, {
           buffer: audioBuffer,
         });
+
         const worklet = new AudioWorkletNode(context, "loudness-processor", {
           processorOptions: {
             capacity: length / sampleRate,
-            interval: 0.1,
           },
         });
 
@@ -97,7 +97,7 @@ function Playground() {
               1,
             ) ?? "-"}
           </dd>
-          <dt>Loudness Range (LRA)</dt>
+          <dt>Loudness Range (LU)</dt>
           <dd>
             {getSnapshot()?.currentMeasurements[0].loudnessRange.toFixed(1) ??
               "-"}

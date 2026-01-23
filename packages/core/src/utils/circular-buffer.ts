@@ -22,7 +22,7 @@ class CircularBuffer<T> {
 
   /**
    * Adds an item to the buffer.
-   * @param item - The item to add to the buffer.
+   * @param { T } item - The item to add to the buffer.
    * @returns { void }
    */
   push(item: T): void {
@@ -85,6 +85,20 @@ class CircularBuffer<T> {
     }
 
     return result;
+  }
+
+  /**
+   * Adds an item to the buffer and
+   * returns undefined if the buffer is not full,
+   * otherwise returns the oldest item from the buffer without removing it.
+   *
+   * @param item
+   */
+  evict(item: T): T | undefined {
+    const evicted = this.isFull() ? this.peek() : undefined;
+    this.push(item);
+
+    return evicted;
   }
 
   /**
