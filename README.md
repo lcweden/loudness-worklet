@@ -269,7 +269,7 @@ type LoudnessSnapshot = {
 | `maximumMomentaryLoudness` | `LUFS`/`LKFS` |
 | `maximumShortTermLoudness` | `LUFS`/`LKFS` |
 | `maximumTruePeakLevel`     | `dBTP`        |
-| `loudnessRange`            | `LRA`         |
+| `loudnessRange`            | `LU`         |
 
 ### Supported Channels
 

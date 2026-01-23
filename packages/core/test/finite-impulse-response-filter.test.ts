@@ -105,70 +105,6 @@ describe("FiniteImpulseResponseFilter", () => {
     });
   });
 
-  describe("process - multiple samples", () => {
-    it("should process array of samples", () => {
-      const inputs = [1, 2, 3, 4, 5];
-      const outputs = filter.process(inputs);
-
-      assert.deepStrictEqual(outputs, inputs);
-      assert.strictEqual(outputs.length, 5);
-    });
-
-    it("should process empty array", () => {
-      const outputs = filter.process([]);
-      assert.deepStrictEqual(outputs, []);
-    });
-
-    it("should process single-element array", () => {
-      const outputs = filter.process([1]);
-      assert.deepStrictEqual(outputs, [1]);
-    });
-
-    it("should maintain state across array processing", () => {
-      const avgFilter = new FiniteImpulseResponseFilter([0.5, 0.5]);
-
-      const outputs = avgFilter.process([1, 2, 3, 4]);
-
-      // [1, 0] -> 0.5
-      // [2, 1] -> 1.5
-      // [3, 2] -> 2.5
-      // [4, 3] -> 3.5
-      assert.ok(Math.abs(outputs[0] - 0.5) < 1e-10);
-      assert.ok(Math.abs(outputs[1] - 1.5) < 1e-10);
-      assert.ok(Math.abs(outputs[2] - 2.5) < 1e-10);
-      assert.ok(Math.abs(outputs[3] - 3.5) < 1e-10);
-    });
-
-    it("should handle negative values in array", () => {
-      const inputs = [-1, -2, -3];
-      const outputs = filter.process(inputs);
-
-      assert.deepStrictEqual(outputs, inputs);
-    });
-
-    it("should handle mixed positive and negative values", () => {
-      const avgFilter = new FiniteImpulseResponseFilter([0.5, 0.5]);
-      const inputs = [1, -1, 2, -2];
-      const outputs = avgFilter.process(inputs);
-
-      assert.ok(Math.abs(outputs[0] - 0.5) < 1e-10); // [1, 0]
-      assert.ok(Math.abs(outputs[1] - 0) < 1e-10); // [-1, 1]
-      assert.ok(Math.abs(outputs[2] - 0.5) < 1e-10); // [2, -1]
-      assert.ok(Math.abs(outputs[3] - 0) < 1e-10); // [-2, 2]
-    });
-
-    it("should process large arrays efficiently", () => {
-      const largeArray = Array(1000).fill(1);
-      const outputs = filter.process(largeArray);
-
-      assert.strictEqual(outputs.length, 1000);
-      assert.strictEqual(
-        outputs.every((v) => v === 1),
-        true,
-      );
-    });
-  });
-
   describe("reset", () => {
     it("should clear filter state", () => {
       const delayFilter = new FiniteImpulseResponseFilter([0, 1]);
@@ -256,13 +192,6 @@ describe("FiniteImpulseResponseFilter", () => {
       const output = altFilter.process(1); // [1, 1, 1, 1] -> 0
 
       assert.strictEqual(output, 0);
-    });
-
-    it("should handle fractional coefficients", () => {
-      const fracFilter = new FiniteImpulseResponseFilter([0.1, 0.2, 0.3, 0.4]);
-      const output = fracFilter.process([1, 1, 1, 1]);
-
-      assert.ok(Math.abs(output[3] - 1.0) < 1e-10); // 0.1 + 0.2 + 0.3 + 0.4 = 1.0
     });
 
     it("should produce consistent results with repeated inputs", () => {

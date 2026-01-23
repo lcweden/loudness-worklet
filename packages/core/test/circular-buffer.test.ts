@@ -29,6 +29,15 @@ describe("CircularBuffer", () => {
     assert.deepStrictEqual([...buf], [2, 3, 4]);
   });
 
+  it("evict returns overwritten item when full", () => {
+    const buf = new CircularBuffer<number>(3);
+    assert.strictEqual(buf.evict(1), undefined);
+    assert.strictEqual(buf.evict(2), undefined);
+    assert.strictEqual(buf.evict(3), undefined);
+    assert.strictEqual(buf.evict(4), 1);
+    assert.deepStrictEqual([...buf], [2, 3, 4]);
+  });
+
   it("pop order and empty end state", () => {
     const buf = new CircularBuffer<number>(3);
     buf.push(10);

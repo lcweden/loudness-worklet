@@ -4,6 +4,7 @@
 class FiniteImpulseResponseFilter {
   #coefficients: number[];
   #buffer: number[];
+  #index: number;
 
   /**
    * Creates an instance of the filter.
@@ -12,6 +13,7 @@ class FiniteImpulseResponseFilter {
   constructor(coefficients: number[]) {
     this.#coefficients = coefficients;
     this.#buffer = Array(coefficients.length).fill(0);
+    this.#index = 0;
   }
 
   /**
@@ -19,32 +21,19 @@ class FiniteImpulseResponseFilter {
    * @param {number} input - The input sample.
    * @returns {number} - The filtered output sample.
    */
-  process(input: number): number;
-  /**
-   * Processes multiple input samples.
-   * @param {number[]} inputs - The input samples.
-   * @returns {number[]} - The filtered output samples.
-   */
-  process(inputs: number[]): number[];
-  process(i: number | number[]): number | number[] {
-    if (Array.isArray(i)) {
-      const inputs = i;
+  process(input: number): number {
+    this.#buffer[this.#index] = input;
+    this.#index = (this.#index + 1) % this.#buffer.length;
 
-      return inputs.map((input) => this.process(input));
-    } else {
-      const input = i;
+    let output = 0;
 
-      this.#buffer.pop();
-      this.#buffer.unshift(input);
-
-      let output = 0;
-
-      for (let i = 0; i < this.#coefficients.length; i++) {
-        output += this.#coefficients[i] * this.#buffer[i];
-      }
-
-      return output;
+    for (let i = 0; i < this.#coefficients.length; i++) {
+      const index =
+        (this.#index - 1 - i + this.#buffer.length) % this.#buffer.length;
+      output += this.#coefficients[i] * this.#buffer[index];
     }
+
+    return output;
   }
 
   /**
@@ -53,6 +42,7 @@ class FiniteImpulseResponseFilter {
    */
   reset(): void {
     this.#buffer.fill(0);
+    this.#index = 0;
   }
 }
 
