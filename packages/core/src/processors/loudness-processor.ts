@@ -33,7 +33,7 @@ class LoudnessProcessor extends AudioWorkletProcessor {
   interval: number;
   previousTime: number = 0;
   attenuation: number = 10 ** (-ATTENUATION_DB / 20);
-  measurements: LoudnessMeasurements[];
+  measurements: LoudnessMeasurements[] = [];
   kWeightingFilters: Repeat<BiquadraticFilter, 2>[][] = [];
   overSamplingFilters: Repeat<FiniteImpulseResponseFilter, 4>[][] = [];
   overSampledValues: number[] = [];
@@ -57,7 +57,6 @@ class LoudnessProcessor extends AudioWorkletProcessor {
 
     this.capacity = capacity || 0;
     this.interval = interval || 0;
-    this.measurements = [];
 
     for (let i = 0; i < numberOfInputs; i++) {
       const mEnergyBufferSize = Math.round(sampleRate * MOMENTARY_WINDOW_SEC);
@@ -146,7 +145,7 @@ class LoudnessProcessor extends AudioWorkletProcessor {
           const highshelfOutput = highshelf.process(sample);
           const kWeightedSample = highpass.process(highshelfOutput);
           const sampleEnergy = kWeightedSample * kWeightedSample;
-          const channelWeight = weights[c] ?? 1.0;
+          const channelWeight = weights ? (weights[c] ?? 1.0) : 1.0;
 
           energy += sampleEnergy * channelWeight;
 
