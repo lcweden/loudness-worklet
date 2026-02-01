@@ -49,6 +49,7 @@ function Dashboard(props: Props) {
   function handleFileSelect(event: Event) {
     const select = event.target as HTMLSelectElement;
     const file = Array.from(props.files).find((f) => f.name === select.value);
+
     if (file) {
       handleFileChange(file);
     }
@@ -77,7 +78,10 @@ function Dashboard(props: Props) {
 
   createEffect(() => {
     const [file] = props.files;
-    handleFileChange(file);
+
+    if (file) {
+      handleFileChange(file);
+    }
   });
 
   createEffect(() => {
