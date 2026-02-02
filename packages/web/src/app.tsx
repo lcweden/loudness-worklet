@@ -70,7 +70,7 @@ function App() {
         <div class="fab">
           <FileInput
             accept="video/*,audio/*"
-            class="btn btn-circle btn-shadow btn-primary"
+            class="btn btn-circle btn-shadow btn-primary btn-lg"
             disabled={getIsGenerating()}
             multiple={true}
             oninput={setFiles}
