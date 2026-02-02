@@ -22,14 +22,14 @@
   "screenshots": [
     {
       "src": "./screenshots/home.png",
-      "sizes": "2560x1440",
+      "sizes": "3840x2160",
       "type": "image/png",
       "form_factor": "wide",
       "label": "Home screen showing main navigation"
     },
     {
       "src": "./screenshots/meter.png",
-      "sizes": "2560x1440",
+      "sizes": "3840x2160",
       "type": "image/png",
       "label": "Dashboard view displaying key metrics"
     }
