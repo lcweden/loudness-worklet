@@ -15,6 +15,13 @@ A loudness meter for the `Web Audio API`, based on the [ITU-R BS.1770-5](https:/
 - **Versatile Input**: Seamlessly supports both live audio streams ("Microphone/WebRTC") and offline file analysis.
 - **Zero Dependencies**: Lightweight, pure AudioWorklet implementation requiring no external libraries.
 
+## Use Cases
+
+- **Volume Normalization**: Dynamically analyze and harmonize volume levels across multi-source playlists directly in the browser, eliminating the need for server-side processing.
+- **Pre-upload Validation**: Verify if audio files meet platform-specific loudness standards (e.g., -14 LUFS) locally before uploading.
+- **Live Metering**: Build responsive, standard-compliant loudness meters for web-based recorders, conferencing tools, or broadcasting interfaces.
+- **Web Audio Editors**: Integrate professional-grade loudness analysis into browser-based Digital Audio Workstations (DAWs).
+
 ## Installation
 
 ### CDN
@@ -22,8 +29,8 @@ A loudness meter for the `Web Audio API`, based on the [ITU-R BS.1770-5](https:/
 Import directly in your code:
 
 ```javascript
-const module = "https://lcweden.github.io/loudness-worklet/loudness.worklet.js";
-await audioContext.audioWorklet.addModule(module);
+const moduleUrl = "https://lcweden.github.io/loudness-worklet/loudness.worklet.js";
+await audioContext.audioWorklet.addModule(moduleUrl);
 const worklet = new AudioWorkletNode(audioContext, "loudness-processor");
 ```
 
@@ -75,17 +82,17 @@ This example shows the easiest way to get started with the Loudness Audio Workle
     <button>Share Screen</button>
     <pre></pre>
     <script>
-      const module = "https://lcweden.github.io/loudness-worklet/loudness.worklet.js";
+      const moduleUrl = "https://lcweden.github.io/loudness-worklet/loudness.worklet.js";
       const button = document.querySelector("button");
       const pre = document.querySelector("pre");
 
       button.onclick = async () => {
-        // Get the screen stream with audio, for example a youtube tab
+        // Get the screen stream with audio, for example a YouTube tab
         const mediaStream = await navigator.mediaDevices.getDisplayMedia({ audio: true });
         const context = new AudioContext();
 
         // Load the loudness worklet processor
-        await context.audioWorklet.addModule(module);
+        await context.audioWorklet.addModule(moduleUrl);
 
         // Create the audio node from the stream
         const source = new MediaStreamAudioSourceNode(context, { mediaStream });
@@ -219,11 +226,8 @@ The `AudioWorkletNode` constructor accepts the following options:
 
 | Option                    | Type       | Required | Default | Description                                                                                          |
 | ------------------------- | ---------- | -------- | ------- | ---------------------------------------------------------------------------------------------------- |
-| numberOfInputs            | `number`   | `N`      | `1`     | Number of input channels.                                                                            |
-| numberOfOutputs           | `number`   | `N`      | `1`     | Number of output channels.                                                                           |
-| outputChannelCount        | `number[]` | `N`      | -       | Determined at runtime automatically.                                                                 |
-| processorOptions.interval | `number`   | `N`      | `0.1`   | Message interval in seconds.                                                                         |
-| processorOptions.capacity | `number`   | `N`      | `0`     | Maximum seconds of history to keep. If set to `0`, the processor will not limit the history size. |
+| processorOptions.interval | `number`   | `No`     | `0.1`   | Message interval in seconds.                                                                         |
+| processorOptions.capacity | `number`   | `No`     | `0`     | Maximum seconds of history to keep. If set to `0`, the processor will not limit the history size.   |
 
 #### Example
 
@@ -232,9 +236,6 @@ Most of the time, you only need to set `processorOptions`.
 ```javascript
 const { numberOfChannels, length, sampleRate } = audioBuffer;
 const worklet = new AudioWorkletNode(context, "loudness-processor", {
-  numberOfInputs: 1,
-  numberOfOutputs: 1,
-  outputChannelCount: [numberOfChannels], // Unnecessary
   processorOptions: {
     capacity: length / sampleRate,
     interval: 0.1
@@ -274,7 +275,7 @@ type LoudnessSnapshot = {
 | `maximumMomentaryLoudness` | `LUFS`/`LKFS` |
 | `maximumShortTermLoudness` | `LUFS`/`LKFS` |
 | `maximumTruePeakLevel`     | `dBTP`        |
-| `loudnessRange`            | `LU`         |
+| `loudnessRange`            | `LU`          |
 
 ### Supported Channels
 
@@ -289,7 +290,7 @@ The following coefficients are used for the K-weighting filter:
 
 |     | highshelf         | highpass          |
 | --- | ----------------- | ----------------- |
-| a1  | -1.69065929318241 | −1.99004745483398 |
+| a1  | -1.69065929318241 | -1.99004745483398 |
 | a2  | 0.73248077421585  | 0.99007225036621  |
 | b0  | 1.53512485958697  | 1.0               |
 | b1  | -2.69169618940638 | -2.0              |
@@ -299,18 +300,18 @@ The following FIR filter coefficients are used for true-peak measurement:
 
 | Phase 0          | Phase 1          | Phase 2          | Phase 3          |
 | ---------------- | ---------------- | ---------------- | ---------------- |
-| 0.0017089843750  | −0.0291748046875 | −0.0189208984375 | −0.0083007812500 |
+| 0.0017089843750  | -0.0291748046875 | -0.0189208984375 | -0.0083007812500 |
 | 0.0109863281250  | 0.0292968750000  | 0.0330810546875  | 0.0148925781250  |
-| −0.0196533203125 | −0.0517578125000 | −0.0582275390625 | −0.0266113281250 |
+| -0.0196533203125 | -0.0517578125000 | -0.0582275390625 | -0.0266113281250 |
 | 0.0332031250000  | 0.0891113281250  | 0.1015625000000  | 0.0476074218750  |
-| −0.0594482421875 | −0.1665039062500 | −0.2003173828125 | −0.1022949218750 |
+| -0.0594482421875 | -0.1665039062500 | -0.2003173828125 | -0.1022949218750 |
 | 0.1373291015625  | 0.4650878906250  | 0.7797851562500  | 0.9721679687500  |
 | 0.9721679687500  | 0.7797851562500  | 0.4650878906250  | 0.1373291015625  |
-| −0.1022949218750 | −0.2003173828125 | −0.1665039062500 | −0.0594482421875 |
+| -0.1022949218750 | -0.2003173828125 | -0.1665039062500 | -0.0594482421875 |
 | 0.0476074218750  | 0.1015625000000  | 0.0891113281250  | 0.0332031250000  |
-| −0.0266113281250 | −0.0582275390625 | −0.0517578125000 | −0.0196533203125 |
+| -0.0266113281250 | -0.0582275390625 | -0.0517578125000 | -0.0196533203125 |
 | 0.0148925781250  | 0.0330810546875  | 0.0292968750000  | 0.0109863281250  |
-| −0.0083007812500 | −0.0189208984375 | −0.0291748046875 | 0.0017089843750  |
+| -0.0083007812500 | -0.0189208984375 | -0.0291748046875 | 0.0017089843750  |
 
 ## Validation
 
@@ -379,29 +380,29 @@ Validated against **[EBU TECH 3341](https://tech.ebu.ch/publications/tech3341)**
 
 | file                                 | expected response and accepted tolerances                   |                    |
 | ------------------------------------ | ----------------------------------------------------------- | ------------------ |
-| seq-3341-1-16bit                     | M, S, I = −23.0 ±0.1 LUFS                                   | :white_check_mark: |
-| seq-3341-2-16bit                     | M, S, I = −33.0 ±0.1 LUFS                                   | :white_check_mark: |
-| seq-3341-3-16bit-v02                 | I = −23.0 ±0.1 LUFS                                         | :white_check_mark: |
-| seq-3341-4-16bit-v02                 | I = −23.0 ±0.1 LUFS                                         | :white_check_mark: |
-| seq-3341-5-16bit-v02                 | I = −23.0 ±0.1 LUFS                                         | :white_check_mark: |
-| seq-3341-6-6channels-WAVEEX-16bit    | I = −23.0 ±0.1 LUFS                                         | :white_check_mark: |
-| seq-3341-7_seq-3342-5-24bit          | I = −23.0 ±0.1 LUFS                                         | :white_check_mark: |
-| seq-3341-2011-8_seq-3342-6-24bit-v02 | I = −23.0 ±0.1 LUFS                                         | :white_check_mark: |
-| seq-3341-9-24bit                     | S = −23.0 ±0.1 LUFS, constant after 3 s                     | :white_check_mark: |
-| seq-3341-10-\*-24bit                 | Max S = −23.0 ±0.1 LUFS, for each segment                   | :white_check_mark: |
-| seq-3341-11-24bit                    | Max S = −38.0, −37.0, …, −19.0 ±0.1 LUFS, successive values | :white_check_mark: |
-| seq-3341-12-24bit                    | M = −23.0 ±0.1 LUFS, constant after 1 s                     | :white_check_mark: |
-| seq-3341-13-\*-24bit                 | Max M = −23.0 ±0.1 LUFS, for each segment                   | :white_check_mark: |
-| seq-3341-14-24bit                    | Max M = −38.0, …, −19.0 ±0.1 LUFS, successive values        | :white_check_mark: |
-| seq-3341-15-24bit                    | Max true-peak = −6.0 +0.2/−0.4 dBTP                         | :white_check_mark: |
-| seq-3341-16-24bit                    | Max true-peak = −6.0 +0.2/−0.4 dBTP                         | :white_check_mark: |
-| seq-3341-17-24bit                    | Max true-peak = −6.0 +0.2/−0.4 dBTP                         | :white_check_mark: |
-| seq-3341-18-24bit                    | Max true-peak = −6.0 +0.2/−0.4 dBTP                         | :white_check_mark: |
-| seq-3341-19-24bit                    | Max true-peak = +3.0 +0.2/−0.4 dBTP                         | :white_check_mark: |
-| seq-3341-20-24bit                    | Max true-peak = 0.0 +0.2/−0.4 dBTP                          | :white_check_mark: |
-| seq-3341-21-24bit                    | Max true-peak = 0.0 +0.2/−0.4 dBTP                          | :white_check_mark: |
-| seq-3341-22-24bit                    | Max true-peak = 0.0 +0.2/−0.4 dBTP                          | :white_check_mark: |
-| seq-3341-23-24bit                    | Max true-peak = 0.0 +0.2/−0.4 dBTP                          | :white_check_mark: |
+| seq-3341-1-16bit                     | M, S, I = -23.0 ±0.1 LUFS                                   | :white_check_mark: |
+| seq-3341-2-16bit                     | M, S, I = -33.0 ±0.1 LUFS                                   | :white_check_mark: |
+| seq-3341-3-16bit-v02                 | I = -23.0 ±0.1 LUFS                                         | :white_check_mark: |
+| seq-3341-4-16bit-v02                 | I = -23.0 ±0.1 LUFS                                         | :white_check_mark: |
+| seq-3341-5-16bit-v02                 | I = -23.0 ±0.1 LUFS                                         | :white_check_mark: |
+| seq-3341-6-6channels-WAVEEX-16bit    | I = -23.0 ±0.1 LUFS                                         | :white_check_mark: |
+| seq-3341-7_seq-3342-5-24bit          | I = -23.0 ±0.1 LUFS                                         | :white_check_mark: |
+| seq-3341-2011-8_seq-3342-6-24bit-v02 | I = -23.0 ±0.1 LUFS                                         | :white_check_mark: |
+| seq-3341-9-24bit                     | S = -23.0 ±0.1 LUFS, constant after 3 s                     | :white_check_mark: |
+| seq-3341-10-\*-24bit                 | Max S = -23.0 ±0.1 LUFS, for each segment                   | :white_check_mark: |
+| seq-3341-11-24bit                    | Max S = -38.0, -37.0, …, -19.0 ±0.1 LUFS, successive values | :white_check_mark: |
+| seq-3341-12-24bit                    | M = -23.0 ±0.1 LUFS, constant after 1 s                     | :white_check_mark: |
+| seq-3341-13-\*-24bit                 | Max M = -23.0 ±0.1 LUFS, for each segment                   | :white_check_mark: |
+| seq-3341-14-24bit                    | Max M = -38.0, …, -19.0 ±0.1 LUFS, successive values        | :white_check_mark: |
+| seq-3341-15-24bit                    | Max true-peak = -6.0 +0.2/-0.4 dBTP                         | :white_check_mark: |
+| seq-3341-16-24bit                    | Max true-peak = -6.0 +0.2/-0.4 dBTP                         | :white_check_mark: |
+| seq-3341-17-24bit                    | Max true-peak = -6.0 +0.2/-0.4 dBTP                         | :white_check_mark: |
+| seq-3341-18-24bit                    | Max true-peak = -6.0 +0.2/-0.4 dBTP                         | :white_check_mark: |
+| seq-3341-19-24bit                    | Max true-peak = +3.0 +0.2/-0.4 dBTP                         | :white_check_mark: |
+| seq-3341-20-24bit                    | Max true-peak = 0.0 +0.2/-0.4 dBTP                          | :white_check_mark: |
+| seq-3341-21-24bit                    | Max true-peak = 0.0 +0.2/-0.4 dBTP                          | :white_check_mark: |
+| seq-3341-22-24bit                    | Max true-peak = 0.0 +0.2/-0.4 dBTP                          | :white_check_mark: |
+| seq-3341-23-24bit                    | Max true-peak = 0.0 +0.2/-0.4 dBTP                          | :white_check_mark: |
 
 ### EBU TECH 3342 Minimum requirements test signals
 
