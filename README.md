@@ -1,7 +1,8 @@
-# Loudness Audio Worklet Processor
+# Loudness Worklet
 
 [![npm version](https://img.shields.io/npm/v/loudness-worklet.svg)](https://www.npmjs.com/package/loudness-worklet)
 [![license](https://img.shields.io/github/license/lcweden/loudness-worklet.svg)](LICENSE)
+[![demo](https://img.shields.io/badge/demo-Online-purple.svg)](https://lcweden.github.io/loudness-worklet/)
 
 A loudness meter for the `Web Audio API`, based on the [ITU-R BS.1770-5](https://www.itu.int/rec/R-REC-BS.1770) standard and implemented as an AudioWorkletProcessor.
 
@@ -9,10 +10,10 @@ A loudness meter for the `Web Audio API`, based on the [ITU-R BS.1770-5](https:/
 
 ## Features
 
-- **Loudness Measurement**: Compliant with the **ITU-R BS.1770-5** standard.
-- **Comprehensive Metrics**: Calculates Momentary, Short-term, and Integrated Loudness, as well as Loudness Range (LRA) and True-Peak levels.
-- **Flexible**: Works with live audio and pre-recorded files.
-- **Lightweight**: No external dependencies required.
+- **Standard Compliant**: Strictly follows **ITU-R BS.1770-5** for accurate loudness measurement.
+- **Comprehensive Metrics**: Calculates Momentary, Short-term, and Integrated Loudness, plus Loudness Range (LRA) and True-Peak levels.
+- **Versatile Input**: Seamlessly supports both live audio streams ("Microphone/WebRTC") and offline file analysis.
+- **Zero Dependencies**: Lightweight, pure AudioWorklet implementation requiring no external libraries.
 
 ## Installation
 
@@ -47,63 +48,18 @@ npm install loudness-worklet
 Use helper functions to create and load the worklet:
 
 ```javascript
-import { createLoudnessWorklet, LoudnessWorkletNode } from "loudness-worklet";
+import { createLoudnessWorklet } from "loudness-worklet";
 
 const worklet = await createLoudnessWorklet(audioContext);
+```
 
-// or
+or
+
+```javascript
+import { LoudnessWorkletNode } from "loudness-worklet";
 
 await LoudnessWorkletNode.loadModule(audioContext);
 const worklet = new LoudnessWorkletNode(audioContext);
-```
-
-## Concepts
-
-### Contexts
-
-Provide the execution environment for audio processing.
-
-#### AudioContext
-
-`AudioContext` is used for real-time audio processing, such as live audio input from a microphone or media stream.
-
-#### OfflineAudioContext
-
-`OfflineAudioContext` is used for processing audio data offline, allowing for rendering and analysis without requiring real-time playback.
-
-### Nodes
-
-Nodes are the building blocks of an audio graph, representing audio sources, processing modules, and destinations. The following nodes are commonly used as a source input:
-
-#### AudioBufferSourceNode
-
-`AudioBufferSourceNode` is used to play audio data stored in an `AudioBuffer`, typically for pre-recorded audio files.
-
-```javascript
-const audioContext = new AudioContext();
-const arrayBuffer = await file.arrayBuffer();
-const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
-const bufferSource = new AudioBufferSourceNode(audioContext, { buffer: audioBuffer });
-```
-
-#### MediaStreamAudioSourceNode
-
-`MediaStreamAudioSourceNode` is used to play audio from a `MediaStream`, such as a live microphone input or a video element.
-
-```javascript
-const audioContext = new AudioContext();
-const mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-const mediaStreamSource = new MediaStreamAudioSourceNode(audioContext, { mediaStream });
-```
-
-#### MediaElementAudioSourceNode
-
-`MediaElementAudioSourceNode` is used to play audio from an HTML `<audio>` or `<video>` element.
-
-```javascript
-const audioContext = new AudioContext();
-const mediaElement = document.querySelector("audio");
-const elementSource = new MediaElementAudioSourceNode(audioContext, { mediaElement });
 ```
 
 ## Quick Start
@@ -204,6 +160,55 @@ source.connect(worklet);
 // Optionally connect to destination for monitoring (echo)
 ```
 
+## Concepts
+
+### Contexts
+
+Provide the execution environment for audio processing.
+
+#### AudioContext
+
+`AudioContext` is used for real-time audio processing, such as live audio input from a microphone or media stream.
+
+#### OfflineAudioContext
+
+`OfflineAudioContext` is used for processing audio data offline, allowing for rendering and analysis without requiring real-time playback.
+
+### Nodes
+
+Nodes are the building blocks of an audio graph, representing audio sources, processing modules, and destinations. The following nodes are commonly used as a source input:
+
+#### AudioBufferSourceNode
+
+`AudioBufferSourceNode` is used to play audio data stored in an `AudioBuffer`, typically for pre-recorded audio files.
+
+```javascript
+const audioContext = new AudioContext();
+const arrayBuffer = await file.arrayBuffer();
+const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+const bufferSource = new AudioBufferSourceNode(audioContext, { buffer: audioBuffer });
+```
+
+#### MediaStreamAudioSourceNode
+
+`MediaStreamAudioSourceNode` is used to play audio from a `MediaStream`, such as a live microphone input or a video element.
+
+```javascript
+const audioContext = new AudioContext();
+const mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+const mediaStreamSource = new MediaStreamAudioSourceNode(audioContext, { mediaStream });
+```
+
+#### MediaElementAudioSourceNode
+
+`MediaElementAudioSourceNode` is used to play audio from an HTML `<audio>` or `<video>` element.
+
+```javascript
+const audioContext = new AudioContext();
+const mediaElement = document.querySelector("audio");
+const elementSource = new MediaElementAudioSourceNode(audioContext, { mediaElement });
+```
+
 ## API
 
 ### Options
@@ -217,8 +222,8 @@ The `AudioWorkletNode` constructor accepts the following options:
 | numberOfInputs            | `number`   | `N`      | `1`     | Number of input channels.                                                                            |
 | numberOfOutputs           | `number`   | `N`      | `1`     | Number of output channels.                                                                           |
 | outputChannelCount        | `number[]` | `N`      | -       | Determined at runtime automatically.                                                                 |
-| processorOptions.interval | `number`   | `N`      | `null`  | Message interval in seconds.                                                                         |
-| processorOptions.capacity | `number`   | `N`      | `null`  | Maximum seconds of history to keep. If set to `null`, the processor will not limit the history size. |
+| processorOptions.interval | `number`   | `N`      | `0.1`   | Message interval in seconds.                                                                         |
+| processorOptions.capacity | `number`   | `N`      | `0`     | Maximum seconds of history to keep. If set to `0`, the processor will not limit the history size. |
 
 #### Example
 
@@ -239,7 +244,7 @@ const worklet = new AudioWorkletNode(context, "loudness-processor", {
 
 ### Message Format
 
-Measurement results are sent back to the main thread via `port.onmessage` with the following format:
+Measurement results are sent back to the main thread via `port.onmessage` as a `LoudnessSnapshot` object:
 
 ```typescript
 type LoudnessMeasurements = {
@@ -311,8 +316,7 @@ The following FIR filter coefficients are used for true-peak measurement:
 
 ### ITU-R BS.2217
 
-The [ITU-R BS.2217](https://www.itu.int/pub/R-REP-BS.2217) test suite provides a table of compliance test files and related information for verifying that a meter
-meets the specifications within Recommendation [ITU-R BS.1770](https://www.itu.int/rec/R-REC-BS.1770).
+Code correctness is verified against the official **[ITU-R BS.2217](https://www.itu.int/pub/R-REP-BS.2217)** compliance test suite, ensuring strict adherence to the **[ITU-R BS.1770](https://www.itu.int/rec/R-REC-BS.1770)** specification.
 
 | file                                 | measurement | channels |                    |
 | ------------------------------------ | ----------- | -------- | ------------------ |
@@ -371,7 +375,7 @@ meets the specifications within Recommendation [ITU-R BS.1770](https://www.itu.i
 
 ### EBU TECH 3341 Minimum requirements test signals
 
-[EBU TECH 3341](https://tech.ebu.ch/publications/tech3341) defines minimum requirements and corresponding test signals for verifying momentary, short-term, and integrated loudness accuracy, gating behavior, and true-peak measurement.
+Validated against **[EBU TECH 3341](https://tech.ebu.ch/publications/tech3341)** minimum requirements for loudness metering, including gating behavior, time scales, and true-peak accuracy.
 
 | file                                 | expected response and accepted tolerances                   |                    |
 | ------------------------------------ | ----------------------------------------------------------- | ------------------ |
