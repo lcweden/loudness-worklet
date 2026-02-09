@@ -15,11 +15,7 @@ import {
   TRUE_PEAK_COEFFICIENTS,
 } from "#constants";
 import { BiquadraticFilter, FiniteImpulseResponseFilter } from "#filters";
-import type {
-  LoudnessMeasurements,
-  LoudnessProcessorOptions,
-  Repeat,
-} from "#types";
+import type { LoudnessMeasurements, Repeat } from "#types";
 import { CircularBuffer } from "#utils";
 
 /**
@@ -52,11 +48,44 @@ class LoudnessProcessor extends AudioWorkletProcessor {
   constructor(options: AudioWorkletNodeOptions) {
     super();
 
-    const { numberOfInputs = 1, processorOptions } = options;
-    const { capacity, interval } = processorOptions as LoudnessProcessorOptions;
+    const { numberOfInputs = 1, processorOptions } = options ?? {};
+
+    if (
+      typeof numberOfInputs !== "number" ||
+      !Number.isInteger(numberOfInputs) ||
+      numberOfInputs < 1
+    ) {
+      throw new Error("numberOfInputs must be a positive integer.");
+    }
+
+    if (processorOptions && typeof processorOptions !== "object") {
+      throw new Error("processorOptions must be an object.");
+    }
+
+    const { capacity, interval } = processorOptions ?? {};
+
+    if (capacity !== undefined) {
+      if (
+        typeof capacity !== "number" ||
+        !Number.isFinite(capacity) ||
+        capacity < 0
+      ) {
+        throw new Error("Capacity must be a non-negative finite number.");
+      }
+    }
+
+    if (interval !== undefined) {
+      if (
+        typeof interval !== "number" ||
+        !Number.isFinite(interval) ||
+        interval < 0
+      ) {
+        throw new Error("Interval must be a non-negative finite number.");
+      }
+    }
 
     this.capacity = capacity || 0;
-    this.interval = interval || 0;
+    this.interval = interval || 0.1;
 
     for (let i = 0; i < numberOfInputs; i++) {
       const mEnergyBufferSize = Math.round(sampleRate * MOMENTARY_WINDOW_SEC);

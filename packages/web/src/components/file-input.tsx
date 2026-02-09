@@ -19,6 +19,8 @@ function FileInput(props: FileInputProps) {
     if (files && props.oninput) {
       props.oninput(files);
     }
+
+    input.value = "";
   }
 
   return (

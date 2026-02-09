@@ -49,6 +49,7 @@ function Dashboard(props: Props) {
   function handleFileSelect(event: Event) {
     const select = event.target as HTMLSelectElement;
     const file = Array.from(props.files).find((f) => f.name === select.value);
+
     if (file) {
       handleFileChange(file);
     }
@@ -77,7 +78,10 @@ function Dashboard(props: Props) {
 
   createEffect(() => {
     const [file] = props.files;
-    handleFileChange(file);
+
+    if (file) {
+      handleFileChange(file);
+    }
   });
 
   createEffect(() => {
@@ -237,7 +241,7 @@ function Dashboard(props: Props) {
                     <div class="flex flex-col gap-4">
                       <div class="flex flex-col gap-2">
                         <div class="rounded-box bg-base-100 p-2 shadow">
-                          <div class="stat-title uppercase">
+                          <div class="stat-title uppercase tracking-wider">
                             integrated loudness
                           </div>
                           <div class="stat-value font-light text-primary">
@@ -292,7 +296,7 @@ function Dashboard(props: Props) {
 
                       <div class="grid grid-cols-2 gap-2">
                         <div class="flex flex-col gap-1 rounded-box bg-base-100 p-2 shadow">
-                          <div class="stat-title text-pretty uppercase">
+                          <div class="stat-title text-pretty uppercase tracking-wider">
                             loudness range
                           </div>
                           <div
@@ -304,7 +308,7 @@ function Dashboard(props: Props) {
                           </div>
                         </div>
                         <div class="flex flex-col gap-1 rounded-box bg-base-100 p-2 shadow">
-                          <div class="stat-title text-pretty uppercase">
+                          <div class="stat-title text-pretty uppercase tracking-wider">
                             true peak
                           </div>
                           <Show keyed when={getTarget()}>
