@@ -28,6 +28,7 @@ function Dashboard(props: Props) {
   const [getBuffer, setBuffer] = createSignal<AudioBuffer>();
   const [getTarget, setTarget] = createSignal<LoudnessStandard>(STANDARDS[0]);
   const getProgress = createMemo(handleProgressChange);
+  const getFiles = createMemo(() => Array.from(props.files));
 
   function handleProgressChange() {
     const buffer = getBuffer();
@@ -41,6 +42,11 @@ function Dashboard(props: Props) {
 
     const { duration } = buffer;
     const { currentTime } = snapshot;
+
+    if (duration - currentTime <= 0.15) {
+      return 100;
+    }
+
     const progress = Math.min(Math.ceil((currentTime / duration) * 100), 100);
 
     return progress;
@@ -48,7 +54,7 @@ function Dashboard(props: Props) {
 
   function handleFileSelect(event: Event) {
     const select = event.target as HTMLSelectElement;
-    const file = Array.from(props.files).find((f) => f.name === select.value);
+    const file = getFiles().find((f) => f.name === select.value);
 
     if (file) {
       handleFileChange(file);
@@ -77,7 +83,7 @@ function Dashboard(props: Props) {
   }
 
   createEffect(() => {
-    const [file] = props.files;
+    const [file] = getFiles();
 
     if (file) {
       handleFileChange(file);
@@ -90,7 +96,7 @@ function Dashboard(props: Props) {
     if (!buffer) return;
 
     clear();
-    analyze(buffer);
+    analyze(buffer, { interval: 0.1 });
   });
 
   return (
@@ -127,10 +133,10 @@ function Dashboard(props: Props) {
                   <Show
                     fallback={<option>-</option>}
                     keyed={true}
-                    when={props.files}
+                    when={getFiles()}
                   >
                     {(files) => (
-                      <For each={Array.from(files)}>
+                      <For each={files}>
                         {(file) => (
                           <option value={file.name}>{file.name}</option>
                         )}
