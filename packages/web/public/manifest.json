@@ -9,12 +9,32 @@
   "display_override": ["standalone", "window-controls-overlay"],
   "icons": [
     {
+      "src": "icons/192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/android-chrome-192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "maskable"
+    },
+    {
       "src": "icons/512.png",
+      "type": "image/png",
       "sizes": "512x512",
-      "purpose": "monochrome maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "icons/android-chrome-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "maskable"
     },
     {
       "src": "icons/1024.png",
+      "type": "image/png",
       "sizes": "1024x1024",
       "purpose": "any"
     }
