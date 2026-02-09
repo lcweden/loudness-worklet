@@ -45,6 +45,8 @@ jobs:
           npm run build -w @loudness-worklet/core
           npm run build -w @loudness-worklet/lib
           npm run build -w @loudness-worklet/web
+      - name: Copy worklet to web dist
+        run: cp packages/core/dist/loudness.worklet.js packages/web/dist/loudness.worklet.js
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
