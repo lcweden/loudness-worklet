@@ -1,7 +1,8 @@
-# Loudness Audio Worklet Processor
+# Loudness Worklet
 
 [![npm version](https://img.shields.io/npm/v/loudness-worklet.svg)](https://www.npmjs.com/package/loudness-worklet)
 [![license](https://img.shields.io/github/license/lcweden/loudness-worklet.svg)](LICENSE)
+[![demo](https://img.shields.io/badge/demo-Online-purple.svg)](https://lcweden.github.io/loudness-worklet/)
 
 A loudness meter for the `Web Audio API`, based on the [ITU-R BS.1770-5](https://www.itu.int/rec/R-REC-BS.1770) standard and implemented as an AudioWorkletProcessor.
 
@@ -9,10 +10,17 @@ A loudness meter for the `Web Audio API`, based on the [ITU-R BS.1770-5](https:/
 
 ## Features
 
-- **Loudness Measurement**: Compliant with the **ITU-R BS.1770-5** standard.
-- **Comprehensive Metrics**: Calculates Momentary, Short-term, and Integrated Loudness, as well as Loudness Range (LRA) and True-Peak levels.
-- **Flexible**: Works with live audio and pre-recorded files.
-- **Lightweight**: No external dependencies required.
+- **Standard Compliant**: Strictly follows **ITU-R BS.1770-5** for accurate loudness measurement.
+- **Comprehensive Metrics**: Calculates Momentary, Short-term, and Integrated Loudness, plus Loudness Range (LRA) and True-Peak levels.
+- **Versatile Input**: Seamlessly supports both live audio streams ("Microphone/WebRTC") and offline file analysis.
+- **Zero Dependencies**: Lightweight, pure AudioWorklet implementation requiring no external libraries.
+
+## Use Cases
+
+- **Volume Normalization**: Dynamically analyze and harmonize volume levels across multi-source playlists directly in the browser, eliminating the need for server-side processing.
+- **Pre-upload Validation**: Verify if audio files meet platform-specific loudness standards (e.g., -14 LUFS) locally before uploading.
+- **Live Metering**: Build responsive, standard-compliant loudness meters for web-based recorders, conferencing tools, or broadcasting interfaces.
+- **Web Audio Editors**: Integrate professional-grade loudness analysis into browser-based Digital Audio Workstations (DAWs).
 
 ## Installation
 
@@ -21,8 +29,8 @@ A loudness meter for the `Web Audio API`, based on the [ITU-R BS.1770-5](https:/
 Import directly in your code:
 
 ```javascript
-const module = "https://lcweden.github.io/loudness-worklet/loudness.worklet.js";
-await audioContext.audioWorklet.addModule(module);
+const moduleUrl = "https://lcweden.github.io/loudness-worklet/loudness.worklet.js";
+await audioContext.audioWorklet.addModule(moduleUrl);
 const worklet = new AudioWorkletNode(audioContext, "loudness-processor");
 ```
 
@@ -47,63 +55,18 @@ npm install loudness-worklet
 Use helper functions to create and load the worklet:
 
 ```javascript
-import { createLoudnessWorklet, LoudnessWorkletNode } from "loudness-worklet";
+import { createLoudnessWorklet } from "loudness-worklet";
 
 const worklet = await createLoudnessWorklet(audioContext);
+```
 
-// or
+or
+
+```javascript
+import { LoudnessWorkletNode } from "loudness-worklet";
 
 await LoudnessWorkletNode.loadModule(audioContext);
 const worklet = new LoudnessWorkletNode(audioContext);
-```
-
-## Concepts
-
-### Contexts
-
-Provide the execution environment for audio processing.
-
-#### AudioContext
-
-`AudioContext` is used for real-time audio processing, such as live audio input from a microphone or media stream.
-
-#### OfflineAudioContext
-
-`OfflineAudioContext` is used for processing audio data offline, allowing for rendering and analysis without requiring real-time playback.
-
-### Nodes
-
-Nodes are the building blocks of an audio graph, representing audio sources, processing modules, and destinations. The following nodes are commonly used as a source input:
-
-#### AudioBufferSourceNode
-
-`AudioBufferSourceNode` is used to play audio data stored in an `AudioBuffer`, typically for pre-recorded audio files.
-
-```javascript
-const audioContext = new AudioContext();
-const arrayBuffer = await file.arrayBuffer();
-const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
-const bufferSource = new AudioBufferSourceNode(audioContext, { buffer: audioBuffer });
-```
-
-#### MediaStreamAudioSourceNode
-
-`MediaStreamAudioSourceNode` is used to play audio from a `MediaStream`, such as a live microphone input or a video element.
-
-```javascript
-const audioContext = new AudioContext();
-const mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-const mediaStreamSource = new MediaStreamAudioSourceNode(audioContext, { mediaStream });
-```
-
-#### MediaElementAudioSourceNode
-
-`MediaElementAudioSourceNode` is used to play audio from an HTML `<audio>` or `<video>` element.
-
-```javascript
-const audioContext = new AudioContext();
-const mediaElement = document.querySelector("audio");
-const elementSource = new MediaElementAudioSourceNode(audioContext, { mediaElement });
 ```
 
 ## Quick Start
@@ -119,17 +82,17 @@ This example shows the easiest way to get started with the Loudness Audio Workle
     <button>Share Screen</button>
     <pre></pre>
     <script>
-      const module = "https://lcweden.github.io/loudness-worklet/loudness.worklet.js";
+      const moduleUrl = "https://lcweden.github.io/loudness-worklet/loudness.worklet.js";
       const button = document.querySelector("button");
       const pre = document.querySelector("pre");
 
       button.onclick = async () => {
-        // Get the screen stream with audio, for example a youtube tab
+        // Get the screen stream with audio, for example a YouTube tab
         const mediaStream = await navigator.mediaDevices.getDisplayMedia({ audio: true });
         const context = new AudioContext();
 
         // Load the loudness worklet processor
-        await context.audioWorklet.addModule(module);
+        await context.audioWorklet.addModule(moduleUrl);
 
         // Create the audio node from the stream
         const source = new MediaStreamAudioSourceNode(context, { mediaStream });
@@ -204,6 +167,55 @@ source.connect(worklet);
 // Optionally connect to destination for monitoring (echo)
 ```
 
+## Concepts
+
+### Contexts
+
+Provide the execution environment for audio processing.
+
+#### AudioContext
+
+`AudioContext` is used for real-time audio processing, such as live audio input from a microphone or media stream.
+
+#### OfflineAudioContext
+
+`OfflineAudioContext` is used for processing audio data offline, allowing for rendering and analysis without requiring real-time playback.
+
+### Nodes
+
+Nodes are the building blocks of an audio graph, representing audio sources, processing modules, and destinations. The following nodes are commonly used as a source input:
+
+#### AudioBufferSourceNode
+
+`AudioBufferSourceNode` is used to play audio data stored in an `AudioBuffer`, typically for pre-recorded audio files.
+
+```javascript
+const audioContext = new AudioContext();
+const arrayBuffer = await file.arrayBuffer();
+const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+const bufferSource = new AudioBufferSourceNode(audioContext, { buffer: audioBuffer });
+```
+
+#### MediaStreamAudioSourceNode
+
+`MediaStreamAudioSourceNode` is used to play audio from a `MediaStream`, such as a live microphone input or a video element.
+
+```javascript
+const audioContext = new AudioContext();
+const mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+const mediaStreamSource = new MediaStreamAudioSourceNode(audioContext, { mediaStream });
+```
+
+#### MediaElementAudioSourceNode
+
+`MediaElementAudioSourceNode` is used to play audio from an HTML `<audio>` or `<video>` element.
+
+```javascript
+const audioContext = new AudioContext();
+const mediaElement = document.querySelector("audio");
+const elementSource = new MediaElementAudioSourceNode(audioContext, { mediaElement });
+```
+
 ## API
 
 ### Options
@@ -214,11 +226,8 @@ The `AudioWorkletNode` constructor accepts the following options:
 
 | Option                    | Type       | Required | Default | Description                                                                                          |
 | ------------------------- | ---------- | -------- | ------- | ---------------------------------------------------------------------------------------------------- |
-| numberOfInputs            | `number`   | `N`      | `1`     | Number of input channels.                                                                            |
-| numberOfOutputs           | `number`   | `N`      | `1`     | Number of output channels.                                                                           |
-| outputChannelCount        | `number[]` | `N`      | -       | Determined at runtime automatically.                                                                 |
-| processorOptions.interval | `number`   | `N`      | `null`  | Message interval in seconds.                                                                         |
-| processorOptions.capacity | `number`   | `N`      | `null`  | Maximum seconds of history to keep. If set to `null`, the processor will not limit the history size. |
+| processorOptions.interval | `number`   | `No`     | `0.1`   | Message interval in seconds.                                                                         |
+| processorOptions.capacity | `number`   | `No`     | `0`     | Maximum seconds of history to keep. If set to `0`, the processor will not limit the history size.   |
 
 #### Example
 
@@ -227,9 +236,6 @@ Most of the time, you only need to set `processorOptions`.
 ```javascript
 const { numberOfChannels, length, sampleRate } = audioBuffer;
 const worklet = new AudioWorkletNode(context, "loudness-processor", {
-  numberOfInputs: 1,
-  numberOfOutputs: 1,
-  outputChannelCount: [numberOfChannels], // Unnecessary
   processorOptions: {
     capacity: length / sampleRate,
     interval: 0.1
@@ -239,7 +245,7 @@ const worklet = new AudioWorkletNode(context, "loudness-processor", {
 
 ### Message Format
 
-Measurement results are sent back to the main thread via `port.onmessage` with the following format:
+Measurement results are sent back to the main thread via `port.onmessage` as a `LoudnessSnapshot` object:
 
 ```typescript
 type LoudnessMeasurements = {
@@ -269,7 +275,7 @@ type LoudnessSnapshot = {
 | `maximumMomentaryLoudness` | `LUFS`/`LKFS` |
 | `maximumShortTermLoudness` | `LUFS`/`LKFS` |
 | `maximumTruePeakLevel`     | `dBTP`        |
-| `loudnessRange`            | `LU`         |
+| `loudnessRange`            | `LU`          |
 
 ### Supported Channels
 
@@ -284,7 +290,7 @@ The following coefficients are used for the K-weighting filter:
 
 |     | highshelf         | highpass          |
 | --- | ----------------- | ----------------- |
-| a1  | -1.69065929318241 | −1.99004745483398 |
+| a1  | -1.69065929318241 | -1.99004745483398 |
 | a2  | 0.73248077421585  | 0.99007225036621  |
 | b0  | 1.53512485958697  | 1.0               |
 | b1  | -2.69169618940638 | -2.0              |
@@ -294,25 +300,24 @@ The following FIR filter coefficients are used for true-peak measurement:
 
 | Phase 0          | Phase 1          | Phase 2          | Phase 3          |
 | ---------------- | ---------------- | ---------------- | ---------------- |
-| 0.0017089843750  | −0.0291748046875 | −0.0189208984375 | −0.0083007812500 |
+| 0.0017089843750  | -0.0291748046875 | -0.0189208984375 | -0.0083007812500 |
 | 0.0109863281250  | 0.0292968750000  | 0.0330810546875  | 0.0148925781250  |
-| −0.0196533203125 | −0.0517578125000 | −0.0582275390625 | −0.0266113281250 |
+| -0.0196533203125 | -0.0517578125000 | -0.0582275390625 | -0.0266113281250 |
 | 0.0332031250000  | 0.0891113281250  | 0.1015625000000  | 0.0476074218750  |
-| −0.0594482421875 | −0.1665039062500 | −0.2003173828125 | −0.1022949218750 |
+| -0.0594482421875 | -0.1665039062500 | -0.2003173828125 | -0.1022949218750 |
 | 0.1373291015625  | 0.4650878906250  | 0.7797851562500  | 0.9721679687500  |
 | 0.9721679687500  | 0.7797851562500  | 0.4650878906250  | 0.1373291015625  |
-| −0.1022949218750 | −0.2003173828125 | −0.1665039062500 | −0.0594482421875 |
+| -0.1022949218750 | -0.2003173828125 | -0.1665039062500 | -0.0594482421875 |
 | 0.0476074218750  | 0.1015625000000  | 0.0891113281250  | 0.0332031250000  |
-| −0.0266113281250 | −0.0582275390625 | −0.0517578125000 | −0.0196533203125 |
+| -0.0266113281250 | -0.0582275390625 | -0.0517578125000 | -0.0196533203125 |
 | 0.0148925781250  | 0.0330810546875  | 0.0292968750000  | 0.0109863281250  |
-| −0.0083007812500 | −0.0189208984375 | −0.0291748046875 | 0.0017089843750  |
+| -0.0083007812500 | -0.0189208984375 | -0.0291748046875 | 0.0017089843750  |
 
 ## Validation
 
 ### ITU-R BS.2217
 
-The [ITU-R BS.2217](https://www.itu.int/pub/R-REP-BS.2217) test suite provides a table of compliance test files and related information for verifying that a meter
-meets the specifications within Recommendation [ITU-R BS.1770](https://www.itu.int/rec/R-REC-BS.1770).
+Code correctness is verified against the official **[ITU-R BS.2217](https://www.itu.int/pub/R-REP-BS.2217)** compliance test suite, ensuring strict adherence to the **[ITU-R BS.1770](https://www.itu.int/rec/R-REC-BS.1770)** specification.
 
 | file                                 | measurement | channels |                    |
 | ------------------------------------ | ----------- | -------- | ------------------ |
@@ -371,33 +376,33 @@ meets the specifications within Recommendation [ITU-R BS.1770](https://www.itu.i
 
 ### EBU TECH 3341 Minimum requirements test signals
 
-[EBU TECH 3341](https://tech.ebu.ch/publications/tech3341) defines minimum requirements and corresponding test signals for verifying momentary, short-term, and integrated loudness accuracy, gating behavior, and true-peak measurement.
+Validated against **[EBU TECH 3341](https://tech.ebu.ch/publications/tech3341)** minimum requirements for loudness metering, including gating behavior, time scales, and true-peak accuracy.
 
 | file                                 | expected response and accepted tolerances                   |                    |
 | ------------------------------------ | ----------------------------------------------------------- | ------------------ |
-| seq-3341-1-16bit                     | M, S, I = −23.0 ±0.1 LUFS                                   | :white_check_mark: |
-| seq-3341-2-16bit                     | M, S, I = −33.0 ±0.1 LUFS                                   | :white_check_mark: |
-| seq-3341-3-16bit-v02                 | I = −23.0 ±0.1 LUFS                                         | :white_check_mark: |
-| seq-3341-4-16bit-v02                 | I = −23.0 ±0.1 LUFS                                         | :white_check_mark: |
-| seq-3341-5-16bit-v02                 | I = −23.0 ±0.1 LUFS                                         | :white_check_mark: |
-| seq-3341-6-6channels-WAVEEX-16bit    | I = −23.0 ±0.1 LUFS                                         | :white_check_mark: |
-| seq-3341-7_seq-3342-5-24bit          | I = −23.0 ±0.1 LUFS                                         | :white_check_mark: |
-| seq-3341-2011-8_seq-3342-6-24bit-v02 | I = −23.0 ±0.1 LUFS                                         | :white_check_mark: |
-| seq-3341-9-24bit                     | S = −23.0 ±0.1 LUFS, constant after 3 s                     | :white_check_mark: |
-| seq-3341-10-\*-24bit                 | Max S = −23.0 ±0.1 LUFS, for each segment                   | :white_check_mark: |
-| seq-3341-11-24bit                    | Max S = −38.0, −37.0, …, −19.0 ±0.1 LUFS, successive values | :white_check_mark: |
-| seq-3341-12-24bit                    | M = −23.0 ±0.1 LUFS, constant after 1 s                     | :white_check_mark: |
-| seq-3341-13-\*-24bit                 | Max M = −23.0 ±0.1 LUFS, for each segment                   | :white_check_mark: |
-| seq-3341-14-24bit                    | Max M = −38.0, …, −19.0 ±0.1 LUFS, successive values        | :white_check_mark: |
-| seq-3341-15-24bit                    | Max true-peak = −6.0 +0.2/−0.4 dBTP                         | :white_check_mark: |
-| seq-3341-16-24bit                    | Max true-peak = −6.0 +0.2/−0.4 dBTP                         | :white_check_mark: |
-| seq-3341-17-24bit                    | Max true-peak = −6.0 +0.2/−0.4 dBTP                         | :white_check_mark: |
-| seq-3341-18-24bit                    | Max true-peak = −6.0 +0.2/−0.4 dBTP                         | :white_check_mark: |
-| seq-3341-19-24bit                    | Max true-peak = +3.0 +0.2/−0.4 dBTP                         | :white_check_mark: |
-| seq-3341-20-24bit                    | Max true-peak = 0.0 +0.2/−0.4 dBTP                          | :white_check_mark: |
-| seq-3341-21-24bit                    | Max true-peak = 0.0 +0.2/−0.4 dBTP                          | :white_check_mark: |
-| seq-3341-22-24bit                    | Max true-peak = 0.0 +0.2/−0.4 dBTP                          | :white_check_mark: |
-| seq-3341-23-24bit                    | Max true-peak = 0.0 +0.2/−0.4 dBTP                          | :white_check_mark: |
+| seq-3341-1-16bit                     | M, S, I = -23.0 ±0.1 LUFS                                   | :white_check_mark: |
+| seq-3341-2-16bit                     | M, S, I = -33.0 ±0.1 LUFS                                   | :white_check_mark: |
+| seq-3341-3-16bit-v02                 | I = -23.0 ±0.1 LUFS                                         | :white_check_mark: |
+| seq-3341-4-16bit-v02                 | I = -23.0 ±0.1 LUFS                                         | :white_check_mark: |
+| seq-3341-5-16bit-v02                 | I = -23.0 ±0.1 LUFS                                         | :white_check_mark: |
+| seq-3341-6-6channels-WAVEEX-16bit    | I = -23.0 ±0.1 LUFS                                         | :white_check_mark: |
+| seq-3341-7_seq-3342-5-24bit          | I = -23.0 ±0.1 LUFS                                         | :white_check_mark: |
+| seq-3341-2011-8_seq-3342-6-24bit-v02 | I = -23.0 ±0.1 LUFS                                         | :white_check_mark: |
+| seq-3341-9-24bit                     | S = -23.0 ±0.1 LUFS, constant after 3 s                     | :white_check_mark: |
+| seq-3341-10-\*-24bit                 | Max S = -23.0 ±0.1 LUFS, for each segment                   | :white_check_mark: |
+| seq-3341-11-24bit                    | Max S = -38.0, -37.0, …, -19.0 ±0.1 LUFS, successive values | :white_check_mark: |
+| seq-3341-12-24bit                    | M = -23.0 ±0.1 LUFS, constant after 1 s                     | :white_check_mark: |
+| seq-3341-13-\*-24bit                 | Max M = -23.0 ±0.1 LUFS, for each segment                   | :white_check_mark: |
+| seq-3341-14-24bit                    | Max M = -38.0, …, -19.0 ±0.1 LUFS, successive values        | :white_check_mark: |
+| seq-3341-15-24bit                    | Max true-peak = -6.0 +0.2/-0.4 dBTP                         | :white_check_mark: |
+| seq-3341-16-24bit                    | Max true-peak = -6.0 +0.2/-0.4 dBTP                         | :white_check_mark: |
+| seq-3341-17-24bit                    | Max true-peak = -6.0 +0.2/-0.4 dBTP                         | :white_check_mark: |
+| seq-3341-18-24bit                    | Max true-peak = -6.0 +0.2/-0.4 dBTP                         | :white_check_mark: |
+| seq-3341-19-24bit                    | Max true-peak = +3.0 +0.2/-0.4 dBTP                         | :white_check_mark: |
+| seq-3341-20-24bit                    | Max true-peak = 0.0 +0.2/-0.4 dBTP                          | :white_check_mark: |
+| seq-3341-21-24bit                    | Max true-peak = 0.0 +0.2/-0.4 dBTP                          | :white_check_mark: |
+| seq-3341-22-24bit                    | Max true-peak = 0.0 +0.2/-0.4 dBTP                          | :white_check_mark: |
+| seq-3341-23-24bit                    | Max true-peak = 0.0 +0.2/-0.4 dBTP                          | :white_check_mark: |
 
 ### EBU TECH 3342 Minimum requirements test signals
 

@@ -4,21 +4,10 @@
   "description": "A lightweight and efficient AudioWorklet for real-time loudness measurement in the browser, compliant with the ITU-R BS.1770-5 standard.",
   "keywords": [
     "web-audio",
-    "web-audio-api",
-    "audio-meter",
     "audio-worklet",
     "loudness",
-    "loudness-meter",
-    "browser-audio",
     "ebu-r128",
-    "itu-r-bs1770",
-    "audio-processing",
-    "audio-analysis",
-    "true-peak",
-    "lufs",
-    "lra",
-    "javascript",
-    "typescript"
+    "itu-r-bs1770"
   ],
   "type": "module",
   "main": "./packages/lib/dist/index.js",
@@ -50,7 +39,10 @@
     "lint": "biome lint --write"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.3.8",
-    "@types/node": "^24.10.1"
+    "@biomejs/biome": "2.3.13",
+    "@types/node": "^24.10.1",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.1",
+    "vite-plugin-dts": "^4.5.4"
   }
 }

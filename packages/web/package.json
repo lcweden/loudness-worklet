@@ -18,14 +18,10 @@
     "#views": "./src/views/index.ts"
   },
   "devDependencies": {
-    "@solidjs/router": "^0.15.4",
-    "@tailwindcss/typography": "^0.5.19",
     "@tailwindcss/vite": "^4.1.17",
     "daisyui": "^5.5.5",
     "echarts": "^6.0.0",
-    "solid-js": "^1.9.10",
-    "tailwindcss": "^4.1.17",
-    "typescript": "^5.9.3",
-    "vite": "^7.2.4"
+    "solid-js": "^1.9.11",
+    "tailwindcss": "^4.1.17"
   }
 }

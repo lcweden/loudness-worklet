@@ -4,17 +4,37 @@
   "scope": "/loudness-worklet/",
   "name": "Loudness Worklet",
   "short_name": "Loudness Worklet",
-  "description": "A lightweight, ITU-R BS.1770-5 compliant loudness meter running on Audio Worklet. Measure Integrated LUFS, Momentary, and True Peak in real-time.",
+  "description": "Real-time LUFS loudness meter in your browser using Audio Worklet (ITU-R BS.1770-5). Measure integrated, short-term, momentary and true peak.",
   "display": "standalone",
   "display_override": ["standalone", "window-controls-overlay"],
   "icons": [
     {
+      "src": "icons/192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/android-chrome-192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "maskable"
+    },
+    {
       "src": "icons/512.png",
+      "type": "image/png",
       "sizes": "512x512",
-      "purpose": "monochrome maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "icons/android-chrome-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "maskable"
     },
     {
       "src": "icons/1024.png",
+      "type": "image/png",
       "sizes": "1024x1024",
       "purpose": "any"
     }
@@ -22,14 +42,14 @@
   "screenshots": [
     {
       "src": "./screenshots/home.png",
-      "sizes": "2560x1440",
+      "sizes": "3840x2160",
       "type": "image/png",
       "form_factor": "wide",
       "label": "Home screen showing main navigation"
     },
     {
       "src": "./screenshots/meter.png",
-      "sizes": "2560x1440",
+      "sizes": "3840x2160",
       "type": "image/png",
       "label": "Dashboard view displaying key metrics"
     }
