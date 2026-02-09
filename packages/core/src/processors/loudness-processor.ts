@@ -85,7 +85,7 @@ class LoudnessProcessor extends AudioWorkletProcessor {
     }
 
     this.capacity = capacity || 0;
-    this.interval = interval || 0.1;
+    this.interval = interval ?? 0.02;
 
     for (let i = 0; i < numberOfInputs; i++) {
       const mEnergyBufferSize = Math.round(sampleRate * MOMENTARY_WINDOW_SEC);
