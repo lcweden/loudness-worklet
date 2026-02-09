@@ -30,7 +30,7 @@ function createLoudnessAnalysis() {
 
   async function analyze(
     buffer: AudioBuffer,
-    options?: { capacity?: number; interval: number },
+    options?: { capacity?: number; interval?: number },
   ) {
     const { numberOfChannels, length, sampleRate } = buffer;
     const ctx = new OfflineAudioContext(numberOfChannels, length, sampleRate);
@@ -38,7 +38,7 @@ function createLoudnessAnalysis() {
     await LoudnessWorkletNode.loadModule(ctx);
 
     const capacity = options?.capacity ?? length / sampleRate;
-    const interval = options?.interval ?? 0.1;
+    const interval = options?.interval ?? 0.02;
     const option = { processorOptions: { capacity, interval } };
 
     const sourceNode = new AudioBufferSourceNode(ctx, { buffer });

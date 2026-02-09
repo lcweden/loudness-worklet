@@ -99,7 +99,7 @@ This example shows the easiest way to get started with the Loudness Audio Workle
         // Create the loudness worklet node
         const worklet = new AudioWorkletNode(context, "loudness-processor", {
           processorOptions: {
-            interval: 0.1, // every 0.1s a message will be sent
+            interval: 0.02, // every 0.02s a message will be sent
             capacity: 600 // 1 minute of history can be stored
           }
         });
@@ -226,7 +226,7 @@ The `AudioWorkletNode` constructor accepts the following options:
 
 | Option                    | Type       | Required | Default | Description                                                                                          |
 | ------------------------- | ---------- | -------- | ------- | ---------------------------------------------------------------------------------------------------- |
-| processorOptions.interval | `number`   | `No`     | `0.1`   | Message interval in seconds.                                                                         |
+| processorOptions.interval | `number`   | `No`     | `0.02`  | Message interval in seconds.                                                                         |
 | processorOptions.capacity | `number`   | `No`     | `0`     | Maximum seconds of history to keep. If set to `0`, the processor will not limit the history size.   |
 
 #### Example
@@ -238,7 +238,7 @@ const { numberOfChannels, length, sampleRate } = audioBuffer;
 const worklet = new AudioWorkletNode(context, "loudness-processor", {
   processorOptions: {
     capacity: length / sampleRate,
-    interval: 0.1
+    interval: 0.02
   }
 });
 ```
