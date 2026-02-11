@@ -279,7 +279,7 @@ type LoudnessSnapshot = {
 
 ### Supported Channels
 
-Supported channel counts: `1`, `2`, `6`, `8`, `10`, `12`, `24`
+Supported channel counts: `1`, `2`, `5`, `6`, `8`, `10`, `12`, `24`
 
 > [!NOTE]
 > Channel counts not listed above are weighted at `1.0`.

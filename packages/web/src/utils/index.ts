@@ -4,6 +4,8 @@ function formatChannels(numberOfChannels: number): string {
       return "Mono";
     case 2:
       return "Stereo";
+    case 5:
+      return "5.0 Surround";
     case 6:
       return "5.1 Surround";
     case 8:
