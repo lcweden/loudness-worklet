@@ -15,13 +15,6 @@ A loudness meter for the `Web Audio API`, based on the [ITU-R BS.1770-5](https:/
 - **Versatile Input**: Seamlessly supports both live audio streams ("Microphone/WebRTC") and offline file analysis.
 - **Zero Dependencies**: Lightweight, pure AudioWorklet implementation requiring no external libraries.
 
-## Use Cases
-
-- **Volume Normalization**: Dynamically analyze and harmonize volume levels across multi-source playlists directly in the browser, eliminating the need for server-side processing.
-- **Pre-upload Validation**: Verify if audio files meet platform-specific loudness standards (e.g., -14 LUFS) locally before uploading.
-- **Live Metering**: Build responsive, standard-compliant loudness meters for web-based recorders, conferencing tools, or broadcasting interfaces.
-- **Web Audio Editors**: Integrate professional-grade loudness analysis into browser-based Digital Audio Workstations (DAWs).
-
 ## Installation
 
 ### CDN
@@ -73,7 +66,7 @@ const worklet = new LoudnessWorkletNode(audioContext);
 
 ### Example
 
-This example shows the easiest way to get started with the Loudness Audio Worklet Processor.
+This example shows the easiest way to get started with the `loudness-worklet` by measuring the loudness of a screen share stream with audio (e.g., a YouTube tab).
 
 ```html
 <!DOCTYPE html>
@@ -87,7 +80,7 @@ This example shows the easiest way to get started with the Loudness Audio Workle
       const pre = document.querySelector("pre");
 
       button.onclick = async () => {
-        // Get the screen stream with audio, for example a YouTube tab
+        // Get the display media stream with audio
         const mediaStream = await navigator.mediaDevices.getDisplayMedia({ audio: true });
         const context = new AudioContext();
 
@@ -190,7 +183,6 @@ Nodes are the building blocks of an audio graph, representing audio sources, pro
 `AudioBufferSourceNode` is used to play audio data stored in an `AudioBuffer`, typically for pre-recorded audio files.
 
 ```javascript
-const audioContext = new AudioContext();
 const arrayBuffer = await file.arrayBuffer();
 const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
 const bufferSource = new AudioBufferSourceNode(audioContext, { buffer: audioBuffer });
@@ -201,7 +193,6 @@ const bufferSource = new AudioBufferSourceNode(audioContext, { buffer: audioBuff
 `MediaStreamAudioSourceNode` is used to play audio from a `MediaStream`, such as a live microphone input or a video element.
 
 ```javascript
-const audioContext = new AudioContext();
 const mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
 const mediaStreamSource = new MediaStreamAudioSourceNode(audioContext, { mediaStream });
 ```
@@ -211,7 +202,6 @@ const mediaStreamSource = new MediaStreamAudioSourceNode(audioContext, { mediaSt
 `MediaElementAudioSourceNode` is used to play audio from an HTML `<audio>` or `<video>` element.
 
 ```javascript
-const audioContext = new AudioContext();
 const mediaElement = document.querySelector("audio");
 const elementSource = new MediaElementAudioSourceNode(audioContext, { mediaElement });
 ```
@@ -231,7 +221,7 @@ The `AudioWorkletNode` constructor accepts the following options:
 
 #### Example
 
-Most of the time, you only need to set `processorOptions`.
+Most of the time, you only need to set `processorOptions` or leave it empty.
 
 ```javascript
 const { numberOfChannels, length, sampleRate } = audioBuffer;
@@ -265,6 +255,8 @@ type LoudnessSnapshot = {
 };
 ```
 
+## Details
+
 ### Units
 
 | Metric                     | Unit          |
@@ -279,7 +271,7 @@ type LoudnessSnapshot = {
 
 ### Supported Channels
 
-Supported channel counts: `1`, `2`, `6`, `8`, `10`, `12`, `24`
+Supported channel counts: `1`, `2`, `5`, `6`, `8`, `10`, `12`, `24`
 
 > [!NOTE]
 > Channel counts not listed above are weighted at `1.0`.
@@ -385,6 +377,7 @@ Validated against **[EBU TECH 3341](https://tech.ebu.ch/publications/tech3341)**
 | seq-3341-3-16bit-v02                 | I = -23.0 ±0.1 LUFS                                         | :white_check_mark: |
 | seq-3341-4-16bit-v02                 | I = -23.0 ±0.1 LUFS                                         | :white_check_mark: |
 | seq-3341-5-16bit-v02                 | I = -23.0 ±0.1 LUFS                                         | :white_check_mark: |
+| seq-3341-6-5channels-16bit           | I = -23.0 ±0.1 LUFS                                         | :white_check_mark: |
 | seq-3341-6-6channels-WAVEEX-16bit    | I = -23.0 ±0.1 LUFS                                         | :white_check_mark: |
 | seq-3341-7_seq-3342-5-24bit          | I = -23.0 ±0.1 LUFS                                         | :white_check_mark: |
 | seq-3341-2011-8_seq-3342-6-24bit-v02 | I = -23.0 ±0.1 LUFS                                         | :white_check_mark: |
