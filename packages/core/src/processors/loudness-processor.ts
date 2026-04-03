@@ -1,7 +1,6 @@
 import {
   ATTENUATION_DB,
   CHANNEL_WEIGHT_FACTORS,
-  K_WEIGHTING_COEFFICIENTS,
   LOUDNESS_RANGE_LOWER_PERCENTILE,
   LOUDNESS_RANGE_UPPER_PERCENTILE,
   LRA_ABSOLUTE_THRESHOLD,
@@ -14,7 +13,11 @@ import {
   SHORT_TERM_WINDOW_SEC,
   TRUE_PEAK_COEFFICIENTS,
 } from "#constants";
-import { BiquadraticFilter, FiniteImpulseResponseFilter } from "#filters";
+import {
+  BiquadraticFilter,
+  computeKWeightingCoefficients,
+  FiniteImpulseResponseFilter,
+} from "#filters";
 import type { LoudnessMeasurements, Repeat } from "#types";
 import { CircularBuffer } from "#utils";
 
@@ -134,7 +137,8 @@ class LoudnessProcessor extends AudioWorkletProcessor {
         !this.kWeightingFilters[i] ||
         this.kWeightingFilters[i].length !== channelCount
       ) {
-        const { highshelf, highpass } = K_WEIGHTING_COEFFICIENTS;
+        const { highshelf, highpass } =
+          computeKWeightingCoefficients(sampleRate);
 
         this.kWeightingFilters[i] = this.kWeightingFilters[i] || [];
 
