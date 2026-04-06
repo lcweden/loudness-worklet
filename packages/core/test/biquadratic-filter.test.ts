@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { beforeEach, describe, it } from "node:test";
-import { BiquadraticFilter } from "../src/filters/biquadratic-filter.ts";
+import { BiquadraticFilter } from "#filters/biquadratic-filter";
 
 describe("BiquadraticFilter", () => {
   let filter: BiquadraticFilter;
