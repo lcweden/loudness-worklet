@@ -17,26 +17,6 @@ A loudness meter for the `Web Audio API`, based on the [ITU-R BS.1770-5](https:/
 
 ## Installation
 
-### CDN
-
-Import directly in your code:
-
-```javascript
-const moduleUrl = "https://lcweden.github.io/loudness-worklet/loudness.worklet.js";
-await audioContext.audioWorklet.addModule(moduleUrl);
-const worklet = new AudioWorkletNode(audioContext, "loudness-processor");
-```
-
-### Download
-
-1. Download the pre-built file: [loudness.worklet.js](https://lcweden.github.io/loudness-worklet/loudness.worklet.js).
-2. Place `loudness.worklet.js` in your project directory (e.g., `/public/`).
-
-```javascript
-await audioContext.audioWorklet.addModule("loudness.worklet.js");
-const worklet = new AudioWorkletNode(audioContext, "loudness-processor");
-```
-
 ### NPM
 
 Install via [npm](https://www.npmjs.com/package/loudness-worklet):
@@ -62,6 +42,26 @@ await LoudnessWorkletNode.loadModule(audioContext);
 const worklet = new LoudnessWorkletNode(audioContext);
 ```
 
+### CDN
+
+Import directly in your browser using **jsDelivr** or **unpkg**:
+
+```javascript
+import { createLoudnessWorklet, LoudnessWorkletNode } from "https://cdn.jsdelivr.net/npm/loudness-worklet/+esm";
+```
+
+### Download
+
+For strict Content Security Policy (CSP) environments restricting `blob:` or `eval()` via `script-src` and `worker-src`, or for offline integration, download the pre-built `loudness.worklet.js` payload.
+
+1. Download the pre-built file from GitHub Releases: [loudness.worklet.js](https://github.com/lcweden/loudness-worklet/releases/latest/download/loudness.worklet.js).
+2. Place `loudness.worklet.js` in your project directory (e.g., `/public/`).
+
+```javascript
+await audioContext.audioWorklet.addModule("loudness.worklet.js");
+const worklet = new AudioWorkletNode(audioContext, "loudness-processor");
+```
+
 ## Quick Start
 
 ### Example
@@ -74,8 +74,9 @@ This example shows the easiest way to get started with the `loudness-worklet` by
   <body>
     <button>Share Screen</button>
     <pre></pre>
-    <script>
-      const moduleUrl = "https://lcweden.github.io/loudness-worklet/loudness.worklet.js";
+    <script type="module">
+      import { createLoudnessWorklet } from "https://cdn.jsdelivr.net/npm/loudness-worklet/+esm";
+
       const button = document.querySelector("button");
       const pre = document.querySelector("pre");
 
@@ -84,18 +85,16 @@ This example shows the easiest way to get started with the `loudness-worklet` by
         const mediaStream = await navigator.mediaDevices.getDisplayMedia({ audio: true });
         const context = new AudioContext();
 
-        // Load the loudness worklet processor
-        await context.audioWorklet.addModule(moduleUrl);
-
-        // Create the audio node from the stream
-        const source = new MediaStreamAudioSourceNode(context, { mediaStream });
-        // Create the loudness worklet node
-        const worklet = new AudioWorkletNode(context, "loudness-processor", {
+        // Create the loudness worklet node automatically
+        const worklet = await createLoudnessWorklet(context, {
           processorOptions: {
             interval: 0.02, // every 0.02s a message will be sent
             capacity: 600 // 1 minute of history can be stored
           }
         });
+
+        // Create the audio node from the stream
+        const source = new MediaStreamAudioSourceNode(context, { mediaStream });
 
         worklet.port.onmessage = (event) => {
           pre.textContent = JSON.stringify(event.data, null, 2);
