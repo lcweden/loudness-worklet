@@ -11,7 +11,7 @@
     }
   },
   "imports": {
-    "#constants": "./src/constants.ts",
+    "#common/*": "./src/common/*.ts",
     "#filters": "./src/filters/index.ts",
     "#processors": "./src/processors/index.ts",
     "#utils": "./src/utils/index.ts",

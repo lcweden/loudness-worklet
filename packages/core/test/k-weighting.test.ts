@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
+import { K_WEIGHTING_COEFFICIENTS } from "../src/common/constants.ts";
+import { BiquadraticFilter } from "../src/filters/biquadratic-filter.ts";
 import { computeKWeightingCoefficients } from "../src/utils/k-weighting.ts";
 
 describe("compute K-Weighting coefficients", () => {
@@ -19,21 +21,17 @@ describe("compute K-Weighting coefficients", () => {
 
     const coeffs = computeKWeightingCoefficients(48000);
 
-    assert.ok(Math.abs(coeffs.highshelf.a[0] - COEFFS.highshelf.a[0]) < E);
-    assert.ok(Math.abs(coeffs.highshelf.a[1] - COEFFS.highshelf.a[1]) < E);
-    assert.ok(Math.abs(coeffs.highshelf.b[0] - COEFFS.highshelf.b[0]) < E);
-    assert.ok(Math.abs(coeffs.highshelf.b[1] - COEFFS.highshelf.b[1]) < E);
-    assert.ok(Math.abs(coeffs.highshelf.b[2] - COEFFS.highshelf.b[2]) < E);
-
-    assert.ok(Math.abs(coeffs.highpass.a[0] - COEFFS.highpass.a[0]) < E);
-    assert.ok(Math.abs(coeffs.highpass.a[1] - COEFFS.highpass.a[1]) < E);
-    assert.ok(Math.abs(coeffs.highpass.b[0] - COEFFS.highpass.b[0]) < E);
-    assert.ok(Math.abs(coeffs.highpass.b[1] - COEFFS.highpass.b[1]) < E);
-    assert.ok(Math.abs(coeffs.highpass.b[2] - COEFFS.highpass.b[2]) < E);
+    for (let i = 0; i < 2; i++) {
+      assert.ok(Math.abs(coeffs.highshelf.a[i] - COEFFS.highshelf.a[i]) < E);
+      assert.ok(Math.abs(coeffs.highpass.a[i] - COEFFS.highpass.a[i]) < E);
+    }
+    for (let i = 0; i < 3; i++) {
+      assert.ok(Math.abs(coeffs.highshelf.b[i] - COEFFS.highshelf.b[i]) < E);
+      assert.ok(Math.abs(coeffs.highpass.b[i] - COEFFS.highpass.b[i]) < E);
+    }
   });
 
   it("should compute coefficients for 96000 Hz sample rate", () => {
-    const E = 1e-10;
     const COEFFS = {
       highshelf: {
         a: [-1.84460946989011, 0.85584332293064],
@@ -47,16 +45,69 @@ describe("compute K-Weighting coefficients", () => {
 
     const coeffs = computeKWeightingCoefficients(96000);
 
-    assert.ok(Math.abs(coeffs.highshelf.a[0] - COEFFS.highshelf.a[0]) < E);
-    assert.ok(Math.abs(coeffs.highshelf.a[1] - COEFFS.highshelf.a[1]) < E);
-    assert.ok(Math.abs(coeffs.highshelf.b[0] - COEFFS.highshelf.b[0]) < E);
-    assert.ok(Math.abs(coeffs.highshelf.b[1] - COEFFS.highshelf.b[1]) < E);
-    assert.ok(Math.abs(coeffs.highshelf.b[2] - COEFFS.highshelf.b[2]) < E);
+    for (let i = 0; i < 2; i++) {
+      assert.ok(Math.abs(coeffs.highshelf.a[i] - COEFFS.highshelf.a[i]) < E);
+      assert.ok(Math.abs(coeffs.highpass.a[i] - COEFFS.highpass.a[i]) < E);
+    }
+    for (let i = 0; i < 3; i++) {
+      assert.ok(Math.abs(coeffs.highshelf.b[i] - COEFFS.highshelf.b[i]) < E);
+      assert.ok(Math.abs(coeffs.highpass.b[i] - COEFFS.highpass.b[i]) < E);
+    }
+  });
 
-    assert.ok(Math.abs(coeffs.highpass.a[0] - COEFFS.highpass.a[0]) < E);
-    assert.ok(Math.abs(coeffs.highpass.a[1] - COEFFS.highpass.a[1]) < E);
-    assert.ok(Math.abs(coeffs.highpass.b[0] - COEFFS.highpass.b[0]) < E);
-    assert.ok(Math.abs(coeffs.highpass.b[1] - COEFFS.highpass.b[1]) < E);
-    assert.ok(Math.abs(coeffs.highpass.b[2] - COEFFS.highpass.b[2]) < E);
+  it("should compute coefficients for 44100 Hz sample rate", () => {
+    const COEFFS = {
+      highshelf: {
+        a: [-1.6636551132560204, 0.7125954280732254],
+        b: [1.5308412300503478, -2.6509799951547297, 1.169079079921587],
+      },
+      highpass: {
+        a: [-1.989169673629796, 0.9891990357870393],
+        b: [1, -2, 1],
+      },
+    };
+
+    const coeffs = computeKWeightingCoefficients(44100);
+
+    for (let i = 0; i < 2; i++) {
+      assert.ok(Math.abs(coeffs.highshelf.a[i] - COEFFS.highshelf.a[i]) < E);
+      assert.ok(Math.abs(coeffs.highpass.a[i] - COEFFS.highpass.a[i]) < E);
+    }
+    for (let i = 0; i < 3; i++) {
+      assert.ok(Math.abs(coeffs.highshelf.b[i] - COEFFS.highshelf.b[i]) < E);
+      assert.ok(Math.abs(coeffs.highpass.b[i] - COEFFS.highpass.b[i]) < E);
+    }
+  });
+
+  it("should produce identical filter output to hardcoded constants at 48000 Hz", () => {
+    const computedCoeffs = computeKWeightingCoefficients(48000);
+    const { highshelf, highpass } = K_WEIGHTING_COEFFICIENTS;
+
+    const oldFilters = [
+      new BiquadraticFilter(highshelf.a, highshelf.b),
+      new BiquadraticFilter(highpass.a, highpass.b),
+    ];
+    const newFilters = [
+      new BiquadraticFilter(
+        computedCoeffs.highshelf.a,
+        computedCoeffs.highshelf.b,
+      ),
+      new BiquadraticFilter(
+        computedCoeffs.highpass.a,
+        computedCoeffs.highpass.b,
+      ),
+    ];
+
+    for (let n = 0; n < 4800; n++) {
+      const input = Math.sin((2 * Math.PI * 997 * n) / 48000);
+
+      const oldOut = oldFilters.reduce((s, f) => f.process(s), input);
+      const newOut = newFilters.reduce((s, f) => f.process(s), input);
+
+      assert.ok(
+        Math.abs(oldOut - newOut) < 1e-12,
+        `Sample ${n}: old=${oldOut}, new=${newOut}, diff=${Math.abs(oldOut - newOut)}`,
+      );
+    }
   });
 });
