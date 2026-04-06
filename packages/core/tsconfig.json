@@ -17,7 +17,8 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "noUncheckedSideEffectImports": true
+    "noUncheckedSideEffectImports": true,
+    "types": ["node", "audioworklet"]
   },
-  "include": ["src", "playground", "vite-env.d.ts"]
+  "include": ["src", "test", "playground", "vite-env.d.ts"]
 }
