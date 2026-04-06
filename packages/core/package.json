@@ -12,9 +12,9 @@
   },
   "imports": {
     "#common/*": "./src/common/*.ts",
-    "#filters": "./src/filters/index.ts",
-    "#processors": "./src/processors/index.ts",
-    "#utils": "./src/utils/index.ts",
+    "#filters/*": "./src/filters/*.ts",
+    "#processors/*": "./src/processors/*.ts",
+    "#utils/*": "./src/utils/*.ts",
     "#types": "./src/types/index.ts"
   },
   "files": [

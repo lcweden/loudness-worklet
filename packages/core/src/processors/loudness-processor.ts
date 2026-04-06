@@ -13,14 +13,12 @@ import {
   SHORT_TERM_WINDOW_SEC,
   TRUE_PEAK_COEFFICIENTS,
 } from "#common/constants";
-import { BiquadraticFilter, FiniteImpulseResponseFilter } from "#filters";
+import { BiquadraticFilter } from "#filters/biquadratic-filter";
+import { FiniteImpulseResponseFilter } from "#filters/finite-impulse-response-filter";
 import type { LoudnessMeasurements, Repeat } from "#types";
-import {
-  CircularBuffer,
-  computeKWeightingCoefficients,
-  energyToLoudness,
-  loudnessToEnergy,
-} from "#utils";
+import { CircularBuffer } from "#utils/circular-buffer";
+import { computeKWeightingCoefficients } from "#utils/k-weighting";
+import { energyToLoudness, loudnessToEnergy } from "#utils/loudness-math";
 
 /**
  * Loudness Algorithm Implementation (ITU-R BS.1770-5)
@@ -368,7 +366,7 @@ class LoudnessProcessor extends AudioWorkletProcessor {
               return (
                 sortedLoudnesses[lowerIndex] +
                 (sortedLoudnesses[upperIndex] - sortedLoudnesses[lowerIndex]) *
-                (percentile * (sortedLoudnesses.length - 1) - lowerIndex)
+                  (percentile * (sortedLoudnesses.length - 1) - lowerIndex)
               );
             });
 

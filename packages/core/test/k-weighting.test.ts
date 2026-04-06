@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { K_WEIGHTING_COEFFICIENTS } from "../src/common/constants.ts";
-import { BiquadraticFilter } from "../src/filters/biquadratic-filter.ts";
-import { computeKWeightingCoefficients } from "../src/utils/k-weighting.ts";
+import { K_WEIGHTING_COEFFICIENTS } from "#common/constants";
+import { BiquadraticFilter } from "#filters/biquadratic-filter";
+import { computeKWeightingCoefficients } from "#utils/k-weighting";
 
 describe("compute K-Weighting coefficients", () => {
   const E = 1e-10;

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { beforeEach, describe, it } from "node:test";
-import { FiniteImpulseResponseFilter } from "../src/filters/finite-impulse-response-filter.ts";
+import { FiniteImpulseResponseFilter } from "#filters/finite-impulse-response-filter";
 
 describe("FiniteImpulseResponseFilter", () => {
   let filter: FiniteImpulseResponseFilter;

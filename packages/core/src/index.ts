@@ -1,4 +1,4 @@
-import { LoudnessProcessor } from "#processors";
+import { LoudnessProcessor } from "#processors/loudness-processor";
 import type {
   LoudnessMeasurements,
   LoudnessProcessorOptions,
