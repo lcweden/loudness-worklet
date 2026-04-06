@@ -12,12 +12,14 @@ on:
 # OIDC authentication
 permissions:
   id-token: write # Required for OIDC
-  contents: read
+  contents: write
 
 jobs:
   # Single publish job since we're just publishing
   publish:
     runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
       - name: Checkout
         uses: actions/checkout@v4
