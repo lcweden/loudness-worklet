@@ -1,8 +1,8 @@
-import { LoudnessProcessor } from "#processors";
+import { LoudnessProcessor } from "#processors/loudness-processor";
 import type {
   LoudnessMeasurements,
-  LoudnessSnapshot,
   LoudnessProcessorOptions,
+  LoudnessSnapshot,
 } from "#types";
 
 registerProcessor("loudness-processor", LoudnessProcessor);

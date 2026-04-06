@@ -31,29 +31,33 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
           node-version: lts/*
           cache: "npm"
+
       - name: Clean npm cache and install dependencies
         run: |
           rm -rf node_modules package-lock.json
           npm install
+
       - name: Build
         run: |
           npm run build -w @loudness-worklet/core
           npm run build -w @loudness-worklet/lib
           npm run build -w @loudness-worklet/web
-      - name: Copy worklet to web dist
-        run: cp packages/core/dist/loudness.worklet.js packages/web/dist/loudness.worklet.js
+
       - name: Setup Pages
         uses: actions/configure-pages@v5
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           # Upload web dist folder
           path: "./packages/web/dist"
+
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
