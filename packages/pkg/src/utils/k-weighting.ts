@@ -1,6 +1,8 @@
 /**
  * Computes ITU-R BS.1770-5 K-weighting filter coefficients dynamically based on sample rate.
  * This matches the libebur128 implementation exactly.
+ * @param sampleRate
+ * @returns
  */
 function computeKWeightingCoefficients(sampleRate: number): {
   highshelf: { a: [number, number]; b: [number, number, number] };

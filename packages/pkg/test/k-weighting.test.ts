@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import { K_WEIGHTING_COEFFICIENTS } from "#common/constants";
-import { BiquadraticFilter } from "#filters/biquadratic-filter";
+import { BiquadraticFilter } from "#modules/biquadratic-filter";
 import { computeKWeightingCoefficients } from "#utils/k-weighting";
 
 describe("compute K-Weighting coefficients", () => {

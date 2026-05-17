@@ -13,10 +13,10 @@ import {
   SHORT_TERM_WINDOW_SEC,
   TRUE_PEAK_COEFFICIENTS,
 } from "#common/constants";
-import { BiquadraticFilter } from "#filters/biquadratic-filter";
-import { FiniteImpulseResponseFilter } from "#filters/finite-impulse-response-filter";
-import type { LoudnessMeasurements, Repeat } from "#types";
-import { CircularBuffer } from "#utils/circular-buffer";
+import type { LoudnessMeasurements, Repeat } from "#common/types";
+import { BiquadraticFilter } from "#modules/biquadratic-filter";
+import { CircularBuffer } from "#modules/circular-buffer";
+import { FiniteImpulseResponseFilter } from "#modules/finite-impulse-response-filter";
 import { computeKWeightingCoefficients } from "#utils/k-weighting";
 import { energyToLoudness, loudnessToEnergy } from "#utils/loudness-math";
 

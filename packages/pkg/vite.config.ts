@@ -1,10 +1,9 @@
 import { defineConfig } from "vite";
-import dts from "vite-plugin-dts";
 import solid from "vite-plugin-solid";
 
 export default defineConfig({
   cacheDir: "../../node_modules/.vite",
-  plugins: [solid(), dts({ rollupTypes: true })],
+  plugins: [solid()],
   server: {
     host: true,
   },

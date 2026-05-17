@@ -1,6 +1,6 @@
 import { createEffect, createSignal } from "solid-js";
 import { render } from "solid-js/web";
-import type { LoudnessSnapshot } from "#types";
+import type { LoudnessSnapshot } from "#common/types";
 
 function Playground() {
   const [getAudioBuffer, setAudioBuffer] = createSignal<AudioBuffer>();

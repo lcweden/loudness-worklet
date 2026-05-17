@@ -17,7 +17,7 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true,
     "paths": {
-      "@loudness-worklet/core": ["../core/dist/loudness.worklet.d.ts"]
+      "@loudness-worklet/pkg": ["../pkg/dist/index.d.ts"]
     }
   },
   "include": ["src", "vite-env.d.ts"]
