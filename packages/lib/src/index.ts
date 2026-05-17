@@ -45,10 +45,10 @@ async function addModule(context: BaseAudioContext): Promise<void> {
   }
 }
 
-export { createLoudnessWorklet, LoudnessWorkletNode };
-export type { LoudnessWorkletProcessorOptions };
 export type {
   LoudnessMeasurements,
-  LoudnessSnapshot,
   LoudnessProcessorOptions,
+  LoudnessSnapshot,
+  LoudnessWorkletProcessorOptions,
 };
+export { createLoudnessWorklet, LoudnessWorkletNode };

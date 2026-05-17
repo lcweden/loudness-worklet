@@ -9,6 +9,6 @@ registerProcessor("loudness-processor", LoudnessProcessor);
 
 export type {
   LoudnessMeasurements,
-  LoudnessSnapshot,
   LoudnessProcessorOptions,
+  LoudnessSnapshot,
 };

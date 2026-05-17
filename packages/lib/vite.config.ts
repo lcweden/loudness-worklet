@@ -1,9 +1,7 @@
 import { defineConfig } from "vite";
-import dts from "vite-plugin-dts";
 
 export default defineConfig({
   cacheDir: "../../node_modules/.vite",
-  plugins: [dts({ rollupTypes: true })],
   worker: { format: "es" },
   build: {
     target: "esnext",

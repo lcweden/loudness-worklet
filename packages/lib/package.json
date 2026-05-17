@@ -14,6 +14,6 @@
     "dist"
   ],
   "scripts": {
-    "build": "tsc -b && vite build"
+    "build": "vite build && tsc -b tsconfig.build.json"
   }
 }
