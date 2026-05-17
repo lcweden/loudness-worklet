@@ -1,5 +1,5 @@
 {
-  "name": "@loudness-worklet/core",
+  "name": "@loudness-worklet/pkg",
   "private": true,
   "type": "module",
   "main": "./dist/loudness.worklet.js",
@@ -12,10 +12,8 @@
   },
   "imports": {
     "#common/*": "./src/common/*.ts",
-    "#filters/*": "./src/filters/*.ts",
-    "#processors/*": "./src/processors/*.ts",
-    "#utils/*": "./src/utils/*.ts",
-    "#types": "./src/types/index.ts"
+    "#modules/*": "./src/modules/*.ts",
+    "#utils/*": "./src/utils/*.ts"
   },
   "files": [
     "dist"

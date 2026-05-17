@@ -2,8 +2,8 @@ import type {
   LoudnessMeasurements,
   LoudnessProcessorOptions,
   LoudnessSnapshot,
-} from "@loudness-worklet/core";
-import source from "@loudness-worklet/core?raw";
+} from "@loudness-worklet/pkg";
+import source from "@loudness-worklet/pkg?raw";
 
 interface LoudnessWorkletProcessorOptions {
   numberOfInputs?: AudioWorkletNodeOptions["numberOfInputs"];

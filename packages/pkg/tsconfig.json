@@ -20,5 +20,5 @@
     "noUncheckedSideEffectImports": true,
     "types": ["node", "audioworklet"]
   },
-  "include": ["src", "test", "playground", "vite-env.d.ts"]
+  "include": ["src", "test", "ui", "vite-env.d.ts"]
 }
