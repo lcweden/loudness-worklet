@@ -1,0 +1,40 @@
+{
+  "name": "@loudness-worklet/pkg",
+  "private": true,
+  "type": "module",
+  "main": "./dist/loudness.worklet.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/loudness.worklet.js"
+    }
+  },
+  "imports": {
+    "#common/*": {
+      "types": "./dist/common/*.d.ts",
+      "default": "./src/common/*.ts"
+    },
+    "#modules/*": {
+      "types": "./dist/modules/*.d.ts",
+      "default": "./src/modules/*.ts"
+    },
+    "#utils/*": {
+      "types": "./dist/utils/*.d.ts",
+      "default": "./src/utils/*.ts"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "test": "node --test",
+    "build": "vite build && tsc -b tsconfig.build.json"
+  },
+  "devDependencies": {
+    "@types/audioworklet": "^0.0.100",
+    "solid-js": "^1.9.11",
+    "vite-plugin-solid": "^2.10.2"
+  }
+}

@@ -47,7 +47,7 @@ jobs:
 
       - name: Build
         run: |
-          npm run build -w @loudness-worklet/core
+          npm run build -w @loudness-worklet/pkg
           npm run build -w @loudness-worklet/lib
           npm run build -w @loudness-worklet/web
 

@@ -41,14 +41,14 @@ jobs:
 
       - name: Build
         run: |
-          npm run build -w @loudness-worklet/core
+          npm run build -w @loudness-worklet/pkg
           npm run build -w @loudness-worklet/lib
 
       - name: Upload artifact to GitHub Release
         if: github.event_name == 'release'
         uses: softprops/action-gh-release@v2
         with:
-          files: packages/core/dist/loudness.worklet.js
+          files: packages/pkg/dist/loudness.worklet.js
 
       - name: Publish to NPM
         run: npm publish --access public

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { CircularBuffer } from "#utils/circular-buffer";
+import { CircularBuffer } from "#modules/circular-buffer";
 
 describe("CircularBuffer", () => {
   it("initial state", () => {
