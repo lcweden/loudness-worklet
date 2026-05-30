@@ -15,10 +15,10 @@ class LoudnessWorkletNode extends AudioWorkletNode {
   }
 }
 
-async function createLoudnessWorklet(
+function createLoudnessWorklet(
   context: BaseAudioContext,
   options?: LoudnessWorkletProcessorOptions,
-): Promise<AudioWorkletNode> {
+): AudioWorkletNode {
   const { processorOptions } = options || {};
   return new LoudnessWorkletNode(context, { processorOptions });
 }
