@@ -1,18 +1,26 @@
-import { defineConfig } from "vite";
+import { defineConfig } from "vite-plus";
+import solid from "vite-plugin-solid";
 
 export default defineConfig({
   cacheDir: "../../node_modules/.vite",
-  worker: { format: "es" },
-  build: {
-    target: "esnext",
-    lib: {
-      entry: new URL("src/index.ts", import.meta.url).pathname,
-      name: "loudness-worklet",
-      fileName: () => "index.js",
-      formats: ["es"],
+  server: { host: true },
+  pack: [
+    {
+      dts: false,
+      entry: { "loudness.worklet": "src/scripts/loudness.worklet.ts" },
+      exports: true,
+      format: ["esm"],
+      name: "lib",
+      outExtensions: () => ({ js: ".js" }),
     },
-    outDir: "dist",
-    emptyOutDir: true,
-    minify: true,
-  },
+    {
+      dts: { entry: "src/index.ts" },
+      entry: { index: "src/index.ts" },
+      exports: true,
+      format: ["esm"],
+      name: "lib",
+      outExtensions: () => ({ js: ".js" }),
+    },
+  ],
+  plugins: [solid()],
 });

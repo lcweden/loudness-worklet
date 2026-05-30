@@ -1,29 +1,17 @@
-import type {
-  LoudnessMeasurements,
-  LoudnessProcessorOptions,
-  LoudnessSnapshot,
-} from "@loudness-worklet/pkg";
-import source from "@loudness-worklet/pkg?raw";
+import { PROCESSOR_NAME } from "#common/constants";
+import type { LoudnessProcessorOptions } from "#common/types";
+import type { LoudnessMeasurements, LoudnessSnapshot } from "#common/types";
 
-interface LoudnessWorkletProcessorOptions {
+type LoudnessWorkletProcessorOptions = {
   numberOfInputs?: AudioWorkletNodeOptions["numberOfInputs"];
   numberOfOutputs?: AudioWorkletNodeOptions["numberOfOutputs"];
   outputChannelCount?: AudioWorkletNodeOptions["outputChannelCount"];
   processorOptions?: LoudnessProcessorOptions;
-}
-
-const name = "loudness-processor";
+};
 
 class LoudnessWorkletNode extends AudioWorkletNode {
-  constructor(
-    context: BaseAudioContext,
-    options?: LoudnessWorkletProcessorOptions,
-  ) {
-    super(context, name, options);
-  }
-
-  static async loadModule(context: BaseAudioContext): Promise<void> {
-    return addModule(context);
+  constructor(context: BaseAudioContext, options?: LoudnessWorkletProcessorOptions) {
+    super(context, PROCESSOR_NAME, options);
   }
 }
 
@@ -31,24 +19,11 @@ async function createLoudnessWorklet(
   context: BaseAudioContext,
   options?: LoudnessWorkletProcessorOptions,
 ): Promise<AudioWorkletNode> {
-  await addModule(context);
-  return new AudioWorkletNode(context, name, options);
+  const { processorOptions } = options || {};
+  return new LoudnessWorkletNode(context, { processorOptions });
 }
 
-async function addModule(context: BaseAudioContext): Promise<void> {
-  const blob = new Blob([source], { type: "application/javascript" });
-  const url = URL.createObjectURL(blob);
-  try {
-    await context.audioWorklet.addModule(url);
-  } finally {
-    URL.revokeObjectURL(url);
-  }
-}
-
-export type {
-  LoudnessMeasurements,
-  LoudnessProcessorOptions,
-  LoudnessSnapshot,
-  LoudnessWorkletProcessorOptions,
-};
-export { createLoudnessWorklet, LoudnessWorkletNode };
+export { createLoudnessWorklet };
+export default LoudnessWorkletNode;
+export type { LoudnessWorkletProcessorOptions };
+export type { LoudnessMeasurements, LoudnessProcessorOptions, LoudnessSnapshot };
