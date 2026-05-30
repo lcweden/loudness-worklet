@@ -47,7 +47,10 @@ const worklet = new LoudnessWorkletNode(audioContext);
 Import directly in your browser using **jsDelivr** or **unpkg**:
 
 ```javascript
-import { createLoudnessWorklet, LoudnessWorkletNode } from "https://cdn.jsdelivr.net/npm/loudness-worklet/+esm";
+import {
+  createLoudnessWorklet,
+  LoudnessWorkletNode,
+} from "https://cdn.jsdelivr.net/npm/loudness-worklet/+esm";
 ```
 
 ### Download
@@ -89,8 +92,8 @@ This example shows the easiest way to get started with the `loudness-worklet` by
         const worklet = await createLoudnessWorklet(context, {
           processorOptions: {
             interval: 0.02, // every 0.02s a message will be sent
-            capacity: 600 // 1 minute of history can be stored
-          }
+            capacity: 600, // 1 minute of history can be stored
+          },
         });
 
         // Create the audio node from the stream
@@ -149,7 +152,7 @@ const mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
 const context = new AudioContext({ sampleRate: 48000 });
 const source = context.createMediaStreamSource(mediaStream);
 const worklet = await createLoudnessWorklet(context, {
-  processorOptions: { interval: 1, capacity: 600 }
+  processorOptions: { interval: 1, capacity: 600 },
 });
 
 worklet.port.onmessage = (event) => console.log("Loudness Data:", event.data);
@@ -213,10 +216,10 @@ The `AudioWorkletNode` constructor accepts the following options:
 
 #### Params
 
-| Option                    | Type       | Required | Default | Description                                                                                          |
-| ------------------------- | ---------- | -------- | ------- | ---------------------------------------------------------------------------------------------------- |
-| processorOptions.interval | `number`   | `No`     | `0.02`  | Message interval in seconds.                                                                         |
-| processorOptions.capacity | `number`   | `No`     | `0`     | Maximum seconds of history to keep. If set to `0`, the processor will not limit the history size.   |
+| Option                    | Type     | Required | Default | Description                                                                                       |
+| ------------------------- | -------- | -------- | ------- | ------------------------------------------------------------------------------------------------- |
+| processorOptions.interval | `number` | `No`     | `0.02`  | Message interval in seconds.                                                                      |
+| processorOptions.capacity | `number` | `No`     | `0`     | Maximum seconds of history to keep. If set to `0`, the processor will not limit the history size. |
 
 #### Example
 
@@ -227,8 +230,8 @@ const { numberOfChannels, length, sampleRate } = audioBuffer;
 const worklet = new AudioWorkletNode(context, "loudness-processor", {
   processorOptions: {
     capacity: length / sampleRate,
-    interval: 0.02
-  }
+    interval: 0.02,
+  },
 });
 ```
 
