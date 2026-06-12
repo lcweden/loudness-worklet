@@ -1,7 +1,7 @@
 /**
  * A polyphase finite impulse response filter implementation.
  *
- * @class
+ * @class PolyphaseFiniteImpulseResponseFilter
  */
 class PolyphaseFiniteImpulseResponseFilter {
   #coefficients: Float32Array[];
@@ -13,8 +13,8 @@ class PolyphaseFiniteImpulseResponseFilter {
   /**
    * Creates a new PolyphaseFiniteImpulseResponseFilter with given coefficients.
    *
-   * @param {number} numberOfTaps - The number of taps in each phase
-   * @param {number[][]} coefficients - An array of coefficient arrays, one for each phase
+   * @param {number} numberOfTaps The number of taps in each phase
+   * @param {number[][]} coefficients An array of coefficient arrays, one for each phase
    */
   constructor(numberOfTaps: number, coefficients: number[][]) {
     this.#coefficients = coefficients.map((phase) => new Float32Array(phase));
@@ -27,8 +27,8 @@ class PolyphaseFiniteImpulseResponseFilter {
   /**
    * Processes the input signal and produces the output signal.
    *
-   * @param {Float32Array} input - The input signal
-   * @param {Float32Array} output - The output signal
+   * @param {Float32Array} input The input signal
+   * @param {Float32Array} output The output signal
    */
   process(input: Float32Array, output: Float32Array): void {
     const history = this.#history;

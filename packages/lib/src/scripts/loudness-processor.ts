@@ -20,8 +20,8 @@ import {
 import type { LoudnessWorkletOptions } from "#common/types";
 import BiquadraticFilter from "#modules/biquadratic-filter";
 import CircularBuffer from "#modules/circular-buffer";
-import PolyphaseFiniteImpulseResponseFilter from "#modules/polyphase-finite-impulse-response-filter";
 import Histogram from "#modules/histogram";
+import PolyphaseFiniteImpulseResponseFilter from "#modules/polyphase-finite-impulse-response-filter";
 import { computeKWeightingCoefficients } from "#utils/k-weighting";
 import { energyToLoudness, loudnessToEnergy } from "#utils/loudness";
 
@@ -261,11 +261,7 @@ class LoudnessProcessor extends AudioWorkletProcessor {
           const absoluteMeanEnergy = absoluteGatedEnergySum / absoluteGatedCount;
           const absoluteGatedLoudness = energyToLoudness(absoluteMeanEnergy);
           const threshold = absoluteGatedLoudness + LRA_RELATIVE_THRESHOLD;
-          // const p95 = shortTermHistogram.percentile(LOUDNESS_RANGE_UPPER_PERCENTILE, threshold);
-          // const p10 = shortTermHistogram.percentile(LOUDNESS_RANGE_LOWER_PERCENTILE, threshold);
-
           const { min, step, size } = shortTermHistogram;
-
           const start = Math.max(0, Math.round((threshold - min) / step));
           let count = 0;
 
