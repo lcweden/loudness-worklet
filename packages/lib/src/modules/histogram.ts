@@ -2,7 +2,6 @@
  * A histogram data structure for collecting and binning numerical values.
  *
  * @class
- * @internal
  */
 class Histogram {
   #min: number;

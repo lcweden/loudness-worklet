@@ -1,5 +1,5 @@
 import { expect, test, describe } from "vite-plus/test";
-import Histogram from "../src/modules/histogram";
+import Histogram from "#modules/histogram";
 
 describe("Histogram", () => {
   test("constructor sets correct properties", () => {

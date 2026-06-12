@@ -1,3 +1,8 @@
+/**
+ * A Biquadratic IIR Filter implementation.
+ *
+ * @class
+ */
 class BiquadraticFilter {
   #a1: number;
   #a2: number;
@@ -9,6 +14,12 @@ class BiquadraticFilter {
   #y1: number;
   #y2: number;
 
+  /**
+   * Creates a new BiquadraticFilter with given coefficients.
+   *
+   * @param {number[]} a - Feedback coefficients [a1, a2]
+   * @param {number[]} b - Feedforward coefficients [b0, b1, b2]
+   */
   constructor(a: number[], b: number[]) {
     this.#a1 = a[0];
     this.#a2 = a[1];
@@ -21,7 +32,13 @@ class BiquadraticFilter {
     this.#y2 = 0;
   }
 
-  process(buffer: Float32Array): void {
+  /**
+   * Processes a block of audio samples synchronously. This method modifies the provided buffer
+   * in-place to optimize memory allocation and performance.
+   *
+   * @param {Float32Array} input - The input signal
+   */
+  process(input: Float32Array): void {
     let x1 = this.#x1;
     let x2 = this.#x2;
     let y1 = this.#y1;
@@ -33,16 +50,18 @@ class BiquadraticFilter {
     const a1 = this.#a1;
     const a2 = this.#a2;
 
-    for (let i = 0; i < buffer.length; i++) {
-      const input = buffer[i];
-      const output = b0 * input + b1 * x1 + b2 * x2 - a1 * y1 - a2 * y2;
+    for (let i = 0; i < input.length; i++) {
+      const sample = input[i];
+      const output = b0 * sample + b1 * x1 + b2 * x2 - a1 * y1 - a2 * y2;
 
+      // Shift the delay line for the next iteration
       x2 = x1;
-      x1 = input;
+      x1 = sample;
       y2 = y1;
       y1 = output;
 
-      buffer[i] = output;
+      // Writing the output back to the input buffer for in-place processing
+      input[i] = output;
     }
 
     this.#x1 = x1;

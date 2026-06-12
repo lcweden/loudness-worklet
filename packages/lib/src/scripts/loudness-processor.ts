@@ -20,7 +20,7 @@ import {
 import type { LoudnessWorkletOptions } from "#common/types";
 import BiquadraticFilter from "#modules/biquadratic-filter";
 import CircularBuffer from "#modules/circular-buffer";
-import FiniteImpulseResponseFilter from "#modules/finite-impulse-response-filter";
+import PolyphaseFiniteImpulseResponseFilter from "#modules/polyphase-finite-impulse-response-filter";
 import Histogram from "#modules/histogram";
 import { computeKWeightingCoefficients } from "#utils/k-weighting";
 import { energyToLoudness, loudnessToEnergy } from "#utils/loudness";
@@ -31,7 +31,7 @@ class LoudnessProcessor extends AudioWorkletProcessor {
   samples: Float32Array;
   upsamples: Float32Array;
   kWeightingFilters: BiquadraticFilter[][][];
-  truePeakFilters: FiniteImpulseResponseFilter[][];
+  truePeakFilters: PolyphaseFiniteImpulseResponseFilter[][];
   momentaryBuffers: CircularBuffer[];
   shortTermBuffers: CircularBuffer[];
   momentaryHistograms: Histogram[];
@@ -107,7 +107,7 @@ class LoudnessProcessor extends AudioWorkletProcessor {
 
       if (this.truePeakFilters[i].length < numberOfChannels) {
         for (let c = this.truePeakFilters[i].length; c < numberOfChannels; c++) {
-          const filter = new FiniteImpulseResponseFilter(12, [
+          const filter = new PolyphaseFiniteImpulseResponseFilter(12, [
             TRUE_PEAK_COEFFICIENTS.lowpass.phase0,
             TRUE_PEAK_COEFFICIENTS.lowpass.phase1,
             TRUE_PEAK_COEFFICIENTS.lowpass.phase2,
