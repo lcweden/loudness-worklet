@@ -1,9 +1,10 @@
-import { defineConfig } from "vite-plus";
 import solid from "vite-plugin-solid";
+import { defineConfig, UserConfig } from "vite-plus";
 
 export default defineConfig({
   cacheDir: "../../node_modules/.vite",
   server: { host: true },
+  test: { environment: "node" },
   pack: [
     {
       dts: false,
@@ -23,4 +24,4 @@ export default defineConfig({
     },
   ],
   plugins: [solid()],
-});
+}) as UserConfig;

@@ -1,8 +1,8 @@
 import { createEffect, createSignal } from "solid-js";
 import { render } from "solid-js/web";
-import type { LoudnessSnapshot } from "#common/types";
-import LoudnessWorkletNode from "@loudness-worklet/lib";
-import module from "@loudness-worklet/lib/loudness.worklet?url";
+import module from "#scripts/loudness-processor?url";
+import LoudnessNode from "#src/index";
+import type { LoudnessSnapshot } from "#src/index";
 
 function Playground() {
   const [getAudioBuffer, setAudioBuffer] = createSignal<AudioBuffer>();
@@ -27,8 +27,8 @@ function Playground() {
     new AudioContext().decodeAudioData(arrayBuffer).then(setAudioBuffer).catch(setError);
   }
 
-  function handleAudioWorkletMessage(event: MessageEvent<LoudnessSnapshot>) {
-    setSnapshot(event.data);
+  function handleAudioWorkletMessage(event: MessageEvent) {
+    setSnapshot(LoudnessNode.from(event.data[0]));
   }
 
   createEffect(async () => {
@@ -39,16 +39,15 @@ function Playground() {
     try {
       const { length, sampleRate, numberOfChannels } = audioBuffer;
       const context = new OfflineAudioContext(numberOfChannels, length, sampleRate);
-      const options = { processorOptions: { capacity: length / sampleRate } };
 
       await context.audioWorklet.addModule(module);
 
       const source = new AudioBufferSourceNode(context, { buffer: audioBuffer });
-      const worklet = new LoudnessWorkletNode(context, options);
+      const loudness = new LoudnessNode(context, { numberOfInputs: 1 });
 
-      worklet.port.onmessage = handleAudioWorkletMessage;
+      loudness.port.onmessage = handleAudioWorkletMessage;
 
-      source.connect(worklet).connect(context.destination);
+      source.connect(loudness).connect(context.destination);
       source.start();
 
       console.time("1");
@@ -71,15 +70,15 @@ function Playground() {
         <h2>Loudness Measurement</h2>
         <dl>
           <dt>Momentary Loudness (LUFS)</dt>
-          <dd>{getSnapshot()?.currentMeasurements[0].momentaryLoudness.toFixed(1) ?? "-"}</dd>
+          <dd>{getSnapshot()?.momentaryLoudness.toFixed(1) ?? "-"}</dd>
           <dt>Short-Term Loudness (LUFS)</dt>
-          <dd>{getSnapshot()?.currentMeasurements[0].shortTermLoudness.toFixed(1) ?? "-"}</dd>
+          <dd>{getSnapshot()?.shortTermLoudness.toFixed(1) ?? "-"}</dd>
           <dt>Integrated Loudness (LUFS)</dt>
-          <dd>{getSnapshot()?.currentMeasurements[0].integratedLoudness.toFixed(1) ?? "-"}</dd>
+          <dd>{getSnapshot()?.integratedLoudness.toFixed(1) ?? "-"}</dd>
           <dt>Loudness Range (LU)</dt>
-          <dd>{getSnapshot()?.currentMeasurements[0].loudnessRange.toFixed(1) ?? "-"}</dd>
+          <dd>{getSnapshot()?.loudnessRange.toFixed(1) ?? "-"}</dd>
           <dt>Maximum True Peak Level (dBTP)</dt>
-          <dd>{getSnapshot()?.currentMeasurements[0].maximumTruePeakLevel.toFixed(1) ?? "-"}</dd>
+          <dd>{getSnapshot()?.truePeak.toFixed(1) ?? "-"}</dd>
         </dl>
         <details open>
           <summary>Raw Data</summary>

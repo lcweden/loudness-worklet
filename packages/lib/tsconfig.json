@@ -1,19 +1,11 @@
 {
   "compilerOptions": {
     "target": "esnext",
-    "lib": [
-      "ESNext",
-      "DOM",
-      "DOM.Iterable",
-      "WebWorker"
-    ],
+    "lib": ["ESNext", "DOM", "DOM.Iterable", "WebWorker"],
     "moduleDetection": "force",
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
-    "types": [
-      "node",
-      "audioworklet"
-    ],
+    "types": ["node", "audioworklet"],
     "strict": true,
     "noUnusedLocals": true,
     "declaration": true,
@@ -26,24 +18,11 @@
     "jsx": "preserve",
     "jsxImportSource": "solid-js",
     "paths": {
-      "#common/*": [
-        "./src/common/*"
-      ],
-      "#modules/*": [
-        "./src/modules/*"
-      ],
-      "#scripts/*": [
-        "./src/scripts/*"
-      ],
-      "#utils/*": [
-        "./src/utils/*"
-      ]
+      "#common/*": ["./src/common/*"],
+      "#modules/*": ["./src/modules/*"],
+      "#scripts/*": ["./src/scripts/*"],
+      "#utils/*": ["./src/utils/*"]
     }
   },
-  "include": [
-    "src",
-    "test",
-    "web",
-    "vite-env.d.ts"
-  ]
+  "include": ["src", "test", "web", "vite-env.d.ts"]
 }

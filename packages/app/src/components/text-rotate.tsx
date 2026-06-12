@@ -6,7 +6,7 @@ type TextRotateProps = {
 
 function TextRotate(props: TextRotateProps) {
   return (
-    <span class="select-none text-rotate text-xs">
+    <span class="text-rotate text-xs select-none">
       <span>
         <For each={props.spans}>{(span) => <span>{span}</span>}</For>
       </span>

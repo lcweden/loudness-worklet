@@ -1,26 +1,22 @@
-type Repeat<T, C extends number, Result extends unknown[] = []> = Result["length"] extends C
-  ? Result
-  : Repeat<T, C, [...Result, T]>;
+export interface LoudnessWorkletOptions extends AudioWorkletNodeOptions {
+  processorOptions: {
+    shared: boolean;
+    buffers?: SharedArrayBuffer[];
+  };
+}
 
-type LoudnessProcessorOptions = {
-  capacity?: number;
-  interval?: number;
-};
+export interface LoudnessOptions extends AudioNodeOptions {
+  numberOfInputs?: number;
+}
 
-type LoudnessMeasurements = {
+export type LoudnessSnapshot = {
+  currentFrame: number;
+  currentTime: number;
   momentaryLoudness: number;
   shortTermLoudness: number;
   integratedLoudness: number;
   maximumMomentaryLoudness: number;
   maximumShortTermLoudness: number;
-  maximumTruePeakLevel: number;
   loudnessRange: number;
+  truePeak: number;
 };
-
-type LoudnessSnapshot = {
-  currentFrame: number;
-  currentTime: number;
-  currentMeasurements: LoudnessMeasurements[];
-};
-
-export type { LoudnessProcessorOptions, LoudnessSnapshot, LoudnessMeasurements, Repeat };

@@ -32,20 +32,20 @@ function Landing(props: Props) {
             type="button"
           >
             <Status color="info" />
-            <p class="font-light font-mono text-base-content">
+            <p class="text-base-content font-mono font-light">
               {npmInstallCommand}
               <span class="badge badge-xs badge-soft badge-primary ml-2">v{__VERSION__}</span>
             </p>
           </button>
           <div>
-            <h1 class="bg-linear-to-r from-primary to-accent bg-clip-text font-bold text-5xl text-transparent md:text-6xl">
+            <h1 class="from-primary to-accent bg-linear-to-r bg-clip-text text-5xl font-bold text-transparent md:text-6xl">
               Audio Loudness Measurement
             </h1>
-            <h2 class="font-medium text-base-content/80 text-xl md:text-2xl">
+            <h2 class="text-base-content/80 text-xl font-medium md:text-2xl">
               Loudness Meter for the Web Audio API
             </h2>
           </div>
-          <p class="mx-auto max-w-xl text-base-content/70 text-sm leading-relaxed md:text-md">
+          <p class="text-base-content/70 md:text-md mx-auto max-w-xl text-sm leading-relaxed">
             A lightweight, browser-based loudness meter providing real-time LUFS, LRA, and true-peak
             analysis. Validated with official ITU-R BS.2217 and EBU Tech 3341/3342 test suites.
           </p>

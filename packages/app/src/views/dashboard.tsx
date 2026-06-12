@@ -88,12 +88,12 @@ function Dashboard(props: Props) {
   });
 
   return (
-    <div class="flex h-dvh min-h-0 w-dvw flex-col overflow-hidden bg-base-100 tabular-nums">
+    <div class="bg-base-100 flex h-dvh min-h-0 w-dvw flex-col overflow-hidden tabular-nums">
       <div class="drawer lg:drawer-open lg:drawer-end flex min-h-0 flex-1 overflow-hidden">
         <input class="drawer-toggle" id={id} type="checkbox" />
 
         <div class="drawer-content flex min-h-0 flex-1 flex-col overflow-y-auto">
-          <nav class="navbar min-h-fit border-base-300 border-b bg-base-100 px-4 py-2">
+          <nav class="navbar border-base-300 bg-base-100 min-h-fit border-b px-4 py-2">
             <div class="navbar-start">
               <a class="btn btn-sm btn-ghost" href={__HOME_PAGE__}>
                 Loudness Worklet
@@ -111,7 +111,7 @@ function Dashboard(props: Props) {
               <div class="badge badge-soft gap-2 text-xs">
                 <FileSlidersIcon size={14} />
                 <select
-                  class="w-fit max-w-32 cursor-pointer select-none appearance-none truncate bg-transparent outline-0"
+                  class="w-fit max-w-32 cursor-pointer appearance-none truncate bg-transparent outline-0 select-none"
                   disabled={getProgress() < 99}
                   onchange={handleFileSelect}
                 >
@@ -135,7 +135,7 @@ function Dashboard(props: Props) {
 
         <aside class="drawer-side">
           <label aria-label="close sidebar" class="drawer-overlay" for={id} />
-          <div class="min-h-full w-xs overflow-y-auto border border-base-300 bg-base-200">
+          <div class="border-base-300 bg-base-200 min-h-full w-xs overflow-y-auto border">
             <section class="flex flex-col gap-4 p-4">
               <Show keyed when={getFile()}>
                 {(file) => {
@@ -144,13 +144,13 @@ function Dashboard(props: Props) {
                   return (
                     <div class="flex flex-col gap-2">
                       <div class="flex items-center gap-2">
-                        <div class="avatar rounded-md bg-base-300 p-2">
+                        <div class="avatar bg-base-300 rounded-md p-2">
                           <AudioLinesIcon size={20} />
                         </div>
 
                         <div class="min-w-0">
-                          <h3 class="truncate font-bold text-xs">{name}</h3>
-                          <p class="space-x-1 font-light text-base-content/70 text-xs">
+                          <h3 class="truncate text-xs font-bold">{name}</h3>
+                          <p class="text-base-content/70 space-x-1 text-xs font-light">
                             <span>{type}</span>
                             <span>&middot;</span>
                             <span>{formatFileSize(size)}</span>
@@ -168,7 +168,7 @@ function Dashboard(props: Props) {
                 }}
               </Show>
 
-              <div class="divider text-xs uppercase tracking-wider">properties</div>
+              <div class="divider text-xs tracking-wider uppercase">properties</div>
 
               <Show keyed when={getBuffer()}>
                 {(buffer) => {
@@ -187,7 +187,7 @@ function Dashboard(props: Props) {
                       <For each={audioInfos}>
                         {({ key, value }) => (
                           <>
-                            <p class="font-light text-base-content/70 uppercase tracking-wider">
+                            <p class="text-base-content/70 font-light tracking-wider uppercase">
                               {key}
                             </p>
                             <p class="text-end font-mono tracking-wider">{value}</p>
@@ -199,7 +199,7 @@ function Dashboard(props: Props) {
                 }}
               </Show>
 
-              <div class="divider text-xs uppercase tracking-wider">loudness</div>
+              <div class="divider text-xs tracking-wider uppercase">loudness</div>
 
               <Show keyed when={getMeasurements()}>
                 {(measurements) => {
@@ -213,8 +213,8 @@ function Dashboard(props: Props) {
                     <div class="flex flex-col gap-4">
                       <div class="flex flex-col gap-2">
                         <div class="rounded-box bg-base-100 p-2 shadow">
-                          <div class="stat-title uppercase tracking-wider">integrated loudness</div>
-                          <div class="stat-value font-light text-primary">
+                          <div class="stat-title tracking-wider uppercase">integrated loudness</div>
+                          <div class="stat-value text-primary font-light">
                             {i.toFixed(2)} <span class="stat-desc">LUFS</span>
                           </div>
                           <Show keyed when={getTarget()}>
@@ -255,7 +255,7 @@ function Dashboard(props: Props) {
                           {({ key, value }) => (
                             <div class="flex items-center justify-between">
                               <p class="stat-title">{key}</p>
-                              <p class="stat-value font-light text-xs">
+                              <p class="stat-value text-xs font-light">
                                 {value.toFixed(2)}
                                 <span class="stat-desc ml-1">LUFS</span>
                               </p>
@@ -265,27 +265,27 @@ function Dashboard(props: Props) {
                       </div>
 
                       <div class="grid grid-cols-2 gap-2">
-                        <div class="flex flex-col gap-1 rounded-box bg-base-100 p-2 shadow">
-                          <div class="stat-title text-pretty uppercase tracking-wider">
+                        <div class="rounded-box bg-base-100 flex flex-col gap-1 p-2 shadow">
+                          <div class="stat-title tracking-wider text-pretty uppercase">
                             loudness range
                           </div>
                           <div
-                            class="stat-value font-light text-lg"
+                            class="stat-value text-lg font-light"
                             classList={{ "text-warning": lra > 20 }}
                           >
                             {lra.toFixed(2)}
                             <span class="stat-desc ml-1">LU</span>
                           </div>
                         </div>
-                        <div class="flex flex-col gap-1 rounded-box bg-base-100 p-2 shadow">
-                          <div class="stat-title text-pretty uppercase tracking-wider">
+                        <div class="rounded-box bg-base-100 flex flex-col gap-1 p-2 shadow">
+                          <div class="stat-title tracking-wider text-pretty uppercase">
                             true peak
                           </div>
                           <Show keyed when={getTarget()}>
                             {(target) => {
                               return (
                                 <div
-                                  class="stat-value font-light text-lg"
+                                  class="stat-value text-lg font-light"
                                   classList={{
                                     "text-error": tp > target.tp,
                                   }}

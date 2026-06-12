@@ -1,6 +1,6 @@
 import tailwindcss from "@tailwindcss/vite";
-import { defineConfig } from "vite-plus";
 import solid from "vite-plugin-solid";
+import { defineConfig, UserConfig } from "vite-plus";
 import { homepage, repository, version } from "../../package.json";
 
 export default defineConfig({
@@ -20,4 +20,4 @@ export default defineConfig({
     host: true,
   },
   plugins: [solid(), tailwindcss()],
-});
+}) as UserConfig;

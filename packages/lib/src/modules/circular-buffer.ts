@@ -1,139 +1,53 @@
-/**
- * Implements a simple circular buffer.
- */
-class CircularBuffer<T> {
-  #buffer: T[];
+class CircularBuffer {
+  #bytes: Float32Array;
   #capacity: number;
   #head: number;
-  #tail: number;
   #length: number;
 
-  /**
-   * Creates a new CircularBuffer with given capacity.
-   * @param { number } capacity - The maximum number of items the buffer can hold.
-   */
   constructor(capacity: number) {
-    this.#capacity = capacity ? capacity : 0;
-    this.#buffer = new Array(capacity);
+    this.#capacity = Math.max(1, Math.floor(capacity));
+    this.#bytes = new Float32Array(this.#capacity);
     this.#head = 0;
-    this.#tail = 0;
     this.#length = 0;
   }
 
-  /**
-   * Adds an item to the buffer.
-   * @param { T } item - The item to add to the buffer.
-   * @returns { void }
-   */
-  push(item: T): void {
-    this.#buffer[this.#tail] = item;
-
-    if (this.isFull()) {
-      this.#head = (this.#head + 1) % this.#capacity;
-    } else {
-      this.#length++;
-    }
-
-    this.#tail = (this.#tail + 1) % this.#capacity;
-  }
-
-  /**
-   * Removes and returns the oldest item from the buffer.
-   * @returns { T | undefined }
-   */
-  pop(): T | undefined {
-    if (this.isEmpty()) {
-      return;
-    }
-
-    const item = this.#buffer[this.#head];
-    this.#buffer[this.#head] = undefined as T;
-    this.#head = (this.#head + 1) % this.#capacity;
-    this.#length--;
-
-    return item;
-  }
-
-  /**
-   * Returns the oldest item from the buffer without removing it.
-   * @returns { T | undefined }
-   */
-  peek(): T | undefined {
-    if (this.isEmpty()) {
-      return;
-    }
-
-    return this.#buffer[this.#head];
-  }
-
-  /**
-   * Returns a slice of the buffer contents.
-   * @param { number } start - The starting index of the slice (inclusive).
-   * @param { number } end - The ending index of the slice (exclusive).
-   * @returns { T[] }
-   */
-  slice(start: number, end: number): T[] {
-    if (start >= end) {
-      return [];
-    }
-
-    const result: T[] = [];
-
-    for (let i = Math.max(0, start); i < Math.min(this.#length, end); i++) {
-      const index = (this.#head + i) % this.#capacity;
-      result.push(this.#buffer[index]);
-    }
-
-    return result;
-  }
-
-  /**
-   * Adds an item to the buffer and
-   * returns undefined if the buffer is not full,
-   * otherwise returns the oldest item from the buffer without removing it.
-   *
-   * @param item
-   */
-  evict(item: T): T | undefined {
-    const evicted = this.isFull() ? this.peek() : undefined;
-    this.push(item);
-
-    return evicted;
-  }
-
-  /**
-   * Checks if the buffer is empty.
-   * @returns { boolean }
-   */
-  isEmpty(): boolean {
-    return this.#length === 0;
-  }
-
-  /**
-   * Checks if the buffer is full.
-   * @returns { boolean }
-   */
-  isFull(): boolean {
-    return this.#length === this.#capacity;
-  }
-
-  /** @type { number } */
   get length(): number {
     return this.#length;
   }
 
-  /** @type { number } */
   get capacity(): number {
     return this.#capacity;
   }
 
-  /** @type { IterableIterator<T> } */
-  *[Symbol.iterator](): IterableIterator<T> {
-    for (let i = 0; i < this.#length; i++) {
-      const index = (this.#head + i) % this.#capacity;
-      yield this.#buffer[index];
+  get full(): boolean {
+    return this.length === this.capacity;
+  }
+
+  push(item: number): void {
+    this.#bytes[this.#head] = item;
+    this.#head = (this.#head + 1) % this.#capacity;
+
+    if (this.#length < this.#capacity) {
+      this.#length++;
     }
+  }
+
+  sum(): number {
+    const length = this.#length;
+    const buffer = this.#bytes;
+    let total = 0;
+
+    for (let i = 0; i < length; i++) {
+      total += buffer[i];
+    }
+
+    return total;
+  }
+
+  reset(): void {
+    this.#head = 0;
+    this.#length = 0;
   }
 }
 
-export { CircularBuffer };
+export default CircularBuffer;

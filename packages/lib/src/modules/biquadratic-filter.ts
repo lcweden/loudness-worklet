@@ -1,66 +1,55 @@
-/**
- * Implements a simple biquadratic filter.
- */
 class BiquadraticFilter {
-  #a: Float32Array = new Float32Array(2);
-  #b: Float32Array = new Float32Array(3);
-  #x: Float32Array = new Float32Array(2);
-  #y: Float32Array = new Float32Array(2);
+  #a1: number;
+  #a2: number;
+  #b0: number;
+  #b1: number;
+  #b2: number;
+  #x1: number;
+  #x2: number;
+  #y1: number;
+  #y2: number;
 
-  /**
-   * Creates a new BiquadraticFilter with given coefficients.
-   * @param { number[] } a - Feedback coefficients [a1, a2]
-   * @param { number[] } b - Feedforward coefficients [b0, b1, b2]
-   */
   constructor(a: number[], b: number[]) {
-    this.reset();
-    this.set(a, b);
+    this.#a1 = a[0];
+    this.#a2 = a[1];
+    this.#b0 = b[0];
+    this.#b1 = b[1];
+    this.#b2 = b[2];
+    this.#x1 = 0;
+    this.#x2 = 0;
+    this.#y1 = 0;
+    this.#y2 = 0;
   }
 
-  /**
-   * Processes a single input sample and returns the filtered output.
-   * @param { number } input - The input sample.
-   * @returns { number } - The filtered output sample.
-   */
-  process(input: number): number {
-    const output =
-      this.#b[0] * input +
-      this.#b[1] * this.#x[0] +
-      this.#b[2] * this.#x[1] -
-      this.#a[0] * this.#y[0] -
-      this.#a[1] * this.#y[1];
+  process(buffer: Float32Array): void {
+    let x1 = this.#x1;
+    let x2 = this.#x2;
+    let y1 = this.#y1;
+    let y2 = this.#y2;
 
-    this.#x[1] = this.#x[0];
-    this.#x[0] = input;
+    const b0 = this.#b0;
+    const b1 = this.#b1;
+    const b2 = this.#b2;
+    const a1 = this.#a1;
+    const a2 = this.#a2;
 
-    this.#y[1] = this.#y[0];
-    this.#y[0] = output;
+    for (let i = 0; i < buffer.length; i++) {
+      const input = buffer[i];
+      const output = b0 * input + b1 * x1 + b2 * x2 - a1 * y1 - a2 * y2;
 
-    return output;
-  }
+      x2 = x1;
+      x1 = input;
+      y2 = y1;
+      y1 = output;
 
-  /**
-   * Sets new filter coefficients.
-   * @param { number[] } a - Feedback coefficients [a1, a2]
-   * @param { number[] } b - Feedforward coefficients [b0, b1, b2]
-   * @returns { void }
-   */
-  set(a: number[], b: number[]): void {
-    a.length = 2;
-    this.#a.set(a);
+      buffer[i] = output;
+    }
 
-    b.length = 3;
-    this.#b.set(b);
-  }
-
-  /**
-   * Resets the filter state.
-   * @returns { void }
-   */
-  reset(): void {
-    this.#x.fill(0);
-    this.#y.fill(0);
+    this.#x1 = x1;
+    this.#x2 = x2;
+    this.#y1 = y1;
+    this.#y2 = y2;
   }
 }
 
-export { BiquadraticFilter };
+export default BiquadraticFilter;

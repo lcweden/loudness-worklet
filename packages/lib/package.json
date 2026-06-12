@@ -7,6 +7,8 @@
   "type": "module",
   "types": "./dist/index.d.ts",
   "imports": {
+    "#src/*": "./src/*.ts",
+    "#api/*": "./src/api/*.ts",
     "#common/*": "./src/common/*.ts",
     "#modules/*": "./src/modules/*.ts",
     "#scripts/*": "./src/scripts/*.ts",
@@ -19,7 +21,8 @@
   },
   "scripts": {
     "dev": "vp dev",
-    "build": "vp pack"
+    "build": "vp pack",
+    "test": "vp test"
   },
   "devDependencies": {
     "solid-js": "^1.9.11",

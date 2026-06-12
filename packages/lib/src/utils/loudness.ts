@@ -1,5 +1,6 @@
 /**
  * Converts energy to loudness in decibels (dB).
+ *
  * @param energy
  * @returns
  */
@@ -9,6 +10,7 @@ function energyToLoudness(energy: number): number {
 
 /**
  * Converts loudness in decibels (dB) to energy.
+ *
  * @param loudness
  * @returns
  */

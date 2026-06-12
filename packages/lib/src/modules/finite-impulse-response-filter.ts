@@ -1,48 +1,44 @@
-/**
- * Implements a simple finite impulse response filter.
- */
 class FiniteImpulseResponseFilter {
-  #coefficients: number[];
-  #buffer: number[];
+  #coefficients: Float32Array[];
+  #history: Float32Array;
+  #numberOfFactors: number;
+  #numberOfPhases: number;
   #index: number;
 
-  /**
-   * Creates an instance of the filter.
-   * @param coefficients - The filter coefficients.
-   */
-  constructor(coefficients: number[]) {
-    this.#coefficients = coefficients;
-    this.#buffer = Array(coefficients.length).fill(0);
+  constructor(numberOfFactors: number, coefficients: number[][]) {
+    this.#coefficients = coefficients.map((phase) => new Float32Array(phase));
+    this.#history = new Float32Array(numberOfFactors);
+    this.#numberOfFactors = numberOfFactors;
+    this.#numberOfPhases = coefficients.length;
     this.#index = 0;
   }
 
-  /**
-   * Processes a single input sample.
-   * @param {number} input - The input sample.
-   * @returns {number} - The filtered output sample.
-   */
-  process(input: number): number {
-    this.#buffer[this.#index] = input;
-    this.#index = (this.#index + 1) % this.#buffer.length;
+  process(input: Float32Array, output: Float32Array): void {
+    for (let i = 0; i < input.length; i++) {
+      this.#history[this.#index] = input[i];
 
-    let output = 0;
+      for (let p = 0; p < this.#numberOfPhases; p++) {
+        const coefs = this.#coefficients[p];
+        let sum = 0;
 
-    for (let i = 0; i < this.#coefficients.length; i++) {
-      const index = (this.#index - 1 - i + this.#buffer.length) % this.#buffer.length;
-      output += this.#coefficients[i] * this.#buffer[index];
+        for (let c = 0; c < this.#numberOfFactors; c++) {
+          let index = this.#index - c;
+          if (index < 0) {
+            index += this.#numberOfFactors;
+          }
+          sum += coefs[c] * this.#history[index];
+        }
+
+        output[i * this.#numberOfPhases + p] = sum;
+      }
+
+      this.#index++;
+
+      if (this.#index >= this.#numberOfFactors) {
+        this.#index = 0;
+      }
     }
-
-    return output;
-  }
-
-  /**
-   * Resets the filter state.
-   * @returns { void }
-   */
-  reset(): void {
-    this.#buffer.fill(0);
-    this.#index = 0;
   }
 }
 
-export { FiniteImpulseResponseFilter };
+export default FiniteImpulseResponseFilter;
