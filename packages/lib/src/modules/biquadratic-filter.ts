@@ -36,7 +36,7 @@ class BiquadraticFilter {
    * Processes a block of audio samples synchronously. This method modifies the provided buffer
    * in-place to optimize memory allocation and performance.
    *
-   * @param {Float32Array} input The input signal
+   * @param {Float32Array} input The input signal.
    */
   process(input: Float32Array): void {
     let x1 = this.#x1;

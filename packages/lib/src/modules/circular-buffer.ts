@@ -12,7 +12,7 @@ class CircularBuffer {
   /**
    * Creates a new CircularBuffer with the specified capacity.
    *
-   * @param {number} capacity The maximum number of items the buffer can hold
+   * @param {number} capacity The maximum number of items the buffer can hold.
    */
   constructor(capacity: number) {
     this.#capacity = Math.max(1, Math.floor(capacity));
@@ -33,7 +33,7 @@ class CircularBuffer {
   /**
    * Adds a new item to the buffer, overwriting the oldest item if the buffer is full.
    *
-   * @param {number} item The item to add to the buffer
+   * @param {number} item The item to add to the buffer.
    */
   push(item: number): void {
     this.#bytes[this.#head] = item;

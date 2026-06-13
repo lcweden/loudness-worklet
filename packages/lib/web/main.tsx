@@ -78,7 +78,7 @@ function Playground() {
           <dt>Loudness Range (LU)</dt>
           <dd>{getSnapshot()?.loudnessRange.toFixed(1) ?? "-"}</dd>
           <dt>Maximum True Peak Level (dBTP)</dt>
-          <dd>{getSnapshot()?.truePeak.toFixed(1) ?? "-"}</dd>
+          <dd>{getSnapshot()?.maximumTruePeakLevel.toFixed(1) ?? "-"}</dd>
         </dl>
         <details open>
           <summary>Raw Data</summary>
@@ -105,8 +105,8 @@ function Playground() {
             <strong>Loudness Range</strong>: Statistical measure of loudness variation.
           </li>
           <li>
-            <strong>True Peak</strong>: Maximum sample-accurate peak, considering inter-sample
-            peaks.
+            <strong>Maximum True Peak Level</strong>: Maximum sample-accurate peak, considering
+            inter-sample peaks.
           </li>
         </ul>
         <p>

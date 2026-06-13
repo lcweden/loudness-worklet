@@ -25,8 +25,16 @@ import PolyphaseFiniteImpulseResponseFilter from "#modules/polyphase-finite-impu
 import { computeKWeightingCoefficients } from "#utils/k-weighting";
 import { energyToLoudness, loudnessToEnergy } from "#utils/loudness";
 
+/**
+ * An AudioWorkletProcessor that implements loudness measurement according to ITU-R BS.1770-5.
+ *
+ * @class LoudnessProcessor
+ * @extends {AudioWorkletProcessor} Web Audio API's AudioWorkletProcessor
+ * @see {@link https://www.itu.int/rec/R-REC-BS.1770|ITU-R BS.1770-5}
+ * @see {@link https://tech.ebu.ch/publications/tech3341|EBU Tech 3341}
+ * @see {@link https://tech.ebu.ch/publications/tech3342|EBU Tech 3342}
+ */
 class LoudnessProcessor extends AudioWorkletProcessor {
-  shared: boolean;
   views: Float32Array[];
   samples: Float32Array;
   upsamples: Float32Array;
@@ -36,17 +44,23 @@ class LoudnessProcessor extends AudioWorkletProcessor {
   shortTermBuffers: CircularBuffer[];
   momentaryHistograms: Histogram[];
   shortTermHistograms: Histogram[];
+  shared: boolean;
   hopSize: number;
   previousTime: number;
   counter: number;
 
+  /**
+   * Initializes the LoudnessProcessor, pre-allocating necessary buffers and filters based on the
+   * provided options.
+   *
+   * @param {LoudnessWorkletOptions} options The options for the LoudnessProcessor.
+   */
   constructor(options: LoudnessWorkletOptions) {
     const { numberOfInputs = 1, processorOptions } = options;
     const { shared, buffers } = processorOptions;
 
     super();
 
-    this.shared = shared;
     this.samples = new Float32Array(128);
     this.upsamples = new Float32Array(128 * 4);
     this.views = [];
@@ -56,17 +70,27 @@ class LoudnessProcessor extends AudioWorkletProcessor {
     this.shortTermBuffers = [];
     this.momentaryHistograms = [];
     this.shortTermHistograms = [];
+    this.shared = shared;
     this.hopSize = Math.round(sampleRate * HOP_INTERVAL_SEC);
     this.previousTime = 0;
     this.counter = 0;
 
-    const capacity = (window: number) => Math.max(1, Math.floor(window / (128 / sampleRate)));
+    /**
+     * Calculates the required circular buffer capacity based on the window size and the
+     * AudioWorklet render quantum.
+     *
+     * @param {number} window The window size in seconds.
+     * @returns {number} The calculated buffer capacity
+     */
+    const cap = (window: number): number => Math.max(1, Math.floor(window / (128 / sampleRate)));
 
     for (let i = 0; i < numberOfInputs; i++) {
       this.kWeightingFilters[i] = [];
       this.truePeakFilters[i] = [];
-      this.momentaryBuffers[i] = new CircularBuffer(capacity(MOMENTARY_WINDOW_SEC));
-      this.shortTermBuffers[i] = new CircularBuffer(capacity(SHORT_TERM_WINDOW_SEC));
+
+      this.momentaryBuffers[i] = new CircularBuffer(cap(MOMENTARY_WINDOW_SEC));
+      this.shortTermBuffers[i] = new CircularBuffer(cap(SHORT_TERM_WINDOW_SEC));
+
       this.momentaryHistograms[i] = new Histogram(MIN_LUFS, MAX_LUFS, RESOLUTION);
       this.shortTermHistograms[i] = new Histogram(MIN_LUFS, MAX_LUFS, RESOLUTION);
 
@@ -78,15 +102,23 @@ class LoudnessProcessor extends AudioWorkletProcessor {
     }
   }
 
-  process(inputs: Float32Array[][], _outputs: Float32Array[][]) {
-    const numberOfInputs = inputs.length;
+  /**
+   * Processes incoming audio data, updating loudness measurements and posting results to the main
+   * thread if not in shared mode.
+   *
+   * @param {Float32Array[][]} inputs The input audio data.
+   * @param {Float32Array[][]} outputs The output audio data.
+   * @returns {boolean} Returns `true` to keep the processor alive, or `false` to terminate
+   */
+  process(inputs: Float32Array[][], outputs: Float32Array[][]): boolean {
     const attenduation = 10 ** (-ATTENUATION_DB / 20);
+    const numberOfInputs = inputs.length;
 
     for (let i = 0; i < numberOfInputs; i++) {
       const numberOfChannels = inputs[i].length;
-      const numberOfSamples = inputs[i][0].length;
+      const numberOfSamples = inputs[i][0]?.length || 0;
 
-      if (!inputs[i] || numberOfChannels === 0) {
+      if (!inputs[i] || numberOfChannels === 0 || numberOfSamples === 0) {
         continue;
       }
 
@@ -320,6 +352,12 @@ class LoudnessProcessor extends AudioWorkletProcessor {
 
         this.port.postMessage(copies);
         this.previousTime = currentTime;
+      }
+    }
+
+    for (let i = 0; i < Math.min(inputs.length, outputs.length); i++) {
+      for (let j = 0; j < Math.min(inputs[i].length, outputs[i].length); j++) {
+        outputs[i][j].set(inputs[i][j]);
       }
     }
 

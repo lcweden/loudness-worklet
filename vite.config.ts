@@ -4,7 +4,12 @@ export default defineConfig({
   fmt: {
     sortTailwindcss: true,
     sortImports: { newlinesBetween: false },
-    jsdoc: true,
+    jsdoc: {
+      addDefaultToDescription: true,
+      capitalizeDescriptions: true,
+      commentLineStrategy: "multiline",
+      descriptionWithDot: true,
+    },
     sortPackageJson: true,
   },
   lint: {

@@ -8,9 +8,10 @@ export default defineConfig({
   pack: [
     {
       dts: false,
-      entry: { "loudness.worklet": "src/scripts/loudness.worklet.ts" },
+      entry: { "loudness.worklet": "src/scripts/loudness-processor.ts" },
       exports: true,
       format: ["esm"],
+      minify: true,
       name: "lib",
       outExtensions: () => ({ js: ".js" }),
     },

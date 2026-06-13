@@ -11,9 +11,9 @@ class Histogram {
   /**
    * Creates a new Histogram instance.
    *
-   * @param {number} min The minimum value of the histogram range
-   * @param {number} max The maximum value of the histogram range
-   * @param {number} step The width of each bin
+   * @param {number} min The minimum value of the histogram range.
+   * @param {number} max The maximum value of the histogram range.
+   * @param {number} step The width of each bin.
    * @throws {RangeError} If min is greater than or equal to max
    * @throws {RangeError} If step is not strictly positive
    */
@@ -70,7 +70,7 @@ class Histogram {
   /**
    * Adds a value to the histogram by incrementing the appropriate bin.
    *
-   * @param {number} value The value to add to the histogram
+   * @param {number} value The value to add to the histogram.
    */
   add(value: number): void {
     if (value < this.#min) {
