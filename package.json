@@ -3,11 +3,27 @@
   "version": "1.7.0",
   "description": "A lightweight and efficient AudioWorklet for real-time loudness measurement in the browser, compliant with the ITU-R BS.1770-5 standard.",
   "keywords": [
-    "web-audio",
     "audio-worklet",
-    "loudness",
     "ebu-r128",
-    "itu-r-bs1770"
+    "itu-r-bs1770",
+    "loudness",
+    "web-audio"
+  ],
+  "homepage": "https://lcweden.github.io/loudness-worklet/",
+  "bugs": {
+    "url": "https://github.com/lcweden/loudness-worklet/issues"
+  },
+  "license": "MIT",
+  "author": "lcweden",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lcweden/loudness-worklet.git"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "files": [
+    "packages/lib/dist"
   ],
   "type": "module",
   "main": "./packages/lib/dist/index.js",
@@ -18,30 +34,21 @@
       "default": "./packages/lib/dist/index.js"
     }
   },
-  "files": [
-    "packages/lib/dist"
-  ],
-  "workspaces": [
-    "packages/*"
-  ],
-  "license": "MIT",
-  "author": "lcweden",
-  "homepage": "https://lcweden.github.io/loudness-worklet/",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/lcweden/loudness-worklet.git"
-  },
-  "bugs": {
-    "url": "https://github.com/lcweden/loudness-worklet/issues"
-  },
   "scripts": {
-    "format": "biome format --write",
-    "lint": "biome lint --write"
+    "format": "vp fmt",
+    "lint": "vp lint"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.4.15",
+    "@types/audioworklet": "^0.0.100",
     "@types/node": "^25.8.0",
+    "@typescript/native-preview": "7.0.0-dev.20260509.2",
+    "bumpp": "^11.1.0",
     "typescript": "^6.0.3",
-    "vite": "^8.0.13"
-  }
+    "vite-plus": "^0.1.23"
+  },
+  "overrides": {
+    "vite": "npm:@voidzero-dev/vite-plus-core@latest",
+    "vitest": "npm:@voidzero-dev/vite-plus-test@latest"
+  },
+  "packageManager": "npm@11.16.0"
 }
