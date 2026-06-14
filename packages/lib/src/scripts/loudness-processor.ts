@@ -346,13 +346,11 @@ class LoudnessProcessor extends AudioWorkletProcessor {
       view[INDEX.TRUE_PEAK] = Math.max(view[INDEX.TRUE_PEAK], truePeak);
     }
 
-    if (!this.shared) {
-      if (currentTime - this.previousTime >= RESOLUTION) {
-        const copies = this.views.map((view) => new Float32Array(view));
+    if (currentTime - this.previousTime >= RESOLUTION) {
+      const copies = this.views.map((view) => new Float32Array(view));
 
-        this.port.postMessage(copies);
-        this.previousTime = currentTime;
-      }
+      this.port.postMessage(copies);
+      this.previousTime = currentTime;
     }
 
     for (let i = 0; i < Math.min(inputs.length, outputs.length); i++) {

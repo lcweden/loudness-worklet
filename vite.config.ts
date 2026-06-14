@@ -2,6 +2,7 @@ import { defineConfig, UserConfig } from "vite-plus";
 
 export default defineConfig({
   fmt: {
+    svelte: true,
     sortTailwindcss: true,
     sortImports: { newlinesBetween: false },
     jsdoc: {
