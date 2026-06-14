@@ -1,23 +1,20 @@
+import adapter from "@sveltejs/adapter-static";
+import { sveltekit } from "@sveltejs/kit/vite";
 import tailwindcss from "@tailwindcss/vite";
-import solid from "vite-plugin-solid";
-import { defineConfig, UserConfig } from "vite-plus";
-import { homepage, repository, version } from "../../package.json";
+import { defineConfig } from "vite-plus";
+import type { UserConfig } from "vite-plus";
 
 export default defineConfig({
-  base: "/loudness-worklet/",
-  build: {
-    target: "esnext",
-    outDir: "dist",
-    emptyOutDir: true,
-  },
-  cacheDir: "../../node_modules/.vite",
-  define: {
-    __VERSION__: JSON.stringify(version),
-    __REPO_URL__: JSON.stringify(repository.url),
-    __HOME_PAGE__: JSON.stringify(homepage),
-  },
-  server: {
-    host: true,
-  },
-  plugins: [solid(), tailwindcss()],
+  plugins: [
+    tailwindcss(),
+    sveltekit({
+      compilerOptions: {
+        // Force runes mode for the project, except for libraries. Can be removed in svelte 6.
+        runes: ({ filename }) =>
+          filename.split(/[/\\]/).includes("node_modules") ? undefined : true,
+      },
+      adapter: adapter(),
+      files: { assets: "public" },
+    }),
+  ],
 }) as UserConfig;

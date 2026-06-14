@@ -1,27 +1,18 @@
 {
-  "name": "@loudness-worklet/web",
+  "name": "@loudness-worklet/app",
   "private": true,
   "type": "module",
-  "imports": {
-    "#styles.css": "./src/styles.css",
-    "#app": "./src/app.tsx",
-    "#assets/*": "./src/assets/*",
-    "#components": "./src/components/index.ts",
-    "#hooks": "./src/hooks/index.ts",
-    "#icons": "./src/icons/index.ts",
-    "#utils": "./src/utils/index.ts",
-    "#views": "./src/views/index.ts"
-  },
   "scripts": {
-    "build": "vp build",
     "dev": "vp dev",
-    "preview": "vp preview"
+    "build": "vp build",
+    "preview": "vp preview",
+    "prepare": "svelte-kit sync || echo ''",
+    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+    "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
   },
   "devDependencies": {
-    "@tailwindcss/vite": "^4.1.17",
-    "daisyui": "^5.5.5",
-    "echarts": "^6.0.0",
-    "solid-js": "^1.9.11",
-    "tailwindcss": "^4.1.17"
+    "@sveltejs/adapter-static": "^3.0.10",
+    "@sveltejs/kit": "^2.63.0",
+    "@tailwindcss/vite": "^4.3.0"
   }
 }
