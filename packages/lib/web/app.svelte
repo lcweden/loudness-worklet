@@ -72,12 +72,17 @@
   <section>
     <h2>ITU-R BS.1770-5 Reference</h2>
     <ul>
-      <li><strong>LUFS</strong>: Loudness Units relative to Full Scale, standardized loudness measure.</li>
+      <li>
+        <strong>LUFS</strong>: Loudness Units relative to Full Scale, standardized loudness measure.
+      </li>
       <li><strong>Momentary</strong>: 400ms sliding window loudness.</li>
       <li><strong>Short-Term</strong>: 3s sliding window loudness.</li>
       <li><strong>Integrated</strong>: Overall loudness over the program.</li>
       <li><strong>Loudness Range</strong>: Statistical measure of loudness variation.</li>
-      <li><strong>Maximum True Peak Level</strong>: Maximum sample-accurate peak, considering inter-sample peaks.</li>
+      <li>
+        <strong>Maximum True Peak Level</strong>: Maximum sample-accurate peak, considering
+        inter-sample peaks.
+      </li>
     </ul>
     <p>
       <a href="https://www.itu.int/rec/R-REC-BS.1770/en" rel="noreferrer" target="_blank">
