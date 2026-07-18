@@ -9,9 +9,11 @@
     "preview": "vp preview"
   },
   "devDependencies": {
+    "@loudness-worklet/lib": "*",
     "@sveltejs/adapter-static": "^3.0.10",
     "@sveltejs/kit": "^2.63.0",
     "@tailwindcss/vite": "^4.3.0",
-    "daisyui": "^5.5.23"
+    "daisyui": "^5.6.3",
+    "echarts": "^6.1.0"
   }
 }

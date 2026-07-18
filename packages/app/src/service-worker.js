@@ -79,7 +79,7 @@ self.addEventListener("fetch", (event) => {
       }
 
       if (response.status === 200 && !response.headers.get("cache-control")?.includes("no-store")) {
-        cache.put(event.request, response.clone());
+        await cache.put(event.request, response.clone());
       }
 
       return response;

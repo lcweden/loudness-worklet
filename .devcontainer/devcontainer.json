@@ -1,21 +1,27 @@
 {
+  "name": "Loudness Worklet Dev Container",
   "image": "mcr.microsoft.com/devcontainers/typescript-node:24-bookworm",
   "customizations": {
     "vscode": {
       "extensions": [
-        "VoidZero.vite-plus-extension-pack",
+        "bradlc.vscode-tailwindcss",
+        "oxc.oxc-vscode",
         "svelte.svelte-vscode",
-        "bradlc.vscode-tailwindcss"
+        "vitest.explorer",
+        "VoidZero.vite-plus-extension-pack"
       ],
       "settings": {
-        "npm.scriptRunner": "npm",
-        "editor.defaultFormatter": "oxc.oxc-vscode",
-        "oxc.fmt.configPath": "./vite.config.ts",
         "editor.formatOnSave": true,
+        "editor.defaultFormatter": "oxc.oxc-vscode",
+        "editor.codeActionsOnSave": { "source.fixAll.oxc": "explicit" },
         "editor.formatOnSaveMode": "file",
-        "editor.codeActionsOnSave": {
-          "source.fixAll.oxc": "explicit"
-        }
+        "oxc.fmt.configPath": "oxfmt.config.ts",
+        "oxc.configPath": "oxlint.config.ts",
+        "npm.scriptRunner": "vp",
+        "[javascript]": { "editor.defaultFormatter": "oxc.oxc-vscode" },
+        "[javascriptreact]": { "editor.defaultFormatter": "oxc.oxc-vscode" },
+        "[typescript]": { "editor.defaultFormatter": "oxc.oxc-vscode" },
+        "[typescriptreact]": { "editor.defaultFormatter": "oxc.oxc-vscode" }
       }
     }
   },

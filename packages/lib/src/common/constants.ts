@@ -1,8 +1,8 @@
 export const REGISTERED_NAME = "loudness-processor";
 
-export const MIN_LUFS = -120;
+export const MIN_LUFS = -144;
 
-export const MAX_LUFS = 20;
+export const MAX_LUFS = 12;
 
 export const RESOLUTION = 0.1;
 

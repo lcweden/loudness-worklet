@@ -1,19 +1,65 @@
 {
+  "id": "/loudness-worklet/",
+  "scope": "/loudness-worklet/",
+  "start_url": "/loudness-worklet/",
+  "short_name": "Loudness Worklet",
   "name": "Loudness Worklet",
-  "icons": [
+  "description": "Real-time LUFS loudness meter in your browser using Audio Worklet (ITU-R BS.1770-5). Measure integrated, short-term, momentary and true peak.",
+  "display": "standalone",
+  "display_override": ["standalone", "window-controls-overlay"],
+  "protocol_handlers": [
     {
-      "src": "/icon-1024x1024.png",
-      "sizes": "1024x1024",
-      "type": "image/png"
-    },
-    {
-      "src": "/icon-512x512.png",
-      "sizes": "512x512",
-      "type": "image/png"
+      "protocol": "web+lw",
+      "url": "/loudness-worklet/?file=%s"
     }
   ],
-  "start_url": ".",
-  "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "theme_color": "#0f172a",
+  "background_color": "#0f172a",
+  "icons": [
+    {
+      "src": "icons/192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/android-chrome-192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icons/512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/android-chrome-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icons/1024.png",
+      "type": "image/png",
+      "sizes": "1024x1024",
+      "purpose": "any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "./screenshots/1.png",
+      "sizes": "3840x2160",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Home screen showing main navigation"
+    },
+    {
+      "src": "./screenshots/2.png",
+      "sizes": "3840x2160",
+      "type": "image/png",
+      "label": "Dashboard view displaying key metrics"
+    }
+  ]
 }
