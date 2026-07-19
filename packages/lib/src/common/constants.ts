@@ -7,15 +7,15 @@ export const MAX_LUFS = 12;
 export const RESOLUTION = 0.1;
 
 export const INDEX = {
-  CURRENT_TIME: 0,
-  CURRENT_FRAME: 1,
-  LOUDNESS_RANGE: 2,
-  MOMENTARY: 3,
-  SHORT_TERM: 4,
-  INTEGRATED: 5,
-  MAX_MOMENTARY: 6,
-  MAX_SHORT_TERM: 7,
-  TRUE_PEAK: 8,
+  TIME: 0,
+  FRAME: 1,
+  LRA: 2,
+  LUFS_M: 3,
+  LUFS_S: 4,
+  LUFS_I: 5,
+  MAX_LUFS_M: 6,
+  MAX_LUFS_S: 7,
+  MAX_TP: 8,
 };
 
 export const K_WEIGHTING_COEFFICIENTS = {

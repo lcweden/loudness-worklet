@@ -200,16 +200,21 @@ class LoudnessProcessor extends AudioWorkletProcessor {
 
       const momentaryEnergy = momentaryBuffer.sum() / momentaryBuffer.length;
       const shortTermEnergy = shortTermBuffer.sum() / shortTermBuffer.length;
-      const momentaryLoudness = energyToLoudness(momentaryEnergy);
-      const shortTermLoudness = energyToLoudness(shortTermEnergy);
+      const momentaryLoudness = Math.max(MIN_LUFS, energyToLoudness(momentaryEnergy));
+      const shortTermLoudness = Math.max(MIN_LUFS, energyToLoudness(shortTermEnergy));
 
       this.counter += numberOfSamples;
 
       if (this.counter >= this.hopSize) {
         this.counter -= this.hopSize;
 
-        momentaryHistogram.add(momentaryLoudness);
-        shortTermHistogram.add(shortTermLoudness);
+        if (momentaryBuffer.full) {
+          momentaryHistogram.add(momentaryLoudness);
+        }
+
+        if (shortTermBuffer.full) {
+          shortTermHistogram.add(shortTermLoudness);
+        }
       }
 
       let integratedLoudness = MIN_LUFS;
@@ -335,18 +340,24 @@ class LoudnessProcessor extends AudioWorkletProcessor {
 
       const view = this.views[i];
 
-      view[INDEX.CURRENT_TIME] = currentTime;
-      view[INDEX.CURRENT_FRAME] = currentFrame;
-      view[INDEX.MOMENTARY] = momentaryLoudness;
-      view[INDEX.SHORT_TERM] = shortTermLoudness;
-      view[INDEX.INTEGRATED] = integratedLoudness;
-      view[INDEX.MAX_MOMENTARY] = Math.max(view[INDEX.MAX_MOMENTARY], momentaryLoudness);
-      view[INDEX.MAX_SHORT_TERM] = Math.max(view[INDEX.MAX_SHORT_TERM], shortTermLoudness);
-      view[INDEX.LOUDNESS_RANGE] = loudnessRange;
-      view[INDEX.TRUE_PEAK] = Math.max(view[INDEX.TRUE_PEAK], truePeak);
+      view[INDEX.TIME] = currentTime;
+      view[INDEX.FRAME] = currentFrame;
+      view[INDEX.LUFS_I] = integratedLoudness;
+      view[INDEX.LRA] = loudnessRange;
+      view[INDEX.MAX_TP] = Math.max(view[INDEX.MAX_TP], truePeak);
+
+      if (momentaryBuffer.full) {
+        view[INDEX.LUFS_M] = momentaryLoudness;
+        view[INDEX.MAX_LUFS_M] = Math.max(view[INDEX.MAX_LUFS_M], momentaryLoudness);
+      }
+
+      if (shortTermBuffer.full) {
+        view[INDEX.LUFS_S] = shortTermLoudness;
+        view[INDEX.MAX_LUFS_S] = Math.max(view[INDEX.MAX_LUFS_S], shortTermLoudness);
+      }
     }
 
-    if (currentTime - this.previousTime >= RESOLUTION) {
+    if (currentTime === 0 || currentTime - this.previousTime >= RESOLUTION) {
       const copies = this.views.map((view) => new Float32Array(view));
 
       this.port.postMessage(copies);

@@ -1,4 +1,5 @@
 import { REGISTERED_NAME, INDEX } from "#common/constants";
+import { MIN_LUFS } from "#common/constants";
 import type { LoudnessOptions, LoudnessSnapshot } from "#common/types";
 
 /**
@@ -25,16 +26,18 @@ class LoudnessNode extends AudioWorkletNode {
    * @returns {LoudnessSnapshot} A snapshot of the current loudness metrics.
    */
   static from(array: Float32Array): LoudnessSnapshot {
+    const transform = (value: number) => (value <= MIN_LUFS ? Number.NEGATIVE_INFINITY : value);
+
     return {
-      currentFrame: array[INDEX.CURRENT_FRAME],
-      currentTime: array[INDEX.CURRENT_TIME],
-      loudnessRange: array[INDEX.LOUDNESS_RANGE],
-      momentaryLoudness: array[INDEX.MOMENTARY],
-      shortTermLoudness: array[INDEX.SHORT_TERM],
-      integratedLoudness: array[INDEX.INTEGRATED],
-      maximumMomentaryLoudness: array[INDEX.MAX_MOMENTARY],
-      maximumShortTermLoudness: array[INDEX.MAX_SHORT_TERM],
-      maximumTruePeakLevel: array[INDEX.TRUE_PEAK],
+      currentFrame: array[INDEX.FRAME],
+      currentTime: array[INDEX.TIME],
+      loudnessRange: array[INDEX.LRA],
+      momentaryLoudness: transform(array[INDEX.LUFS_M]),
+      shortTermLoudness: transform(array[INDEX.LUFS_S]),
+      integratedLoudness: transform(array[INDEX.LUFS_I]),
+      maximumMomentaryLoudness: transform(array[INDEX.MAX_LUFS_M]),
+      maximumShortTermLoudness: transform(array[INDEX.MAX_LUFS_S]),
+      maximumTruePeakLevel: array[INDEX.MAX_TP],
     };
   }
 

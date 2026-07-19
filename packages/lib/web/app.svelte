@@ -3,12 +3,13 @@
   import type { LoudnessSnapshot } from "#common/types";
   import moduleURL from "#scripts/loudness-processor?url";
 
-  let snapshot = $state<LoudnessSnapshot>();
   let error = $state<string>();
+  let snapshots = $state<LoudnessSnapshot[]>([]);
+  let snapshot = $derived<LoudnessSnapshot>(snapshots[snapshots.length - 1]);
 
   async function handleChange(event: Event) {
     error = undefined;
-    snapshot = undefined;
+    snapshots = [];
 
     const file = (event.target as HTMLInputElement).files?.[0];
     if (!file) return;
@@ -25,7 +26,7 @@
       const loudness = new LoudnessNode(context, { numberOfInputs: 1 });
 
       loudness.port.onmessage = (event: MessageEvent<Float32Array[]>) => {
-        snapshot = LoudnessNode.from(event.data[0]);
+        snapshots.push(LoudnessNode.from(event.data[0]));
       };
 
       source.connect(loudness).connect(context.destination);
