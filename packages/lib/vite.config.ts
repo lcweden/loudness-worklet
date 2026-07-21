@@ -3,7 +3,6 @@ import { defineConfig } from "vite-plus";
 import type { UserConfig } from "vite-plus";
 
 export default defineConfig({
-  cacheDir: "../../node_modules/.vite",
   server: { host: true },
   test: { environment: "node" },
   pack: [
@@ -25,5 +24,5 @@ export default defineConfig({
       outExtensions: () => ({ js: ".js" }),
     },
   ],
-  plugins: [svelte({ configFile: false })] as UserConfig["plugins"],
+  plugins: [svelte({ configFile: false })],
 }) as UserConfig;

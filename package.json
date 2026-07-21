@@ -39,20 +39,21 @@
     "lint": "vp lint"
   },
   "devDependencies": {
+    "@sveltejs/kit": "^2.70.0",
     "@sveltejs/vite-plugin-svelte": "^7.1.2",
     "@types/audioworklet": "^0.0.100",
     "@types/node": "^26.0.1",
     "@typescript/native-preview": "^7.0.0-dev.20260627.2",
+    "@voidzero-dev/vite-plus-core": "^0.2.5",
     "bumpp": "^11.1.0",
-    "svelte": "^5.56.1",
+    "svelte": "^5.56.6",
     "svelte-check": "^4.6.0",
     "tailwindcss": "^4.3.0",
     "typescript": "^6.0.3",
-    "vite-plus": "^0.2.1"
+    "vite-plus": "^0.2.5"
   },
   "overrides": {
     "vite": "npm:@voidzero-dev/vite-plus-core@latest",
-    "vitest": "npm:@voidzero-dev/vite-plus-test@latest"
-  },
-  "packageManager": "npm@11.16.0"
+    "vitest": "4.1.10"
+  }
 }

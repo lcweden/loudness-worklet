@@ -1,5 +1,9 @@
 export const REGISTERED_NAME = "loudness-processor";
 
+export const DEFAULT_NUMBER_OF_INPUTS = 1;
+
+export const DEFAULT_INTERVAL = 0.1;
+
 export const MIN_LUFS = -144;
 
 export const MAX_LUFS = 12;

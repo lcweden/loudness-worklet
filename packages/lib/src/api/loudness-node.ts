@@ -1,4 +1,9 @@
-import { REGISTERED_NAME, INDEX } from "#common/constants";
+import {
+  REGISTERED_NAME,
+  INDEX,
+  DEFAULT_NUMBER_OF_INPUTS,
+  DEFAULT_INTERVAL,
+} from "#common/constants";
 import { MIN_LUFS } from "#common/constants";
 import type { LoudnessOptions, LoudnessSnapshot } from "#common/types";
 
@@ -50,12 +55,29 @@ class LoudnessNode extends AudioWorkletNode {
    * @param {LoudnessOptions} options - Configuration options for the LoudnessNode.
    */
   constructor(context: BaseAudioContext, options: LoudnessOptions = {}) {
-    const { numberOfInputs = 1 } = options;
+    const { interval = DEFAULT_INTERVAL, numberOfInputs = DEFAULT_NUMBER_OF_INPUTS } = options;
+
+    if (typeof interval !== "number") {
+      throw new TypeError("Argument 'interval' must be a number");
+    }
+
+    if (Number.isNaN(interval) || interval === 0) {
+      throw new RangeError("Argument 'interval' must be a non-zero number");
+    }
+
+    if (typeof numberOfInputs !== "number") {
+      throw new TypeError("Argument 'numberOfInputs' must be a number");
+    }
+
+    if (!Number.isInteger(numberOfInputs) || numberOfInputs <= 0) {
+      throw new RangeError("Argument 'numberOfInputs' must be a positive integer");
+    }
+
     const shared = globalThis.crossOriginIsolated;
     const iterable = { length: numberOfInputs };
     const size = Object.keys(INDEX).length * Float32Array.BYTES_PER_ELEMENT;
     const buffers = shared ? Array.from(iterable, () => new SharedArrayBuffer(size)) : undefined;
-    const processorOptions = { shared, buffers };
+    const processorOptions = { buffers, interval, shared };
     const audioWorkletNodeOptions = { numberOfInputs, processorOptions };
 
     super(context, REGISTERED_NAME, audioWorkletNodeOptions);
@@ -64,11 +86,13 @@ class LoudnessNode extends AudioWorkletNode {
       this.#views = buffers.map((buffer) => new Float32Array(buffer));
     } else {
       this.#views = Array.from(iterable, () => new Float32Array(Object.keys(INDEX).length));
-      this.port.onmessage = (event: MessageEvent<Float32Array[]>) => {
+
+      this.port.addEventListener("message", (event: MessageEvent<Float32Array[]>) => {
         for (let i = 0; i < event.data.length; i++) {
           this.#views[i].set(event.data[i]);
         }
-      };
+      });
+      this.port.start();
     }
   }
 

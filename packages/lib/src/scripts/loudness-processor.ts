@@ -44,6 +44,7 @@ class LoudnessProcessor extends AudioWorkletProcessor {
   shortTermBuffers: CircularBuffer[];
   momentaryHistograms: Histogram[];
   shortTermHistograms: Histogram[];
+  interval: number;
   shared: boolean;
   hopSize: number;
   previousTime: number;
@@ -57,7 +58,7 @@ class LoudnessProcessor extends AudioWorkletProcessor {
    */
   constructor(options: LoudnessWorkletOptions) {
     const { numberOfInputs = 1, processorOptions } = options;
-    const { shared, buffers } = processorOptions;
+    const { buffers, interval, shared } = processorOptions;
 
     super();
 
@@ -70,6 +71,7 @@ class LoudnessProcessor extends AudioWorkletProcessor {
     this.shortTermBuffers = [];
     this.momentaryHistograms = [];
     this.shortTermHistograms = [];
+    this.interval = interval;
     this.shared = shared;
     this.hopSize = Math.round(sampleRate * HOP_INTERVAL_SEC);
     this.previousTime = 0;
@@ -357,7 +359,7 @@ class LoudnessProcessor extends AudioWorkletProcessor {
       }
     }
 
-    if (currentTime === 0 || currentTime - this.previousTime >= RESOLUTION) {
+    if (currentTime === 0 || currentTime - this.previousTime >= this.interval) {
       const copies = this.views.map((view) => new Float32Array(view));
 
       this.port.postMessage(copies);
