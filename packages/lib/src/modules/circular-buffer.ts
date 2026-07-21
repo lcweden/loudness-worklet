@@ -22,6 +22,15 @@ class CircularBuffer {
   }
 
   /**
+   * Checks if the buffer is full.
+   *
+   * @returns {boolean} True if the buffer is full, false otherwise
+   */
+  get full(): boolean {
+    return this.#length === this.#capacity;
+  }
+
+  /**
    * Gets the current number of items in the buffer.
    *
    * @returns {number} The number of items in the buffer
