@@ -1,8 +1,8 @@
-import solid from "vite-plugin-solid";
-import { defineConfig, UserConfig } from "vite-plus";
+import { svelte } from "@sveltejs/vite-plugin-svelte";
+import { defineConfig } from "vite-plus";
+import type { UserConfig } from "vite-plus";
 
 export default defineConfig({
-  cacheDir: "../../node_modules/.vite",
   server: { host: true },
   test: { environment: "node" },
   pack: [
@@ -24,5 +24,5 @@ export default defineConfig({
       outExtensions: () => ({ js: ".js" }),
     },
   ],
-  plugins: [solid()],
+  plugins: [svelte({ configFile: false })],
 }) as UserConfig;

@@ -1,11 +1,12 @@
 {
   "compilerOptions": {
     "target": "esnext",
+    "module": "esnext",
     "lib": ["ESNext", "DOM", "DOM.Iterable", "WebWorker"],
     "moduleDetection": "force",
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
-    "types": ["node", "audioworklet"],
+    "types": ["vite-plus/client", "svelte", "audioworklet"],
     "strict": true,
     "noUnusedLocals": true,
     "declaration": true,
@@ -13,16 +14,14 @@
     "allowImportingTsExtensions": true,
     "esModuleInterop": true,
     "isolatedModules": true,
-    "verbatimModuleSyntax": true,
     "skipLibCheck": true,
-    "jsx": "preserve",
-    "jsxImportSource": "solid-js",
     "paths": {
+      "#api/*": ["./src/api/*"],
       "#common/*": ["./src/common/*"],
       "#modules/*": ["./src/modules/*"],
       "#scripts/*": ["./src/scripts/*"],
       "#utils/*": ["./src/utils/*"]
     }
   },
-  "include": ["src", "test", "web", "vite-env.d.ts"]
+  "include": ["src", "test", "web"]
 }

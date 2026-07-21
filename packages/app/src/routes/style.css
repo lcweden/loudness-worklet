@@ -1,0 +1,13 @@
+@import "tailwindcss";
+
+@plugin "daisyui" {
+  themes: night --default;
+}
+
+html,
+body {
+  overscroll-behavior: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+}

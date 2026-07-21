@@ -1,12 +1,20 @@
 {
   "id": "/loudness-worklet/",
-  "start_url": "/loudness-worklet/",
   "scope": "/loudness-worklet/",
-  "name": "Loudness Worklet",
+  "start_url": "/loudness-worklet/",
   "short_name": "Loudness Worklet",
+  "name": "Loudness Worklet",
   "description": "Real-time LUFS loudness meter in your browser using Audio Worklet (ITU-R BS.1770-5). Measure integrated, short-term, momentary and true peak.",
   "display": "standalone",
   "display_override": ["standalone", "window-controls-overlay"],
+  "protocol_handlers": [
+    {
+      "protocol": "web+lw",
+      "url": "/loudness-worklet/?file=%s"
+    }
+  ],
+  "theme_color": "#0f172a",
+  "background_color": "#0f172a",
   "icons": [
     {
       "src": "icons/192.png",
@@ -41,14 +49,14 @@
   ],
   "screenshots": [
     {
-      "src": "./screenshots/home.png",
+      "src": "./screenshots/1.png",
       "sizes": "3840x2160",
       "type": "image/png",
       "form_factor": "wide",
       "label": "Home screen showing main navigation"
     },
     {
-      "src": "./screenshots/meter.png",
+      "src": "./screenshots/2.png",
       "sizes": "3840x2160",
       "type": "image/png",
       "label": "Dashboard view displaying key metrics"

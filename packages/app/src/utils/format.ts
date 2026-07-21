@@ -1,4 +1,4 @@
-function formatChannels(numberOfChannels: number): string {
+export function formatChannels(numberOfChannels: number): string {
   switch (numberOfChannels) {
     case 1:
       return "Mono";
@@ -21,7 +21,7 @@ function formatChannels(numberOfChannels: number): string {
   }
 }
 
-function formatTime(seconds: number): string {
+export function formatTime(seconds: number): string {
   const h = Math.floor(seconds / 3600)
     .toString()
     .padStart(2, "0");
@@ -34,7 +34,7 @@ function formatTime(seconds: number): string {
   return `${h}:${m}:${s}`;
 }
 
-function formatFileSize(size: number, digits: number = 1): string {
+export function formatFileSize(size: number, digits: number = 1): string {
   if (size < 1024) {
     return `${size.toFixed(digits)} B`;
   } else if (size < 1024 * 1024) {
@@ -45,5 +45,3 @@ function formatFileSize(size: number, digits: number = 1): string {
     return `${(size / 1024 / 1024 / 1024).toFixed(digits)} GB`;
   }
 }
-
-export { formatChannels, formatTime, formatFileSize };

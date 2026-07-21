@@ -7,7 +7,6 @@
   "type": "module",
   "types": "./dist/index.d.ts",
   "imports": {
-    "#src/*": "./src/*.ts",
     "#api/*": "./src/api/*.ts",
     "#common/*": "./src/common/*.ts",
     "#modules/*": "./src/modules/*.ts",
@@ -23,9 +22,5 @@
     "dev": "vp dev",
     "build": "vp pack",
     "test": "vp test"
-  },
-  "devDependencies": {
-    "solid-js": "^1.9.11",
-    "vite-plugin-solid": "^2.10.2"
   }
 }
