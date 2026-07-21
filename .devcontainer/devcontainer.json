@@ -17,7 +17,6 @@
         "editor.formatOnSaveMode": "file",
         "oxc.fmt.configPath": "oxfmt.config.ts",
         "oxc.configPath": "oxlint.config.ts",
-        "npm.scriptRunner": "vp",
         "[javascript]": { "editor.defaultFormatter": "oxc.oxc-vscode" },
         "[javascriptreact]": { "editor.defaultFormatter": "oxc.oxc-vscode" },
         "[typescript]": { "editor.defaultFormatter": "oxc.oxc-vscode" },

@@ -2,8 +2,10 @@ import adapter from "@sveltejs/adapter-static";
 import { sveltekit } from "@sveltejs/kit/vite";
 import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "vite-plus";
+import type { UserConfig } from "vite-plus";
 
 export default defineConfig({
+  server: { host: true },
   plugins: [
     tailwindcss(),
     sveltekit({
@@ -25,5 +27,5 @@ export default defineConfig({
       files: { assets: "public" },
       paths: { base: "/loudness-worklet" },
     }),
-  ],
-});
+  ] as UserConfig["plugins"],
+}) as UserConfig;

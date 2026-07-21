@@ -16,6 +16,7 @@
   let error = $state<Error>();
   let open = $state<boolean>(false);
   let fetching = $state<boolean>(false);
+  let loading = $derived<boolean>(fetching || analyzer.processing);
 
   function oninput(event: Event): void {
     const target = event.target as HTMLInputElement;
@@ -71,7 +72,7 @@
 
           <label class="btn btn-neutral btn-circle">
             <Plus />
-            <input type="file" class="hidden" multiple {oninput} />
+            <input type="file" class="hidden" accept="audio/*,video/*" multiple {oninput} />
           </label>
         </div>
         <a
@@ -86,7 +87,7 @@
 
       <main class="flex-1">
         <div class="flex h-full w-full flex-col gap-2">
-          {#if fetching || analyzer.processing}
+          {#if loading}
             <div class="flex h-full w-full flex-col items-center justify-center gap-2">
               <progress class="progress progress-primary w-56"></progress>
             </div>
@@ -149,12 +150,17 @@
 
                   const dataset = {
                     dimensions: ["time", "integrated", "shortterm", "momentary"],
-                    source: analyzer.snapshots.map((s) => ({
-                      time: s.currentTime,
-                      integrated: s.integratedLoudness.toFixed(2),
-                      shortterm: s.shortTermLoudness.toFixed(2),
-                      momentary: s.momentaryLoudness.toFixed(2),
-                    })),
+                    source: analyzer.snapshots.map((s) => {
+                      const transform = (value: number) =>
+                        Number.isFinite(value) ? value.toFixed(1) : null;
+
+                      return {
+                        time: s.currentTime,
+                        integrated: transform(s.integratedLoudness),
+                        shortterm: transform(s.shortTermLoudness),
+                        momentary: transform(s.momentaryLoudness),
+                      };
+                    }),
                   };
 
                   const tooltip = {
@@ -320,7 +326,7 @@
                     <label class="btn btn-wide btn-primary">
                       <Plus />
                       Select Files
-                      <input type="file" class="hidden" multiple {oninput} />
+                      <input type="file" class="hidden" accept="audio/*,video/*" multiple {oninput} />
                     </label>
                     <a
                       class="btn btn-wide btn-neutral"
@@ -358,6 +364,7 @@
             <button
               class="w-full min-w-0 text-left"
               class:menu-active={f === file}
+              disabled={analyzer.processing}
               onclick={() => document.startViewTransition(() => (file = f))}
             >
               <span class="block truncate">{f.name}</span>
