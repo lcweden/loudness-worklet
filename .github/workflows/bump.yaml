@@ -1,0 +1,50 @@
+name: Bump
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "new version(e.g., 1.2.3)"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          ref: main
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: lts/*
+          cache: npm
+
+      - name: Setup Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Git Commit
+        run: |
+          VERSION="${{ inputs.version }}"
+          BRANCH_NAME="release/v$VERSION"
+          git checkout -b "$BRANCH_NAME"
+          npm version "$VERSION"
+          git push -u origin "$BRANCH_NAME"
+
+      - name: Pull Request
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr create \
+            --title "release/v${{ inputs.version }}" \
+            --body "This pull request bumps the version to v${{ inputs.version }}." \
+            --head "release/v${{ inputs.version }}" \
+            --base main
