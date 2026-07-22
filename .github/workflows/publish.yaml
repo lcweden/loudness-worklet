@@ -1,4 +1,4 @@
-name: Publish package to NPM
+name: Publish NPM Package
 
 on:
   release:
@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Set up Node
         uses: actions/setup-node@v6
@@ -27,7 +27,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build
+      - name: Build Library
         run: |
           npm run build -w @loudness-worklet/lib
 

@@ -1,4 +1,4 @@
-name: Bump
+name: Bump Version
 on:
   workflow_dispatch:
     inputs:
@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           ref: main
 
@@ -31,7 +31,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-      - name: Git Commit
+      - name: Bump version and Git push
         run: |
           VERSION="${{ inputs.version }}"
           BRANCH_NAME="release/v$VERSION"
@@ -39,7 +39,7 @@ jobs:
           npm version "$VERSION"
           git push -u origin "$BRANCH_NAME"
 
-      - name: Pull Request
+      - name: Create pull request
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
