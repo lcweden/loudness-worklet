@@ -8,6 +8,13 @@ A loudness meter for the `Web Audio API`, based on the [ITU-R BS.1770-5](https:/
 
 [![screenshot](https://github.com/lcweden/loudness-worklet/blob/main/packages/app/public/screenshots/2.png)](https://lcweden.github.io/loudness-worklet/)
 
+## Features
+
+- **Standard Compliant**: Strictly follows ITU-R BS.1770-5 for accurate loudness measurement.
+- **Comprehensive Metrics**: Calculates Momentary, Short-term, and Integrated Loudness, plus Loudness Range (LRA) and True-Peak levels.
+- **Versatile Input**: Seamlessly supports both live audio streams ("Microphone/WebRTC") and offline file analysis.
+- **Zero Dependencies**: Lightweight, pure AudioWorklet implementation requiring no external libraries.
+
 ## Installation
 
 Install via [npm](https://www.npmjs.com/package/loudness-worklet):
@@ -16,13 +23,15 @@ Install via [npm](https://www.npmjs.com/package/loudness-worklet):
 npm install loudness-worklet
 ```
 
-Or import directly using **jsDelivr** or **unpkg**:
+Import from CDN **jsDelivr** or **unpkg**:
 
 ```javascript
 import LoudnessNode from "https://cdn.jsdelivr.net/npm/loudness-worklet/+esm";
 ```
 
-Before instantiating a `LoudnessNode`, ensure the `AudioWorkletProcessor` is loaded via `audioContext.audioWorklet.addModule()`.
+### Loading the AudioWorkletProcessor
+
+The AudioWorkletProcessor file `loudness.worklet.js` must be added to your AudioContext before creating a LoudnessNode.
 
 1. Download from the GitHub Release: [loudness.worklet.js](https://github.com/lcweden/loudness-worklet/releases/latest/download/loudness.worklet.js).
 2. Load it from a CDN: [loudness.worklet.js](https://cdn.jsdelivr.net/npm/loudness-worklet/packages/lib/dist/loudness.worklet.js)
@@ -30,8 +39,10 @@ Before instantiating a `LoudnessNode`, ensure the `AudioWorkletProcessor` is loa
 ```javascript
 import LoudnessNode from "loudness-worklet";
 
-const moduleUrl = "/assets/loudness.worklet.js";
 const audioContext = new AudioContext();
+const moduleUrl = "/static/loudness.worklet.js";
+// Or load from CDN
+// const moduleUrl = "https://cdn.jsdelivr.net/npm/loudness-worklet/packages/lib/dist/loudness.worklet.js";
 
 await audioContext.audioWorklet.addModule(moduleUrl);
 
@@ -40,31 +51,38 @@ const loudnessNode = new LoudnessNode(audioContext);
 
 ## Quick Start
 
-Load the AudioWorklet module once for each audio context before creating a `LoudnessNode`.
+Try the [online demo](https://lcweden.github.io/loudness-worklet/?file=https://samplelib.com/mp3/sample-speech-1m.mp3) to see the loudness meter in action. (Demo audio provided by [Samplelib](https://samplelib.com/)).
 
 ### File Analysis
+
+Use an `OfflineAudioContext` to analyze local audio files offline without playback.
 
 ```javascript
 import LoudnessNode from "loudness-worklet";
 
 async function getLoudnessData(file) {
-  const { promise, resolve, reject } = Promise.withResolvers();
-
   try {
     const arrayBuffer = await file.arrayBuffer();
-    const audioBuffer = await new AudioContext().decodeAudioData(arrayBuffer);
-    const { length, sampleRate, numberOfChannels } = audioBuffer;
-    const offlineContext = new OfflineAudioContext(numberOfChannels, length, sampleRate);
+    const audioDecoder = new AudioContext();
+    const audioBuffer = await audioDecoder.decodeAudioData(arrayBuffer);
+    const offlineContext = new OfflineAudioContext(
+      audioBuffer.numberOfChannels,
+      audioBuffer.length,
+      audioBuffer.sampleRate,
+    );
 
-    await offlineContext.audioWorklet.addModule(moduleUrl);
+    await audioDecoder.close();
+    await offlineContext.audioWorklet.addModule("/static/loudness.worklet.js");
 
     const sourceNode = new AudioBufferSourceNode(offlineContext, { buffer: audioBuffer });
-    const loudnessNode = new LoudnessNode(offlineContext, { numberOfInputs: 1 });
-    let snapshot;
+    const loudnessNode = new LoudnessNode(offlineContext);
+    const snapshots = [];
 
     loudnessNode.port.onmessage = (event) => {
       const [input] = event.data;
-      snapshot = LoudnessNode.from(input);
+      const snapshot = LoudnessNode.from(input);
+
+      snapshots.push(snapshot);
     };
 
     sourceNode.connect(loudnessNode).connect(offlineContext.destination);
@@ -72,41 +90,58 @@ async function getLoudnessData(file) {
 
     await offlineContext.startRendering();
 
-    if (!snapshot) {
-      throw new Error("No data received");
-    }
-
-    resolve(snapshot);
+    return snapshots;
   } catch (error) {
-    reject(error);
+    console.error("Error processing audio file:", error);
   }
-
-  return promise;
 }
 ```
 
+In most cases, you will only need the snapshot from the latest update received. Note that in non-SAB mode, the timestamp of the last update depends on your `interval` setting and may not align precisely with the end of the audio.
+
+> [!TIP]
+> If `decodeAudioData()` fails, the browser may not support the selected audio
+> file's codec, container, or channel layout. Try another browser or convert the
+> file to a more widely supported format.
+
 ### Live Analysis
+
+Capture audio streams in real-time from sources such as a microphone (`getUserMedia`), screen sharing (`getDisplayMedia`), or HTML `<audio>`/`<video>` elements.
+
+The example below demonstrates live measurement using the user's microphone:
 
 ```javascript
 import LoudnessNode from "loudness-worklet";
 
-const mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
-const audioContext = new AudioContext();
+async function startLiveAnalysis() {
+  try {
+    const mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    const audioContext = new AudioContext();
 
-await audioContext.audioWorklet.addModule(moduleUrl);
+    await audioContext.audioWorklet.addModule("/static/loudness.worklet.js");
 
-const sourceNode = new MediaStreamAudioSourceNode(audioContext, { mediaStream });
-const loudnessNode = new LoudnessNode(audioContext);
+    const sourceNode = new MediaStreamAudioSourceNode(audioContext, { mediaStream });
+    const loudnessNode = new LoudnessNode(audioContext, { numberOfInputs: 1 });
+    const gainNode = new GainNode(audioContext, { gain: 0 });
 
-loudnessNode.port.onmessage = (event) => {
-  const [input] = event.data;
-  const snapshot = LoudnessNode.from(input);
+    loudnessNode.port.onmessage = (event) => {
+      const [input] = event.data;
+      const snapshot = LoudnessNode.from(input);
 
-  console.log(snapshot);
-};
+      console.log(snapshot);
+    };
 
-sourceNode.connect(loudnessNode).connect(audioContext.destination);
+    sourceNode.connect(loudnessNode).connect(gainNode).connect(audioContext.destination);
+  } catch (error) {
+    console.error("Error accessing microphone:", error);
+  }
+}
 ```
+
+As `LoudnessNode` is a pass-through node, route its output to a `GainNode` with zero gain to mute the playback and prevent feedback.
+
+> [!NOTE]
+> Be sure to manage the `AudioContext` lifecycle for application robustness.
 
 ## Interfaces
 
@@ -133,6 +168,27 @@ const loudnessNode = new LoudnessNode(audioContext, {
 | `metricCount`          | `getter` | Returns the required length of the `Float32Array` for the metrics. |
 | `getFloatLoudnessData` | `method` | Copies the latest loudness metrics into a `Float32Array`.          |
 
+#### Multiple Inputs
+
+A `LoudnessNode` can measure multiple independent audio inputs concurrently. Set `numberOfInputs` when creating the node, then connect each source to a distinct input index.
+
+```js
+const loudnessNode = new LoudnessNode(audioContext, { numberOfInputs: 2 });
+
+sourceA.connect(loudnessNode, 0, 0);
+sourceB.connect(loudnessNode, 0, 1);
+
+loudnessNode.port.onmessage = (event) => {
+  const [firstInput, secondInput] = event.data;
+  const firstSnapshot = LoudnessNode.from(firstInput);
+  const secondSnapshot = LoudnessNode.from(secondInput);
+
+  console.log({ firstSnapshot, secondSnapshot });
+};
+```
+
+Use `getFloatLoudnessData(array: Float32Array, index: number)` to specify the index of the input if you prefer the [pull style](#pull-based).
+
 ### LoudnessOptions
 
 Options passed to the `LoudnessNode` constructor.
@@ -154,32 +210,37 @@ Interface representing the loudness metrics at a specific point in time.
 import type { LoudnessSnapshot } from "loudness-worklet";
 ```
 
-| Property                   | Description                            | Unit |
-| -------------------------- | -------------------------------------- | ---- |
-| `currentFrame`             | Current audio-context frame index.     |      |
-| `currentTime`              | Current audio-context time in seconds. |      |
-| `loudnessRange`            | Loudness range.                        | LU   |
-| `momentaryLoudness`        |                                        | LUFS |
-| `shortTermLoudness`        |                                        | LUFS |
-| `integratedLoudness`       |                                        | LUFS |
-| `maximumMomentaryLoudness` | Highest measured momentary loudness.   | LUFS |
-| `maximumShortTermLoudness` | Highest measured short-term loudness.  | LUFS |
-| `maximumTruePeakLevel`     | Highest measured true peak.            | dBTP |
+| Property                   | Type     | Description                                                      | Unit |
+| -------------------------- | -------- | ---------------------------------------------------------------- | ---- |
+| `currentFrame`             | `number` | Current audio-context frame index.                               |      |
+| `currentTime`              | `number` | Current audio-context time in seconds.                           |      |
+| `loudnessRange`            | `number` | Loudness range.                                                  | LU   |
+| `momentaryLoudness`        | `number` | Loudness measured over a 400 ms sliding rectangular time window. | LUFS |
+| `shortTermLoudness`        | `number` | Loudness measured over a 3 s sliding rectangular time window.    | LUFS |
+| `integratedLoudness`       | `number` | Loudness measured over the entire duration of the audio.         | LUFS |
+| `maximumMomentaryLoudness` | `number` | Highest measured momentary loudness.                             | LUFS |
+| `maximumShortTermLoudness` | `number` | Highest measured short-term loudness.                            | LUFS |
+| `maximumTruePeakLevel`     | `number` | Highest measured true peak.                                      | dBTP |
+
+> [!NOTE]
+> LUFS can be `-Infinity` if:
+>
+> 1. The input is silent or below the measurement threshold (-144).
+> 2. The sliding window has not yet accumulated enough samples to compute a valid measurement.
 
 ## Data Retrieval
 
-The `LoudnessNode` provides two distinct ways to access data: **Push-based** and **Pull-based**. While both are available, you should **choose only one** strategy depending on your application's architecture to avoid redundancy.
+The `LoudnessNode` provides two distinct ways to access data: **Push-based** and **Pull-based**. While both are available, choose one strategy based on your application architecture to avoid duplicate processing.
 
 ### Push Based
 
 This is the common approach. The AudioWorklet automatically sends metrics to the main thread at a fixed frequency.
 
 ```javascript
-// Set interval to send updates every 100ms
-const loudnessNode = new LoudnessNode(audioContext, { interval: 0.1 });
+const loudnessNode = new LoudnessNode(audioContext);
 
 loudnessNode.port.onmessage = (event) => {
-  const [input] = event.data; // event.data[0] contains the Float32Array for the first input
+  const [input] = event.data;
   const snapshot = LoudnessNode.from(input);
 
   console.log(snapshot);
@@ -219,7 +280,7 @@ draw();
 
 The internal behavior of `LoudnessNode` dynamically adapts `SharedArrayBuffer` based on `globalThis.crossOriginIsolated`.
 
-If `COOP` and `COEP` headers are set, the AudioWorklet writes metrics directly to a `SharedArrayBuffer` at every audio block(per 128 samples), when `getFloatLoudnessData()` is called, it reads directly from that shared memory.
+If `COOP` and `COEP` headers are set, the AudioWorklet writes metrics directly to a `SharedArrayBuffer` at every audio block (per 128 samples), when `getFloatLoudnessData()` is called, it reads directly from that shared memory.
 
 Otherwise, it falls back to a local cache on the main thread, which is updated via internal `message` events. The `interval` setting controls the refresh rate of this pulled data.
 
@@ -323,40 +384,35 @@ Code correctness is verified against the official **[ITU-R BS.2217](https://www.
 | 1770Conf-24channels_24LKFS           |       24 |  -24.0 LKFS | :white_check_mark: |
 | 1770Conf-24channels_23LKFS           |       24 |  -23.0 LKFS | :white_check_mark: |
 
-> [!TIP]
-> If `decodeAudioData` fails, it's often due to the browser's specific support for the audio file's format (codec), container, or channel layout, rather than a general API incompatibility.
-> Try a different browser or convert the audio file to a more widely supported format.
-> For example, Chrome has limited support for certain codecs in audio files, while Safari offers broader support. (1770Conf-24channels_24LKFS)
-
 ### EBU TECH 3341
 
 Validated against **[EBU TECH 3341](https://tech.ebu.ch/publications/tech3341)** minimum requirements for loudness metering, including gating behavior, time scales, and true-peak accuracy.
 
-| Signal                | Expected response and accepted tolerances                            |                    |
-| --------------------- | -------------------------------------------------------------------- | :----------------: |
-| seq-3341-1            | M, S, I = -23.0 ±0.1 LUFS<br>M, S, I = 0.0 ±0.1 LU                   | :white_check_mark: |
-| seq-3341-2            | M, S, I = -33.0 ±0.1 LUFS<br>M, S, I = -10.0 ±0.1 LU                 | :white_check_mark: |
-| seq-3341-3            | I = -23.0 ±0.1 LUFS<br>I = 0.0 ±0.1 LU                               | :white_check_mark: |
-| seq-3341-4            | I = -23.0 ±0.1 LUFS<br>I = 0.0 ±0.1 LU                               | :white_check_mark: |
-| seq-3341-5            | I = -23.0 ±0.1 LUFS<br>I = 0.0 ±0.1 LU                               | :white_check_mark: |
-| seq-3341-6            | I = -23.0 ±0.1 LUFS<br>I = 0.0 ±0.1 LU                               | :white_check_mark: |
-| seq-3341-7_seq-3342-5 | I = -23.0 ±0.1 LUFS<br>I = 0.0 ±0.1 LU                               | :white_check_mark: |
-| seq-3341-8_seq-3342-6 | I = -23.0 ±0.1 LUFS<br>I = 0.0 ±0.1 LU                               | :white_check_mark: |
-| seq-3341-9            | S = -23.0 ±0.1 LUFS, constant after 3 s                              | :white_check_mark: |
-| seq-3341-10-\*        | Max S = -23.0 ±0.1 LUFS, for each segment                            | :white_check_mark: |
-| seq-3341-11           | Max S = -38.0, -37.0, -36.0, ..., -19.0 ±0.1 LUFS, successive values | :white_check_mark: |
-| seq-3341-12           | M = -23.0 ±0.1 LUFS, constant after 1 s                              | :white_check_mark: |
-| seq-3341-13-\*        | Max M = -23.0 ±0.1 LUFS, for each segment                            | :white_check_mark: |
-| seq-3341-14           | Max M = -38.0, -37.0, -36.0, ..., -19.0 ±0.1 LUFS, successive values | :white_check_mark: |
-| seq-3341-15           | Max true-peak level = -6.0 +0.2/-0.4 dBTP                            | :white_check_mark: |
-| seq-3341-16           | Max true-peak level = -6.0 +0.2/-0.4 dBTP                            | :white_check_mark: |
-| seq-3341-17           | Max true-peak level = -6.0 +0.2/-0.4 dBTP                            | :white_check_mark: |
-| seq-3341-18           | Max true-peak level = -6.0 +0.2/-0.4 dBTP                            | :white_check_mark: |
-| seq-3341-19           | Max true-peak level = +3.0 +0.2/-0.4 dBTP                            | :white_check_mark: |
-| seq-3341-20           | Max true-peak level = 0.0 +0.2/-0.4 dBTP                             | :white_check_mark: |
-| seq-3341-21           | Max true-peak level = 0.0 +0.2/-0.4 dBTP                             | :white_check_mark: |
-| seq-3341-22           | Max true-peak level = 0.0 +0.2/-0.4 dBTP                             |     -0.45 dBTP     |
-| seq-3341-23           | Max true-peak level = 0.0 +0.2/-0.4 dBTP                             | :white_check_mark: |
+| Signal                | Expected response and accepted tolerances                               |                    |
+| --------------------- | ----------------------------------------------------------------------- | :----------------: |
+| seq-3341-1            | M, S, I = -23.0 ±0.1 LUFS<br>M, S, I = 0.0 ±0.1 LU                      | :white_check_mark: |
+| seq-3341-2            | M, S, I = -33.0 ±0.1 LUFS<br>M, S, I = -10.0 ±0.1 LU                    | :white_check_mark: |
+| seq-3341-3            | I = -23.0 ±0.1 LUFS<br>I = 0.0 ±0.1 LU                                  | :white_check_mark: |
+| seq-3341-4            | I = -23.0 ±0.1 LUFS<br>I = 0.0 ±0.1 LU                                  | :white_check_mark: |
+| seq-3341-5            | I = -23.0 ±0.1 LUFS<br>I = 0.0 ±0.1 LU                                  | :white_check_mark: |
+| seq-3341-6            | I = -23.0 ±0.1 LUFS<br>I = 0.0 ±0.1 LU                                  | :white_check_mark: |
+| seq-3341-7_seq-3342-5 | I = -23.0 ±0.1 LUFS<br>I = 0.0 ±0.1 LU                                  | :white_check_mark: |
+| seq-3341-8_seq-3342-6 | I = -23.0 ±0.1 LUFS<br>I = 0.0 ±0.1 LU                                  | :white_check_mark: |
+| seq-3341-9            | S = -23.0 ±0.1 LUFS, constant after 3 s                                 | :white_check_mark: |
+| seq-3341-10-\*        | Max S = -23.0 ±0.1 LUFS, for each segment                               | :white_check_mark: |
+| seq-3341-11           | Max S = -38.0, -37.0, -36.0,<br>..., -19.0 ±0.1 LUFS, successive values | :white_check_mark: |
+| seq-3341-12           | M = -23.0 ±0.1 LUFS, constant after 1 s                                 | :white_check_mark: |
+| seq-3341-13-\*        | Max M = -23.0 ±0.1 LUFS, for each segment                               | :white_check_mark: |
+| seq-3341-14           | Max M = -38.0, -37.0, -36.0,<br>..., -19.0 ±0.1 LUFS, successive values | :white_check_mark: |
+| seq-3341-15           | Max true-peak level = -6.0 +0.2/-0.4 dBTP                               | :white_check_mark: |
+| seq-3341-16           | Max true-peak level = -6.0 +0.2/-0.4 dBTP                               | :white_check_mark: |
+| seq-3341-17           | Max true-peak level = -6.0 +0.2/-0.4 dBTP                               | :white_check_mark: |
+| seq-3341-18           | Max true-peak level = -6.0 +0.2/-0.4 dBTP                               | :white_check_mark: |
+| seq-3341-19           | Max true-peak level = +3.0 +0.2/-0.4 dBTP                               | :white_check_mark: |
+| seq-3341-20           | Max true-peak level = 0.0 +0.2/-0.4 dBTP                                | :white_check_mark: |
+| seq-3341-21           | Max true-peak level = 0.0 +0.2/-0.4 dBTP                                | :white_check_mark: |
+| seq-3341-22           | Max true-peak level = 0.0 +0.2/-0.4 dBTP                                |     -0.45 dBTP     |
+| seq-3341-23           | Max true-peak level = 0.0 +0.2/-0.4 dBTP                                | :white_check_mark: |
 
 > [!NOTE]
 > The marginal deviation of 0.05 dBTP in `seq-3341-22` is expected behavior.
@@ -377,7 +433,7 @@ Validated against **[EBU TECH 3341](https://tech.ebu.ch/publications/tech3341)**
 
 ## Acknowledgments
 
-This project is a learning experiment aimed at exploring audio signal processing and ITU-R BS.1770 loudness measurement standards. I am not an expert in audio engineering or signal processing, and this project was developed as a way to better understand the concepts of audio loudness and implementation techniques. Thanks to the ITU-R BS.1770 standards for providing the theoretical basis for loudness measurement.
+This project was developed to explore audio loudness processing and study the ITU-R BS.1770 implementation in modern Web Audio environments.
 
 ## License
 
