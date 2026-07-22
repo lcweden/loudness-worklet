@@ -326,7 +326,13 @@
                     <label class="btn btn-wide btn-primary">
                       <Plus />
                       Select Files
-                      <input type="file" class="hidden" accept="audio/*,video/*" multiple {oninput} />
+                      <input
+                        type="file"
+                        class="hidden"
+                        accept="audio/*,video/*"
+                        multiple
+                        {oninput}
+                      />
                     </label>
                     <a
                       class="btn btn-wide btn-neutral"
