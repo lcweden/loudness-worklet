@@ -16,7 +16,7 @@
 
     try {
       const array = await file.arrayBuffer();
-      const buffer = await new AudioContext().decodeAudioData(array);
+      const buffer = await new AudioContext({ sampleRate: 48000 }).decodeAudioData(array);
       const { length, sampleRate, numberOfChannels } = buffer;
       const context = new OfflineAudioContext(numberOfChannels, length, sampleRate);
 

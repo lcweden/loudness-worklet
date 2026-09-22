@@ -63,7 +63,7 @@ import LoudnessNode from "loudness-worklet";
 async function getLoudnessData(file) {
   try {
     const arrayBuffer = await file.arrayBuffer();
-    const audioDecoder = new AudioContext();
+    const audioDecoder = new AudioContext({ sampleRate: 48000 });
     const audioBuffer = await audioDecoder.decodeAudioData(arrayBuffer);
     const offlineContext = new OfflineAudioContext(
       audioBuffer.numberOfChannels,
@@ -100,9 +100,9 @@ async function getLoudnessData(file) {
 In most cases, you will only need the snapshot from the latest update received. Note that in non-SAB mode, the timestamp of the last update depends on your `interval` setting and may not align precisely with the end of the audio.
 
 > [!TIP]
-> If `decodeAudioData()` fails, the browser may not support the selected audio
-> file's codec, container, or channel layout. Try another browser or convert the
-> file to a more widely supported format.
+> By default, `new AudioContext()` uses your system's hardware sample rate (often 44.1 kHz), causing `decodeAudioData()` to resample the audio. To ensure optimal True Peak accuracy and avoid unintended resampling, specify the native sample rate explicitly (e.g., `{ sampleRate: 48000 }`).
+>
+> If decoding fails, the browser may not support the file format or channel layout. Try another browser or convert the file to common formats.
 
 ### Live Analysis
 
@@ -411,12 +411,8 @@ Validated against **[EBU TECH 3341](https://tech.ebu.ch/publications/tech3341)**
 | seq-3341-19           | Max true-peak level = +3.0 +0.2/-0.4 dBTP                               | :white_check_mark: |
 | seq-3341-20           | Max true-peak level = 0.0 +0.2/-0.4 dBTP                                | :white_check_mark: |
 | seq-3341-21           | Max true-peak level = 0.0 +0.2/-0.4 dBTP                                | :white_check_mark: |
-| seq-3341-22           | Max true-peak level = 0.0 +0.2/-0.4 dBTP                                |     -0.45 dBTP     |
+| seq-3341-22           | Max true-peak level = 0.0 +0.2/-0.4 dBTP                                | :white_check_mark: |
 | seq-3341-23           | Max true-peak level = 0.0 +0.2/-0.4 dBTP                                | :white_check_mark: |
-
-> [!NOTE]
-> The marginal deviation of 0.05 dBTP in `seq-3341-22` is expected behavior.
-> The True Peak FIR coefficients are strictly optimized for 48 kHz, which causes a negligible roll-off when applied to a 44.1 kHz test signal.
 
 ### EBU TECH 3342 Minimum requirements test signals
 
