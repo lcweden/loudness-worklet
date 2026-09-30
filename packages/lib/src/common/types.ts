@@ -1,46 +1,4 @@
 /**
- * Options for initializing the LoudnessProcessor inside the AudioWorklet thread.
- */
-export interface LoudnessWorkletOptions extends AudioWorkletNodeOptions {
-  processorOptions: {
-    /**
-     * Pre-allocated SharedArrayBuffers for each input channel.
-     */
-    buffers?: SharedArrayBuffer[];
-
-    /**
-     * Interval, in seconds, between loudness update messages sent from the AudioWorklet.
-     */
-    interval: number;
-
-    /**
-     * Indicates whether cross-origin isolation is active, allowing the use of SharedArrayBuffer for
-     * zero-allocation, lock-free cross-thread communication.
-     */
-    shared: boolean;
-  };
-}
-
-/**
- * Options for creating a LoudnessNode on the main thread.
- */
-export interface LoudnessOptions extends AudioNodeOptions {
-  /**
-   * Interval, in seconds, between loudness update messages sent from the AudioWorklet.
-   *
-   * @default 0.1
-   */
-  interval?: number;
-
-  /**
-   * The number of independent audio inputs to analyze concurrently.
-   *
-   * @default 1
-   */
-  numberOfInputs?: number;
-}
-
-/**
  * A real-time snapshot of loudness metrics calculated according to ITU-R and EBU standards.
  */
 export type LoudnessSnapshot = {
@@ -89,4 +47,17 @@ export type LoudnessSnapshot = {
    * Maximum True Peak level, calculated using 4x oversampling to catch inter-sample peaks.
    */
   maximumTruePeakLevel: number;
+};
+
+export type ValidationRule = {
+  time: number;
+  metric: keyof LoudnessSnapshot;
+  expected: number;
+  tolerances: [number] | [number, number];
+};
+
+export type ValidationResult = {
+  rule: ValidationRule;
+  actual?: number;
+  passed: boolean;
 };
