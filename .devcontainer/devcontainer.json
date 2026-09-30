@@ -8,17 +8,23 @@
         "oxc.oxc-vscode",
         "svelte.svelte-vscode",
         "vitest.explorer",
-        "VoidZero.vite-plus-extension-pack"
+        "VoidZero.vite-plus-extension-pack",
+        "vscode-icons-team.vscode-icons"
       ],
       "settings": {
         "editor.formatOnSave": true,
         "editor.defaultFormatter": "oxc.oxc-vscode",
         "editor.codeActionsOnSave": { "source.fixAll.oxc": "explicit" },
         "editor.formatOnSaveMode": "file",
-        "oxc.fmt.configPath": "oxfmt.config.ts",
-        "oxc.configPath": "oxlint.config.ts",
+        "files.associations": {
+          "*.css": "tailwindcss"
+        },
+        "oxc.disableNestedConfig": true,
+        "oxc.fmt.disableNestedConfig": true,
+        "svelte.plugin.svelte.format.enable": false,
         "[javascript]": { "editor.defaultFormatter": "oxc.oxc-vscode" },
         "[javascriptreact]": { "editor.defaultFormatter": "oxc.oxc-vscode" },
+        "[svelte]": { "editor.defaultFormatter": "oxc.oxc-vscode" },
         "[typescript]": { "editor.defaultFormatter": "oxc.oxc-vscode" },
         "[typescriptreact]": { "editor.defaultFormatter": "oxc.oxc-vscode" }
       }
