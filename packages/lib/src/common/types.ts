@@ -49,15 +49,48 @@ export type LoudnessSnapshot = {
   maximumTruePeakLevel: number;
 };
 
+/**
+ * A validation rule to check a specific loudness metric against an expected value at a given time.
+ */
 export type ValidationRule = {
+  /**
+   * The timestamp in seconds at which the metric should be evaluated.
+   */
   time: number;
+
+  /**
+   * The loudness metric to inspect from the snapshot.
+   */
   metric: keyof LoudnessSnapshot;
+
+  /**
+   * The expected value for the specified metric.
+   */
   expected: number;
+
+  /**
+   * Allowed tolerances. Single value for symmetric tolerance `[tol]`, or `[lower, upper]` for
+   * asymmetric tolerance.
+   */
   tolerances: [number] | [number, number];
 };
 
+/**
+ * The outcome of evaluating a validation rule against actual loudness snapshots.
+ */
 export type ValidationResult = {
+  /**
+   * The validation rule that was tested.
+   */
   rule: ValidationRule;
+
+  /**
+   * The actual value obtained from the snapshot, or undefined if no snapshot matched.
+   */
   actual?: number;
+
+  /**
+   * Whether the actual value falls within the expected tolerance range.
+   */
   passed: boolean;
 };
