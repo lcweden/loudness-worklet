@@ -57,6 +57,7 @@ class LoudnessNode extends AudioWorkletNode {
    */
   constructor(context: BaseAudioContext, options: LoudnessOptions = {}) {
     const { interval = DEFAULT_INTERVAL, numberOfInputs = DEFAULT_NUMBER_OF_INPUTS } = options;
+    const { channelCount, channelCountMode, channelInterpretation } = options;
 
     if (typeof interval !== "number") {
       throw new TypeError("Argument 'interval' must be a number");
@@ -80,8 +81,9 @@ class LoudnessNode extends AudioWorkletNode {
     const buffers = shared ? Array.from(iterable, () => new SharedArrayBuffer(size)) : undefined;
     const processorOptions = { buffers, interval, shared };
     const audioWorkletNodeOptions = { numberOfInputs, processorOptions };
+    const audioNodeOptions = { channelCount, channelCountMode, channelInterpretation };
 
-    super(context, REGISTERED_NAME, audioWorkletNodeOptions);
+    super(context, REGISTERED_NAME, { ...audioNodeOptions, ...audioWorkletNodeOptions });
 
     if (shared && buffers) {
       this.#views = buffers.map((buffer) => new Float32Array(buffer));
