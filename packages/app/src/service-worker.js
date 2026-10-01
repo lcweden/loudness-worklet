@@ -13,13 +13,14 @@
 import { build, files, version } from "$service-worker";
 
 // This gives `self` the correct types
-const self = /**
- * @type {ServiceWorkerGlobalScope}
- */ (
+const self =
   /**
-   * @type {unknown}
-   */ (globalThis.self)
-);
+   * @type {ServiceWorkerGlobalScope}
+   */ (
+    /**
+     * @type {unknown}
+     */ (globalThis.self)
+  );
 
 // Create a unique cache name for this deployment
 const CACHE = `cache-${version}`;

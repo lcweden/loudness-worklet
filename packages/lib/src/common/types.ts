@@ -1,46 +1,4 @@
 /**
- * Options for initializing the LoudnessProcessor inside the AudioWorklet thread.
- */
-export interface LoudnessWorkletOptions extends AudioWorkletNodeOptions {
-  processorOptions: {
-    /**
-     * Pre-allocated SharedArrayBuffers for each input channel.
-     */
-    buffers?: SharedArrayBuffer[];
-
-    /**
-     * Interval, in seconds, between loudness update messages sent from the AudioWorklet.
-     */
-    interval: number;
-
-    /**
-     * Indicates whether cross-origin isolation is active, allowing the use of SharedArrayBuffer for
-     * zero-allocation, lock-free cross-thread communication.
-     */
-    shared: boolean;
-  };
-}
-
-/**
- * Options for creating a LoudnessNode on the main thread.
- */
-export interface LoudnessOptions extends AudioNodeOptions {
-  /**
-   * Interval, in seconds, between loudness update messages sent from the AudioWorklet.
-   *
-   * @default 0.1
-   */
-  interval?: number;
-
-  /**
-   * The number of independent audio inputs to analyze concurrently.
-   *
-   * @default 1
-   */
-  numberOfInputs?: number;
-}
-
-/**
  * A real-time snapshot of loudness metrics calculated according to ITU-R and EBU standards.
  */
 export type LoudnessSnapshot = {
@@ -89,4 +47,50 @@ export type LoudnessSnapshot = {
    * Maximum True Peak level, calculated using 4x oversampling to catch inter-sample peaks.
    */
   maximumTruePeakLevel: number;
+};
+
+/**
+ * A validation rule to check a specific loudness metric against an expected value at a given time.
+ */
+export type ValidationRule = {
+  /**
+   * The timestamp in seconds at which the metric should be evaluated.
+   */
+  time: number;
+
+  /**
+   * The loudness metric to inspect from the snapshot.
+   */
+  metric: keyof LoudnessSnapshot;
+
+  /**
+   * The expected value for the specified metric.
+   */
+  expected: number;
+
+  /**
+   * Allowed tolerances. Single value for symmetric tolerance `[tol]`, or `[lower, upper]` for
+   * asymmetric tolerance.
+   */
+  tolerances: [number] | [number, number];
+};
+
+/**
+ * The outcome of evaluating a validation rule against actual loudness snapshots.
+ */
+export type ValidationResult = {
+  /**
+   * The validation rule that was tested.
+   */
+  rule: ValidationRule;
+
+  /**
+   * The actual value obtained from the snapshot, or undefined if no snapshot matched.
+   */
+  actual?: number;
+
+  /**
+   * Whether the actual value falls within the expected tolerance range.
+   */
+  passed: boolean;
 };

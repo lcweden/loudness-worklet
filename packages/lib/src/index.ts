@@ -1,2 +1,3 @@
 export { default } from "#api/loudness-node";
-export type { LoudnessOptions, LoudnessSnapshot } from "#common/types";
+export type { LoudnessOptions } from "#common/interfaces";
+export type { LoudnessSnapshot } from "#common/types";

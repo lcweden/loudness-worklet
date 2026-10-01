@@ -34,7 +34,7 @@ class Histogram {
   /**
    * Gets the bins array.
    *
-   * @returns {Uint32Array} The array of bin counts
+   * @returns The array of bin counts
    */
   get bins(): Uint32Array {
     return this.#bins;
@@ -43,7 +43,7 @@ class Histogram {
   /**
    * Gets the minimum value of the histogram range.
    *
-   * @returns {number} The minimum value
+   * @returns The minimum value
    */
   get min(): number {
     return this.#min;
@@ -52,7 +52,7 @@ class Histogram {
   /**
    * Gets the bin width.
    *
-   * @returns {number} The step value
+   * @returns The step value
    */
   get step(): number {
     return this.#step;
@@ -61,7 +61,7 @@ class Histogram {
   /**
    * Gets the number of bins.
    *
-   * @returns {number} The number of bins
+   * @returns The number of bins
    */
   get size(): number {
     return this.#bins.length;

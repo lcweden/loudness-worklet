@@ -1,16 +1,16 @@
-export const REGISTERED_NAME = "loudness-processor";
+export const REGISTERED_NAME: string = "loudness-processor";
 
-export const DEFAULT_NUMBER_OF_INPUTS = 1;
+export const DEFAULT_NUMBER_OF_INPUTS: number = 1;
 
-export const DEFAULT_INTERVAL = 0.1;
+export const DEFAULT_INTERVAL: number = 0.1;
 
-export const MIN_LUFS = -144;
+export const MIN_LUFS: number = -144;
 
-export const MAX_LUFS = 12;
+export const MAX_LUFS: number = 12;
 
-export const RESOLUTION = 0.1;
+export const RESOLUTION: number = 0.1;
 
-export const INDEX = {
+export const INDEX: Record<string, number> = {
   TIME: 0,
   FRAME: 1,
   LRA: 2,
@@ -22,18 +22,30 @@ export const INDEX = {
   MAX_TP: 8,
 };
 
-export const K_WEIGHTING_COEFFICIENTS = {
-  highshelf: {
+export const SAMPLE_RATE: number = 48_000;
+
+export const K_WEIGHTING_COEFFICIENTS: {
+  stage1: { a: [number, number]; b: [number, number, number] };
+  stage2: { a: [number, number]; b: [number, number, number] };
+} = {
+  stage1: {
     a: [-1.69065929318241, 0.73248077421585],
     b: [1.53512485958697, -2.69169618940638, 1.19839281085285],
   },
-  highpass: {
+  stage2: {
     a: [-1.99004745483398, 0.99007225036621],
     b: [1.0, -2.0, 1.0],
   },
 };
 
-export const TRUE_PEAK_COEFFICIENTS = {
+export const TRUE_PEAK_COEFFICIENTS: {
+  lowpass: {
+    phase0: number[];
+    phase1: number[];
+    phase2: number[];
+    phase3: number[];
+  };
+} = {
   lowpass: {
     phase0: [
       0.001708984375, 0.010986328125, -0.0196533203125, 0.033203125, -0.0594482421875,
@@ -72,22 +84,22 @@ export const CHANNEL_WEIGHT_FACTORS: Record<number, readonly number[]> = {
   ],
 };
 
-export const MOMENTARY_WINDOW_SEC = 0.4;
+export const MOMENTARY_WINDOW_SEC: number = 0.4;
 
-export const SHORT_TERM_WINDOW_SEC = 3.0;
+export const SHORT_TERM_WINDOW_SEC: number = 3.0;
 
-export const HOP_INTERVAL_SEC = 0.1;
+export const HOP_INTERVAL_SEC: number = 0.1;
 
-export const LOUDNESS_RANGE_UPPER_PERCENTILE = 0.95;
+export const LOUDNESS_RANGE_UPPER_PERCENTILE: number = 0.95;
 
-export const LOUDNESS_RANGE_LOWER_PERCENTILE = 0.1;
+export const LOUDNESS_RANGE_LOWER_PERCENTILE: number = 0.1;
 
-export const ATTENUATION_DB = 12.04;
+export const ATTENUATION_DB: number = 12.04;
 
-export const LUFS_ABSOLUTE_THRESHOLD = -70;
+export const LUFS_ABSOLUTE_THRESHOLD: number = -70;
 
-export const LUFS_RELATIVE_THRESHOLD = -10;
+export const LUFS_RELATIVE_THRESHOLD: number = -10;
 
-export const LRA_ABSOLUTE_THRESHOLD = -70;
+export const LRA_ABSOLUTE_THRESHOLD: number = -70;
 
-export const LRA_RELATIVE_THRESHOLD = -20;
+export const LRA_RELATIVE_THRESHOLD: number = -20;

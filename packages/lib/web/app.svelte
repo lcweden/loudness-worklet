@@ -2,52 +2,107 @@
   import LoudnessNode from "#api/loudness-node";
   import type { LoudnessSnapshot } from "#common/types";
   import moduleURL from "#scripts/loudness-processor?url";
+  import { validate } from "#utils/validation";
 
-  let error = $state<string>();
-  let snapshots = $state<LoudnessSnapshot[]>([]);
-  let snapshot = $derived<LoudnessSnapshot>(snapshots[snapshots.length - 1]);
+  let message = $state<string>("");
+  let filename = $state<string>();
+  let snapshot = $state<LoudnessSnapshot>();
 
-  async function handleChange(event: Event) {
-    error = undefined;
-    snapshots = [];
+  async function onchange(event: Event) {
+    const target = event.target as HTMLInputElement;
+    const files = target.files;
 
-    const file = (event.target as HTMLInputElement).files?.[0];
-    if (!file) return;
+    if (!files) {
+      return;
+    }
 
-    try {
-      const array = await file.arrayBuffer();
-      const buffer = await new AudioContext({ sampleRate: 48000 }).decodeAudioData(array);
-      const { length, sampleRate, numberOfChannels } = buffer;
-      const context = new OfflineAudioContext(numberOfChannels, length, sampleRate);
+    for (const file of files) {
+      const { name } = file;
+      const decoder = new AudioContext({ sampleRate: 48000 });
 
-      await context.audioWorklet.addModule(moduleURL);
+      filename = name;
+      message = "";
 
-      const source = new AudioBufferSourceNode(context, { buffer });
-      const loudness = new LoudnessNode(context, { numberOfInputs: 1 });
+      console.log(`[${name}] decoding audio...`);
 
-      loudness.port.onmessage = (event: MessageEvent<Float32Array[]>) => {
-        snapshots.push(LoudnessNode.from(event.data[0]));
-      };
+      try {
+        const array = await file.arrayBuffer();
+        const buffer = await decoder.decodeAudioData(array);
+        const { length, sampleRate, numberOfChannels } = buffer;
+        const context = new OfflineAudioContext(numberOfChannels, length + sampleRate, sampleRate);
 
-      source.connect(loudness).connect(context.destination);
-      source.start();
+        await context.audioWorklet.addModule(moduleURL);
 
-      console.time("Rendering");
-      await context.startRendering();
-      console.timeEnd("Rendering");
-    } catch (e) {
-      error = e instanceof Error ? e.message : String(e);
+        const source = new AudioBufferSourceNode(context, { buffer });
+        const loudness = new LoudnessNode(context, { interval: 0.2, numberOfInputs: 1 });
+
+        const { promise, resolve } = Promise.withResolvers<number>();
+        const snapshots: LoudnessSnapshot[] = [];
+
+        loudness.port.onmessage = (event: MessageEvent<Float32Array[]>) => {
+          snapshot = LoudnessNode.from(event.data[0]);
+          snapshots.push(snapshot);
+        };
+
+        source.connect(loudness).connect(context.destination);
+        source.start();
+
+        const start = performance.now();
+
+        await context.startRendering();
+
+        const end = performance.now();
+
+        resolve(end - start);
+
+        const duration = await promise;
+        const results = validate(name, snapshots);
+
+        if (results) {
+          const passed = results.every((r) => r.passed);
+          const table = results.map(({ rule, actual, passed }) => ({
+            time: `${rule.time}s`,
+            metric: rule.metric,
+            actual: actual !== undefined ? Number(actual.toFixed(2)) : undefined,
+            expected: rule.expected,
+            tolerance: rule.tolerances.join(" ~ "),
+            status: passed ? "PASS" : "FAIL",
+          }));
+
+          console.info(`[${name}] compliance validation: ${passed ? "PASSED ✅" : "FAILED ❌"}`);
+          console.table(table);
+
+          const failed = results.filter((r) => !r.passed);
+
+          if (failed.length > 0) {
+            console.warn(`[${name}] ${failed.length} rule(s) failed:`, failed);
+          }
+        }
+
+        console.log(`[${name}] rendered in ${duration.toFixed(2)}ms`);
+      } catch (cause) {
+        message = cause instanceof Error ? cause.message : String(cause);
+      } finally {
+        decoder.close();
+      }
     }
   }
 </script>
 
 <main>
-  <h1>Playground</h1>
+  <h1>Loudness Worklet Playground</h1>
 
   <section>
     <h2>Select An Audio Or Video File</h2>
-    <input type="file" onchange={handleChange} />
-    {#if error}<p>{error}</p>{/if}
+    <input type="file" accept="audio/*, video/*" multiple {onchange} />
+    {#if filename}
+      <p>
+        File: <strong>{filename}</strong>
+      </p>
+    {/if}
+    {#if message}
+      <p>{message}</p>
+    {/if}
   </section>
 
   <section>
@@ -61,11 +116,15 @@
       <dd>{snapshot?.integratedLoudness.toFixed(1) ?? "-"}</dd>
       <dt>Loudness Range (LU)</dt>
       <dd>{snapshot?.loudnessRange.toFixed(1) ?? "-"}</dd>
+      <dt>Maximum Momentary Loudness (LUFS)</dt>
+      <dd>{snapshot?.maximumMomentaryLoudness.toFixed(1) ?? "-"}</dd>
+      <dt>Maximum Short-Term Loudness (LUFS)</dt>
+      <dd>{snapshot?.maximumShortTermLoudness.toFixed(1) ?? "-"}</dd>
       <dt>Maximum True Peak Level (dBTP)</dt>
       <dd>{snapshot?.maximumTruePeakLevel.toFixed(1) ?? "-"}</dd>
     </dl>
     <details open>
-      <summary>Raw Data</summary>
+      <summary>Raw Snapshot</summary>
       <pre>{JSON.stringify(snapshot, null, 2)}</pre>
     </details>
   </section>
@@ -93,15 +152,30 @@
   </section>
 
   <section>
-    <h2>ITU-R BS.2217 Reference</h2>
+    <h2>Compliance References</h2>
     <p>
-      This Report contains a table of compliance test files and related information for verifying
-      that a meter meets the specifications within Recommendation ITU-R BS.1770.
+      Compliance test files and specifications for verifying Recommendation ITU-R BS.1770 and EBU
+      R128:
     </p>
+    <ul>
+      <li>
+        <a href="https://www.itu.int/pub/R-REP-BS.2217" rel="noreferrer" target="_blank">
+          ITU-R BS.2217 Compliance Material
+        </a>
+      </li>
+      <li>
+        <a href="https://tech.ebu.ch/publications/tech3341" rel="noreferrer" target="_blank">
+          EBU Tech 3341 (Loudness Metering)
+        </a>
+      </li>
+      <li>
+        <a href="https://tech.ebu.ch/publications/tech3342" rel="noreferrer" target="_blank">
+          EBU Tech 3342 (Loudness Range)
+        </a>
+      </li>
+    </ul>
     <p>
-      <a href="https://www.itu.int/pub/R-REP-BS.2217" rel="noreferrer" target="_blank">
-        Compliance material for Recommendation ITU-R BS.1770
-      </a>
+      <small>Open browser DevTools for compliance validation results.</small>
     </p>
   </section>
 </main>
