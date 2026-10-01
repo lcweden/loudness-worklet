@@ -4,7 +4,8 @@
   import moduleURL from "#scripts/loudness-processor?url";
   import { validate } from "#utils/validation";
 
-  let events = $state<string[]>([]);
+  let message = $state<string>("");
+  let filename = $state<string>();
   let snapshot = $state<LoudnessSnapshot>();
 
   async function onchange(event: Event) {
@@ -19,6 +20,11 @@
       const { name } = file;
       const decoder = new AudioContext({ sampleRate: 48000 });
 
+      filename = name;
+      message = "";
+
+      console.log(`[${name}] decoding audio...`);
+
       try {
         const array = await file.arrayBuffer();
         const buffer = await decoder.decodeAudioData(array);
@@ -28,7 +34,7 @@
         await context.audioWorklet.addModule(moduleURL);
 
         const source = new AudioBufferSourceNode(context, { buffer });
-        const loudness = new LoudnessNode(context, { interval: 0.1, numberOfInputs: 1 });
+        const loudness = new LoudnessNode(context, { interval: 0.2, numberOfInputs: 1 });
 
         const { promise, resolve } = Promise.withResolvers<number>();
         const snapshots: LoudnessSnapshot[] = [];
@@ -53,17 +59,29 @@
         const results = validate(name, snapshots);
 
         if (results) {
-          const passed = results.every((result) => result.passed);
+          const passed = results.every((r) => r.passed);
+          const table = results.map(({ rule, actual, passed }) => ({
+            time: `${rule.time}s`,
+            metric: rule.metric,
+            actual: actual !== undefined ? Number(actual.toFixed(2)) : undefined,
+            expected: rule.expected,
+            tolerance: rule.tolerances.join(" ~ "),
+            status: passed ? "PASS" : "FAIL",
+          }));
 
-          events.push(`[${name}] Validation ${passed ? "passed" : "failed"}`);
+          console.info(`[${name}] compliance validation: ${passed ? "PASSED ✅" : "FAILED ❌"}`);
+          console.table(table);
+
+          const failed = results.filter((r) => !r.passed);
+
+          if (failed.length > 0) {
+            console.warn(`[${name}] ${failed.length} rule(s) failed:`, failed);
+          }
         }
 
-        events.push(`[${name}] Duration: ${duration.toFixed(2)}ms`);
-      } catch (error) {
-        const time = new Date().toLocaleTimeString();
-        const message = error instanceof Error ? error.message : String(error);
-
-        events.push(`[${time}][${name}] Error: ${message}`);
+        console.log(`[${name}] rendered in ${duration.toFixed(2)}ms`);
+      } catch (cause) {
+        message = cause instanceof Error ? cause.message : String(cause);
       } finally {
         decoder.close();
       }
@@ -72,31 +90,92 @@
 </script>
 
 <main>
-  <h2>Loudness Worklet Playground</h2>
-  <input type="file" accept="audio/*, video/*" multiple {onchange} />
-  <code>
-    {#if snapshot}
-      {@const { currentFrame, currentTime } = snapshot}
-      {@const { integratedLoudness, shortTermLoudness, momentaryLoudness } = snapshot}
-      {@const { maximumMomentaryLoudness, maximumShortTermLoudness } = snapshot}
-      {@const { maximumTruePeakLevel, loudnessRange } = snapshot}
+  <h1>Loudness Worklet Playground</h1>
 
-      <p>Current Frame: {currentFrame}</p>
-      <p>Current Time: {currentTime}</p>
-      <p>Integrated Loudness: {integratedLoudness}</p>
-      <p>Momentary Loudness: {momentaryLoudness}</p>
-      <p>Short Term Loudness: {shortTermLoudness}</p>
-      <p>Maximum Momentary Loudness: {maximumMomentaryLoudness}</p>
-      <p>Maximum Short Term Loudness: {maximumShortTermLoudness}</p>
-      <p>Maximum True Peak Level: {maximumTruePeakLevel}</p>
-      <p>Loudness Range: {loudnessRange}</p>
-    {:else}
-      <p>No snapshot available.</p>
+  <section>
+    <h2>Select An Audio Or Video File</h2>
+    <input type="file" accept="audio/*, video/*" multiple {onchange} />
+    {#if filename}
+      <p>
+        File: <strong>{filename}</strong>
+      </p>
     {/if}
-  </code>
-  <ul>
-    {#each events as event}
-      <li>{event}</li>
-    {/each}
-  </ul>
+    {#if message}
+      <p>{message}</p>
+    {/if}
+  </section>
+
+  <section>
+    <h2>Loudness Measurement</h2>
+    <dl>
+      <dt>Momentary Loudness (LUFS)</dt>
+      <dd>{snapshot?.momentaryLoudness.toFixed(1) ?? "-"}</dd>
+      <dt>Short-Term Loudness (LUFS)</dt>
+      <dd>{snapshot?.shortTermLoudness.toFixed(1) ?? "-"}</dd>
+      <dt>Integrated Loudness (LUFS)</dt>
+      <dd>{snapshot?.integratedLoudness.toFixed(1) ?? "-"}</dd>
+      <dt>Loudness Range (LU)</dt>
+      <dd>{snapshot?.loudnessRange.toFixed(1) ?? "-"}</dd>
+      <dt>Maximum Momentary Loudness (LUFS)</dt>
+      <dd>{snapshot?.maximumMomentaryLoudness.toFixed(1) ?? "-"}</dd>
+      <dt>Maximum Short-Term Loudness (LUFS)</dt>
+      <dd>{snapshot?.maximumShortTermLoudness.toFixed(1) ?? "-"}</dd>
+      <dt>Maximum True Peak Level (dBTP)</dt>
+      <dd>{snapshot?.maximumTruePeakLevel.toFixed(1) ?? "-"}</dd>
+    </dl>
+    <details open>
+      <summary>Raw Snapshot</summary>
+      <pre>{JSON.stringify(snapshot, null, 2)}</pre>
+    </details>
+  </section>
+
+  <section>
+    <h2>ITU-R BS.1770-5 Reference</h2>
+    <ul>
+      <li>
+        <strong>LUFS</strong>: Loudness Units relative to Full Scale, standardized loudness measure.
+      </li>
+      <li><strong>Momentary</strong>: 400ms sliding window loudness.</li>
+      <li><strong>Short-Term</strong>: 3s sliding window loudness.</li>
+      <li><strong>Integrated</strong>: Overall loudness over the program.</li>
+      <li><strong>Loudness Range</strong>: Statistical measure of loudness variation.</li>
+      <li>
+        <strong>Maximum True Peak Level</strong>: Maximum sample-accurate peak, considering
+        inter-sample peaks.
+      </li>
+    </ul>
+    <p>
+      <a href="https://www.itu.int/rec/R-REC-BS.1770/en" rel="noreferrer" target="_blank">
+        ITU-R BS.1770-5 Official Recommendation
+      </a>
+    </p>
+  </section>
+
+  <section>
+    <h2>Compliance References</h2>
+    <p>
+      Compliance test files and specifications for verifying Recommendation ITU-R BS.1770 and EBU
+      R128:
+    </p>
+    <ul>
+      <li>
+        <a href="https://www.itu.int/pub/R-REP-BS.2217" rel="noreferrer" target="_blank">
+          ITU-R BS.2217 Compliance Material
+        </a>
+      </li>
+      <li>
+        <a href="https://tech.ebu.ch/publications/tech3341" rel="noreferrer" target="_blank">
+          EBU Tech 3341 (Loudness Metering)
+        </a>
+      </li>
+      <li>
+        <a href="https://tech.ebu.ch/publications/tech3342" rel="noreferrer" target="_blank">
+          EBU Tech 3342 (Loudness Range)
+        </a>
+      </li>
+    </ul>
+    <p>
+      <small>Open browser DevTools for compliance validation results.</small>
+    </p>
+  </section>
 </main>

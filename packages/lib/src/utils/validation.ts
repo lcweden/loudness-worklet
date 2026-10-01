@@ -160,6 +160,72 @@ const ruleset: { pattern: RegExp; rules: ValidationRule[] }[] = [
     pattern: /^seq-3342-4(?:[._-]|$)/i,
     rules: [{ time: 100, metric: "loudnessRange", expected: 15, tolerances: [1] }],
   },
+  {
+    pattern: /^1770(?:-2)?[._-]Comp(?:_2)?[._-]RelGateTest(?:[._-]|$)/i,
+    rules: [{ time: 4, metric: "integratedLoudness", expected: -10, tolerances: [0.1] }],
+  },
+  {
+    pattern: /^1770(?:-2)?[._-]Comp(?:_2)?[._-]AbsGateTest(?:[._-]|$)/i,
+    rules: [{ time: 4, metric: "integratedLoudness", expected: -69.5, tolerances: [0.1] }],
+  },
+  {
+    pattern: /^1770(?:-2)?[._-]Comp(?:_2)?[._-]18LKFS_FrequencySweep(?:[._-]|$)/i,
+    rules: [{ time: 120, metric: "integratedLoudness", expected: -18, tolerances: [0.1] }],
+  },
+  {
+    pattern:
+      /^1770(?:-2)?[._-]Comp(?:_2)?[._-]24LKFS_(?:25|100|500|1000|2000|10000)Hz_2ch(?:[._-]|$)/i,
+    rules: [{ time: 29, metric: "integratedLoudness", expected: -24, tolerances: [0.1] }],
+  },
+  {
+    pattern:
+      /^1770(?:-2)?[._-]Comp(?:_2)?[._-]23LKFS_(?:25|100|500|1000|2000|10000)Hz_2ch(?:[._-]|$)/i,
+    rules: [{ time: 29, metric: "integratedLoudness", expected: -23, tolerances: [0.1] }],
+  },
+  {
+    pattern: /^1770(?:-2)?[._-]Comp(?:_2)?[._-]24LKFS_SummingTest(?:[._-]|$)/i,
+    rules: [{ time: 29, metric: "integratedLoudness", expected: -24, tolerances: [0.1] }],
+  },
+  {
+    pattern: /^1770(?:-2)?[._-]Comp(?:_2)?[._-]23LKFS_SummingTest(?:[._-]|$)/i,
+    rules: [{ time: 29, metric: "integratedLoudness", expected: -23, tolerances: [0.1] }],
+  },
+  {
+    pattern:
+      /^1770(?:-2)?[._-]Comp(?:_2)?[._-]24LKFS_ChannelCheck(?:Left|Right|Centre|Ls|Rs)(?:[._-]|$)/i,
+    rules: [{ time: 29, metric: "integratedLoudness", expected: -24, tolerances: [0.1] }],
+  },
+  {
+    pattern:
+      /^1770(?:-2)?[._-]Comp(?:_2)?[._-]23LKFS_ChannelCheck(?:Left|Right|Centre|Ls|Rs)(?:[._-]|$)/i,
+    rules: [{ time: 29, metric: "integratedLoudness", expected: -23, tolerances: [0.1] }],
+  },
+  {
+    pattern:
+      /^1770(?:-2)?[._-]Conf(?:_|-)(?:6ch_VinCntr|6ch_VinL\+R|6ch_VinL-R-C|Stereo_VinL\+R|Mono_Voice\+Music)-24LKFS(?:[._-]|$)/i,
+    rules: [{ time: 83, metric: "integratedLoudness", expected: -24, tolerances: [0.1] }],
+  },
+  {
+    pattern:
+      /^1770(?:-2)?[._-]Conf(?:_|-)(?:6ch_VinCntr|6ch_VinL\+R|6ch_VinL-R-C|Stereo_VinL\+R|Mono_Voice\+Music)-23LKFS(?:[._-]|$)/i,
+    rules: [{ time: 83, metric: "integratedLoudness", expected: -23, tolerances: [0.1] }],
+  },
+  {
+    pattern: /^1770Conf-(?:8|10|12|24)channels?_24LKFS(?:[._-]|$)/i,
+    rules: [{ time: 29, metric: "integratedLoudness", expected: -24, tolerances: [0.1] }],
+  },
+  {
+    pattern: /^1770Conf-24LKFS-(?:8|10|12|24)channels?(?:[._-]|$)/i,
+    rules: [{ time: 29, metric: "integratedLoudness", expected: -24, tolerances: [0.1] }],
+  },
+  {
+    pattern: /^1770Conf-(?:8|10|12|24)channels?_23LKFS(?:[._-]|$)/i,
+    rules: [{ time: 29, metric: "integratedLoudness", expected: -23, tolerances: [0.1] }],
+  },
+  {
+    pattern: /^1770Conf-23LKFS-(?:8|10|12|24)channels?(?:[._-]|$)/i,
+    rules: [{ time: 29, metric: "integratedLoudness", expected: -23, tolerances: [0.1] }],
+  },
 ];
 
 /**
