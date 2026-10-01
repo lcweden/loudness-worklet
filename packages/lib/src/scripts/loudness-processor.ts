@@ -19,7 +19,7 @@ import {
   K_WEIGHTING_COEFFICIENTS,
   SAMPLE_RATE,
 } from "#common/constants";
-import type { LoudnessWorkletOptions } from "#common/types";
+import type { LoudnessWorkletOptions } from "#common/interfaces";
 import BiquadraticFilter from "#modules/biquadratic-filter";
 import CircularBuffer from "#modules/circular-buffer";
 import Histogram from "#modules/histogram";
@@ -84,7 +84,7 @@ class LoudnessProcessor extends AudioWorkletProcessor {
      * AudioWorklet render quantum.
      *
      * @param {number} window The window size in seconds.
-     * @returns {number} The calculated buffer capacity
+     * @returns The calculated buffer capacity
      */
     const cap = (window: number): number => Math.max(1, Math.floor(window / (128 / sampleRate)));
 
@@ -112,7 +112,7 @@ class LoudnessProcessor extends AudioWorkletProcessor {
    *
    * @param {Float32Array[][]} inputs The input audio data.
    * @param {Float32Array[][]} outputs The output audio data.
-   * @returns {boolean} Returns `true` to keep the processor alive, or `false` to terminate
+   * @returns Returns `true` to keep the processor alive, or `false` to terminate
    */
   process(inputs: Float32Array[][], outputs: Float32Array[][]): boolean {
     const attenduation = 10 ** (-ATTENUATION_DB / 20);

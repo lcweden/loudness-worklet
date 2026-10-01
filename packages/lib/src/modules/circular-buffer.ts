@@ -24,7 +24,7 @@ class CircularBuffer {
   /**
    * Checks if the buffer is full.
    *
-   * @returns {boolean} True if the buffer is full, false otherwise
+   * @returns True if the buffer is full, false otherwise
    */
   get full(): boolean {
     return this.#length === this.#capacity;
@@ -33,7 +33,7 @@ class CircularBuffer {
   /**
    * Gets the current number of items in the buffer.
    *
-   * @returns {number} The number of items in the buffer
+   * @returns The number of items in the buffer
    */
   get length(): number {
     return this.#length;
@@ -56,7 +56,7 @@ class CircularBuffer {
   /**
    * Calculates the sum of all items currently in the buffer.
    *
-   * @returns {number} The sum of the items in the buffer
+   * @returns The sum of the items in the buffer
    */
   sum(): number {
     const length = this.#length;

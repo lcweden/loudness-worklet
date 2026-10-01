@@ -5,7 +5,8 @@ import {
   DEFAULT_INTERVAL,
 } from "#common/constants";
 import { MIN_LUFS } from "#common/constants";
-import type { LoudnessOptions, LoudnessSnapshot } from "#common/types";
+import type { LoudnessOptions } from "#common/interfaces";
+import type { LoudnessSnapshot } from "#common/types";
 
 /**
  * LoudnessNode is an AudioWorkletNode that provides real-time loudness measurement.
@@ -28,7 +29,7 @@ class LoudnessNode extends AudioWorkletNode {
    *
    * @param {Float32Array} array - A Float32Array containing loudness metrics from the audio
    *   processor.
-   * @returns {LoudnessSnapshot} A snapshot of the current loudness metrics.
+   * @returns A snapshot of the current loudness metrics.
    */
   static from(array: Float32Array): LoudnessSnapshot {
     const transform = (value: number) => (value <= MIN_LUFS ? Number.NEGATIVE_INFINITY : value);
@@ -56,6 +57,7 @@ class LoudnessNode extends AudioWorkletNode {
    */
   constructor(context: BaseAudioContext, options: LoudnessOptions = {}) {
     const { interval = DEFAULT_INTERVAL, numberOfInputs = DEFAULT_NUMBER_OF_INPUTS } = options;
+    const { channelCount, channelCountMode, channelInterpretation } = options;
 
     if (typeof interval !== "number") {
       throw new TypeError("Argument 'interval' must be a number");
@@ -79,8 +81,9 @@ class LoudnessNode extends AudioWorkletNode {
     const buffers = shared ? Array.from(iterable, () => new SharedArrayBuffer(size)) : undefined;
     const processorOptions = { buffers, interval, shared };
     const audioWorkletNodeOptions = { numberOfInputs, processorOptions };
+    const audioNodeOptions = { channelCount, channelCountMode, channelInterpretation };
 
-    super(context, REGISTERED_NAME, audioWorkletNodeOptions);
+    super(context, REGISTERED_NAME, { ...audioNodeOptions, ...audioWorkletNodeOptions });
 
     if (shared && buffers) {
       this.#views = buffers.map((buffer) => new Float32Array(buffer));
@@ -104,7 +107,7 @@ class LoudnessNode extends AudioWorkletNode {
    *   const loudness = new LoudnessNode(context);
    *   console.log(loudness.metricCount); // Outputs the number of loudness metrics
    *
-   * @returns {number} The number of loudness metrics available.
+   * @returns The number of loudness metrics available.
    */
   get metricCount(): number {
     return Object.keys(INDEX).length;

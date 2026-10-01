@@ -26,6 +26,6 @@ jobs:
         run: npm ci
 
       - name: Run Tests
-        run: npm run -w @loudness-worklet/lib test 
+        run: npm run -w @loudness-worklet/lib test
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
