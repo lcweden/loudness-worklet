@@ -1,34 +1,28 @@
 {
   "name": "Loudness Worklet Dev Container",
-  "image": "mcr.microsoft.com/devcontainers/typescript-node:24-bookworm",
+  "image": "ghcr.io/voidzero-dev/vite-plus:1.3.0",
   "customizations": {
     "vscode": {
-      "extensions": [
-        "bradlc.vscode-tailwindcss",
-        "oxc.oxc-vscode",
-        "svelte.svelte-vscode",
-        "vitest.explorer",
-        "VoidZero.vite-plus-extension-pack",
-        "vscode-icons-team.vscode-icons"
-      ],
       "settings": {
-        "editor.formatOnSave": true,
+        "npm.scriptRunner": "vp",
         "editor.defaultFormatter": "oxc.oxc-vscode",
-        "editor.codeActionsOnSave": { "source.fixAll.oxc": "explicit" },
-        "editor.formatOnSaveMode": "file",
-        "files.associations": {
-          "*.css": "tailwindcss"
-        },
         "oxc.disableNestedConfig": true,
         "oxc.fmt.disableNestedConfig": true,
-        "svelte.plugin.svelte.format.enable": false,
-        "[javascript]": { "editor.defaultFormatter": "oxc.oxc-vscode" },
-        "[javascriptreact]": { "editor.defaultFormatter": "oxc.oxc-vscode" },
-        "[svelte]": { "editor.defaultFormatter": "oxc.oxc-vscode" },
-        "[typescript]": { "editor.defaultFormatter": "oxc.oxc-vscode" },
-        "[typescriptreact]": { "editor.defaultFormatter": "oxc.oxc-vscode" }
-      }
+        "editor.formatOnSave": true,
+        "editor.formatOnSaveMode": "file",
+        "editor.codeActionsOnSave": {
+          "source.fixAll.oxc": "explicit"
+        },
+        "files.associations": {
+          "*.css": "tailwindcss"
+        }
+      },
+      "extensions": [
+        "bradlc.vscode-tailwindcss",
+        "svelte.svelte-vscode",
+        "vscode-icons-team.vscode-icons",
+        "VoidZero.vite-plus-extension-pack"
+      ]
     }
-  },
-  "forwardPorts": [5173]
+  }
 }

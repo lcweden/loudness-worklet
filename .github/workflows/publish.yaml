@@ -29,13 +29,14 @@ jobs:
 
       - name: Build Library
         run: |
-          npm run build -w @loudness-worklet/lib
+          npx vp run library#build
 
       - name: Upload artifact to GitHub Release
         if: github.event_name == 'release'
         uses: softprops/action-gh-release@v2
         with:
-          files: packages/lib/dist/loudness.worklet.js
+          files: packages/library/dist/loudness.worklet.js
+          fail_on_unmatched_files: true
 
       - name: Publish to NPM
         run: npm publish --access public

@@ -1,5 +1,5 @@
 import { expect, test, describe } from "vite-plus/test";
-import PolyphaseFiniteImpulseResponseFilter from "#modules/polyphase-finite-impulse-response-filter";
+import PolyphaseFiniteImpulseResponseFilter from "#src/modules/polyphase-finite-impulse-response-filter";
 
 describe("PolyphaseFiniteImpulseResponseFilter", () => {
   test("should output interleaved coefficients when fed an impulse", () => {

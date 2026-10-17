@@ -3,10 +3,10 @@ import {
   INDEX,
   DEFAULT_NUMBER_OF_INPUTS,
   DEFAULT_INTERVAL,
-} from "#common/constants";
-import { MIN_LUFS } from "#common/constants";
-import type { LoudnessOptions } from "#common/interfaces";
-import type { LoudnessSnapshot } from "#common/types";
+} from "#src/common/constants";
+import { MIN_LUFS } from "#src/common/constants";
+import type { LoudnessOptions } from "#src/common/interfaces";
+import type { LoudnessSnapshot } from "#src/common/types";
 
 /**
  * LoudnessNode is an AudioWorkletNode that provides real-time loudness measurement.

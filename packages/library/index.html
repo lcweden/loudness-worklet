@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Loudness Worklet Playground</title>
+  </head>
+  <body>
+    <main>
+      <h1>Loudness Worklet Playground</h1>
+
+      <section>
+        <h2>Select An Audio Or Video File</h2>
+        <input type="file" accept="audio/*, video/*" multiple />
+        <p>File: <strong name="filename">-</strong></p>
+        <p name="message">-</p>
+      </section>
+
+      <section>
+        <h2>Loudness Measurement</h2>
+        <dl>
+          <dt>Momentary Loudness (LUFS)</dt>
+          <dd name="momentary-loudness">-</dd>
+          <dt>Short-Term Loudness (LUFS)</dt>
+          <dd name="short-term-loudness">-</dd>
+          <dt>Integrated Loudness (LUFS)</dt>
+          <dd name="integrated-loudness">-</dd>
+          <dt>Loudness Range (LU)</dt>
+          <dd name="loudness-range">-</dd>
+          <dt>Maximum Momentary Loudness (LUFS)</dt>
+          <dd name="maximum-momentary-loudness">-</dd>
+          <dt>Maximum Short-Term Loudness (LUFS)</dt>
+          <dd name="maximum-short-term-loudness">-</dd>
+          <dt>Maximum True Peak Level (dBTP)</dt>
+          <dd name="maximum-true-peak-level">-</dd>
+        </dl>
+        <details open>
+          <summary>Raw Snapshot</summary>
+          <pre>{JSON.stringify(snapshot, null, 2)}</pre>
+        </details>
+      </section>
+
+      <section>
+        <h2>ITU-R BS.1770-5 Reference</h2>
+        <ul>
+          <li>
+            <strong>LUFS</strong>: Loudness Units relative to Full Scale, standardized loudness
+            measure.
+          </li>
+          <li><strong>Momentary</strong>: 400ms sliding window loudness.</li>
+          <li><strong>Short-Term</strong>: 3s sliding window loudness.</li>
+          <li><strong>Integrated</strong>: Overall loudness over the program.</li>
+          <li><strong>Loudness Range</strong>: Statistical measure of loudness variation.</li>
+          <li>
+            <strong>Maximum True Peak Level</strong>: Maximum sample-accurate peak, considering
+            inter-sample peaks.
+          </li>
+        </ul>
+        <p>
+          <a href="https://www.itu.int/rec/R-REC-BS.1770/en" rel="noreferrer" target="_blank">
+            ITU-R BS.1770-5 Official Recommendation
+          </a>
+        </p>
+      </section>
+
+      <section>
+        <h2>Compliance References</h2>
+        <p>
+          Compliance test files and specifications for verifying Recommendation ITU-R BS.1770 and
+          EBU R128:
+        </p>
+        <ul>
+          <li>
+            <a href="https://www.itu.int/pub/R-REP-BS.2217" rel="noreferrer" target="_blank">
+              ITU-R BS.2217 Compliance Material
+            </a>
+          </li>
+          <li>
+            <a href="https://tech.ebu.ch/publications/tech3341" rel="noreferrer" target="_blank">
+              EBU Tech 3341 (Loudness Metering)
+            </a>
+          </li>
+          <li>
+            <a href="https://tech.ebu.ch/publications/tech3342" rel="noreferrer" target="_blank">
+              EBU Tech 3342 (Loudness Range)
+            </a>
+          </li>
+        </ul>
+        <p>
+          <small>Open browser DevTools for compliance validation results.</small>
+        </p>
+      </section>
+    </main>
+    <script type="module" src="/web/main.ts"></script>
+  </body>
+</html>
