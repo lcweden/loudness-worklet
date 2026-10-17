@@ -2,10 +2,15 @@ name: Bump Version
 on:
   workflow_dispatch:
     inputs:
-      version:
-        description: "new version(e.g., 1.2.3)"
+      increment:
+        description: "version increment"
         required: true
-        type: string
+        default: patch
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
 
 permissions:
   contents: write
@@ -14,7 +19,18 @@ permissions:
 jobs:
   release-pr:
     runs-on: ubuntu-latest
+    outputs:
+      branch: ${{ steps.bump.outputs.branch }}
+    env:
+      INCREMENT: ${{ inputs.increment }}
     steps:
+      - name: Validate increment
+        run: |
+          if [[ "$INCREMENT" != patch && "$INCREMENT" != minor && "$INCREMENT" != major ]]; then
+            echo "Increment must be patch, minor or major."
+            exit 1
+          fi
+
       - name: Checkout repository
         uses: actions/checkout@v7
         with:
@@ -32,19 +48,31 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
       - name: Bump version and Git push
+        id: bump
         run: |
-          VERSION="${{ inputs.version }}"
+          npm version "$INCREMENT" --no-git-tag-version
+          VERSION=$(node -p 'JSON.parse(require("node:fs").readFileSync("package.json", "utf8")).version')
           BRANCH_NAME="release/v$VERSION"
           git checkout -b "$BRANCH_NAME"
-          npm version "$VERSION"
+          git add package.json package-lock.json
+          git commit -m "chore: release v$VERSION"
           git push -u origin "$BRANCH_NAME"
+          printf 'version=%s\nbranch=%s\n' "$VERSION" "$BRANCH_NAME" >> "$GITHUB_OUTPUT"
 
       - name: Create pull request
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERSION: ${{ steps.bump.outputs.version }}
+          BRANCH_NAME: ${{ steps.bump.outputs.branch }}
         run: |
           gh pr create \
-            --title "release/v${{ inputs.version }}" \
-            --body "This pull request bumps the version to v${{ inputs.version }}." \
-            --head "release/v${{ inputs.version }}" \
+            --title "release/v$VERSION" \
+            --body "This pull request bumps the version to v$VERSION." \
+            --head "$BRANCH_NAME" \
             --base main
+
+  validate-release:
+    needs: release-pr
+    uses: ./.github/workflows/ci.yaml
+    with:
+      ref: ${{ needs.release-pr.outputs.branch }}

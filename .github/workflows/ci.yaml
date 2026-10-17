@@ -4,6 +4,13 @@ on:
   pull_request:
     branches: [main, develop]
   workflow_dispatch:
+  workflow_call:
+    inputs:
+      ref:
+        description: Git ref to validate
+        required: false
+        type: string
+        default: ""
 
 permissions:
   contents: read
@@ -15,6 +22,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+        with:
+          ref: ${{ inputs.ref }}
 
       - name: Set up Node.js
         uses: actions/setup-node@v6
@@ -25,9 +34,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run Tests
+      - name: Check, Test and Build
         run: |
           npx vp check
           npx vp test
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          npx vp run library#build
+          npx vp run application#build
