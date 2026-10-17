@@ -1,5 +1,5 @@
 import { expect, test, describe } from "vite-plus/test";
-import CircularBuffer from "#modules/circular-buffer";
+import CircularBuffer from "#src/modules/circular-buffer";
 
 describe("CircularBuffer", () => {
   test("should start with length 0", () => {

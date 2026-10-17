@@ -1,0 +1,276 @@
+[
+  {
+    "pattern": "^seq-3341-1(?:[._-]|$)",
+    "flags": "i",
+    "rules": [
+      { "time": 1, "metric": "momentaryLoudness", "expected": -23, "tolerances": [0.1] },
+      { "time": 1, "metric": "integratedLoudness", "expected": -23, "tolerances": [0.1] },
+      { "time": 3, "metric": "shortTermLoudness", "expected": -23, "tolerances": [0.1] }
+    ]
+  },
+  {
+    "pattern": "^seq-3341-2(?:[._-]|$)",
+    "flags": "i",
+    "rules": [
+      { "time": 1, "metric": "momentaryLoudness", "expected": -33, "tolerances": [0.1] },
+      { "time": 1, "metric": "integratedLoudness", "expected": -33, "tolerances": [0.1] },
+      { "time": 3, "metric": "shortTermLoudness", "expected": -33, "tolerances": [0.1] }
+    ]
+  },
+  {
+    "pattern": "^seq-3341-3(?:[._-]|$)",
+    "flags": "i",
+    "rules": [{ "time": 79, "metric": "integratedLoudness", "expected": -23, "tolerances": [0.1] }]
+  },
+  {
+    "pattern": "^seq-3341-4(?:[._-]|$)",
+    "flags": "i",
+    "rules": [{ "time": 99, "metric": "integratedLoudness", "expected": -23, "tolerances": [0.1] }]
+  },
+  {
+    "pattern": "^seq-3341-5(?:[._-]|$)",
+    "flags": "i",
+    "rules": [{ "time": 60, "metric": "integratedLoudness", "expected": -23, "tolerances": [0.1] }]
+  },
+  {
+    "pattern": "^seq-3341-6(?:[._-]|$)",
+    "flags": "i",
+    "rules": [{ "time": 19, "metric": "integratedLoudness", "expected": -23, "tolerances": [0.1] }]
+  },
+  {
+    "pattern": "^seq-3341-7_seq-3342-5(?:[._-]|$)",
+    "flags": "i",
+    "rules": [
+      { "time": 27, "metric": "integratedLoudness", "expected": -23, "tolerances": [0.1] },
+      { "time": 27, "metric": "loudnessRange", "expected": 5, "tolerances": [1] }
+    ]
+  },
+  {
+    "pattern": "^seq-3341-(?:2011-)?8_seq-3342-6(?:[._-]|$)",
+    "flags": "i",
+    "rules": [
+      { "time": 246, "metric": "integratedLoudness", "expected": -23, "tolerances": [0.1] },
+      { "time": 246, "metric": "loudnessRange", "expected": 15, "tolerances": [1] }
+    ]
+  },
+  {
+    "pattern": "^seq-3341-9(?:[._-]|$)",
+    "flags": "i",
+    "rules": [{ "time": 3, "metric": "shortTermLoudness", "expected": -23, "tolerances": [0.1] }]
+  },
+  {
+    "pattern": "^seq-3341-10-1(?:[._-]|$)",
+    "flags": "i",
+    "rules": [
+      { "time": 3, "metric": "maximumShortTermLoudness", "expected": -23, "tolerances": [0.1] }
+    ]
+  },
+  {
+    "pattern": "^seq-3341-10-[2-7](?:[._-]|$)",
+    "flags": "i",
+    "rules": [
+      { "time": 4, "metric": "maximumShortTermLoudness", "expected": -23, "tolerances": [0.1] }
+    ]
+  },
+  {
+    "pattern": "^seq-3341-10-(?:[89]|1[0-4])(?:[._-]|$)",
+    "flags": "i",
+    "rules": [
+      { "time": 5, "metric": "maximumShortTermLoudness", "expected": -23, "tolerances": [0.1] }
+    ]
+  },
+  {
+    "pattern": "^seq-3341-10-(?:1[5-9]|20)(?:[._-]|$)",
+    "flags": "i",
+    "rules": [
+      { "time": 6, "metric": "maximumShortTermLoudness", "expected": -23, "tolerances": [0.1] }
+    ]
+  },
+  {
+    "pattern": "^seq-3341-11(?:[._-]|$)",
+    "flags": "i",
+    "rules": [
+      { "time": 3, "metric": "maximumShortTermLoudness", "expected": -38, "tolerances": [0.1] },
+      { "time": 10, "metric": "maximumShortTermLoudness", "expected": -37, "tolerances": [0.1] },
+      { "time": 16, "metric": "maximumShortTermLoudness", "expected": -36, "tolerances": [0.1] },
+      { "time": 22, "metric": "maximumShortTermLoudness", "expected": -35, "tolerances": [0.1] },
+      { "time": 28, "metric": "maximumShortTermLoudness", "expected": -34, "tolerances": [0.1] },
+      { "time": 34, "metric": "maximumShortTermLoudness", "expected": -33, "tolerances": [0.1] },
+      { "time": 40, "metric": "maximumShortTermLoudness", "expected": -32, "tolerances": [0.1] },
+      { "time": 47, "metric": "maximumShortTermLoudness", "expected": -31, "tolerances": [0.1] },
+      { "time": 53, "metric": "maximumShortTermLoudness", "expected": -30, "tolerances": [0.1] },
+      { "time": 59, "metric": "maximumShortTermLoudness", "expected": -29, "tolerances": [0.1] },
+      { "time": 65, "metric": "maximumShortTermLoudness", "expected": -28, "tolerances": [0.1] },
+      { "time": 71, "metric": "maximumShortTermLoudness", "expected": -27, "tolerances": [0.1] },
+      { "time": 77, "metric": "maximumShortTermLoudness", "expected": -26, "tolerances": [0.1] },
+      { "time": 83, "metric": "maximumShortTermLoudness", "expected": -25, "tolerances": [0.1] },
+      { "time": 90, "metric": "maximumShortTermLoudness", "expected": -24, "tolerances": [0.1] },
+      { "time": 96, "metric": "maximumShortTermLoudness", "expected": -23, "tolerances": [0.1] },
+      { "time": 102, "metric": "maximumShortTermLoudness", "expected": -22, "tolerances": [0.1] },
+      { "time": 108, "metric": "maximumShortTermLoudness", "expected": -21, "tolerances": [0.1] },
+      { "time": 114, "metric": "maximumShortTermLoudness", "expected": -20, "tolerances": [0.1] },
+      { "time": 120, "metric": "maximumShortTermLoudness", "expected": -19, "tolerances": [0.1] }
+    ]
+  },
+  {
+    "pattern": "^seq-3341-12(?:[._-]|$)",
+    "flags": "i",
+    "rules": [{ "time": 1, "metric": "momentaryLoudness", "expected": -23, "tolerances": [0.1] }]
+  },
+  {
+    "pattern": "^seq-3341-13-\\d+(?:[._-]|$)",
+    "flags": "i",
+    "rules": [
+      { "time": 1, "metric": "maximumMomentaryLoudness", "expected": -23, "tolerances": [0.1] }
+    ]
+  },
+  {
+    "pattern": "^seq-3341-14(?:[._-]|$)",
+    "flags": "i",
+    "rules": [
+      { "time": 0.8, "metric": "maximumMomentaryLoudness", "expected": -38, "tolerances": [0.1] },
+      { "time": 1.6, "metric": "maximumMomentaryLoudness", "expected": -37, "tolerances": [0.1] },
+      { "time": 2.4, "metric": "maximumMomentaryLoudness", "expected": -36, "tolerances": [0.1] },
+      { "time": 3.2, "metric": "maximumMomentaryLoudness", "expected": -35, "tolerances": [0.1] },
+      { "time": 4.1, "metric": "maximumMomentaryLoudness", "expected": -34, "tolerances": [0.1] },
+      { "time": 4.9, "metric": "maximumMomentaryLoudness", "expected": -33, "tolerances": [0.1] },
+      { "time": 5.7, "metric": "maximumMomentaryLoudness", "expected": -32, "tolerances": [0.1] },
+      { "time": 6.5, "metric": "maximumMomentaryLoudness", "expected": -31, "tolerances": [0.1] },
+      { "time": 7.3, "metric": "maximumMomentaryLoudness", "expected": -30, "tolerances": [0.1] },
+      { "time": 8.2, "metric": "maximumMomentaryLoudness", "expected": -29, "tolerances": [0.1] },
+      { "time": 9, "metric": "maximumMomentaryLoudness", "expected": -28, "tolerances": [0.1] },
+      { "time": 9.8, "metric": "maximumMomentaryLoudness", "expected": -27, "tolerances": [0.1] },
+      { "time": 10.6, "metric": "maximumMomentaryLoudness", "expected": -26, "tolerances": [0.1] },
+      { "time": 11.5, "metric": "maximumMomentaryLoudness", "expected": -25, "tolerances": [0.1] },
+      { "time": 12.3, "metric": "maximumMomentaryLoudness", "expected": -24, "tolerances": [0.1] },
+      { "time": 13.1, "metric": "maximumMomentaryLoudness", "expected": -23, "tolerances": [0.1] },
+      { "time": 13.9, "metric": "maximumMomentaryLoudness", "expected": -22, "tolerances": [0.1] },
+      { "time": 14.7, "metric": "maximumMomentaryLoudness", "expected": -21, "tolerances": [0.1] },
+      { "time": 15.5, "metric": "maximumMomentaryLoudness", "expected": -20, "tolerances": [0.1] },
+      { "time": 16, "metric": "maximumMomentaryLoudness", "expected": -19, "tolerances": [0.1] }
+    ]
+  },
+  {
+    "pattern": "^seq-3341-1[5-8](?:[._-]|$)",
+    "flags": "i",
+    "rules": [
+      { "time": 3, "metric": "maximumTruePeakLevel", "expected": -6, "tolerances": [-0.4, 0.2] }
+    ]
+  },
+  {
+    "pattern": "^seq-3341-19(?:[._-]|$)",
+    "flags": "i",
+    "rules": [
+      { "time": 3, "metric": "maximumTruePeakLevel", "expected": 3, "tolerances": [-0.4, 0.2] }
+    ]
+  },
+  {
+    "pattern": "^seq-3341-2[0-3](?:[._-]|$)",
+    "flags": "i",
+    "rules": [
+      { "time": 3, "metric": "maximumTruePeakLevel", "expected": 0, "tolerances": [-0.4, 0.2] }
+    ]
+  },
+  {
+    "pattern": "^seq-3342-1(?:[._-]|$)",
+    "flags": "i",
+    "rules": [{ "time": 40, "metric": "loudnessRange", "expected": 10, "tolerances": [1] }]
+  },
+  {
+    "pattern": "^seq-3342-2(?:[._-]|$)",
+    "flags": "i",
+    "rules": [{ "time": 40, "metric": "loudnessRange", "expected": 5, "tolerances": [1] }]
+  },
+  {
+    "pattern": "^seq-3342-3(?:[._-]|$)",
+    "flags": "i",
+    "rules": [{ "time": 40, "metric": "loudnessRange", "expected": 20, "tolerances": [1] }]
+  },
+  {
+    "pattern": "^seq-3342-4(?:[._-]|$)",
+    "flags": "i",
+    "rules": [{ "time": 100, "metric": "loudnessRange", "expected": 15, "tolerances": [1] }]
+  },
+  {
+    "pattern": "^1770(?:-2)?[._-]Comp(?:_2)?[._-]RelGateTest(?:[._-]|$)",
+    "flags": "i",
+    "rules": [{ "time": 4, "metric": "integratedLoudness", "expected": -10, "tolerances": [0.1] }]
+  },
+  {
+    "pattern": "^1770(?:-2)?[._-]Comp(?:_2)?[._-]AbsGateTest(?:[._-]|$)",
+    "flags": "i",
+    "rules": [{ "time": 4, "metric": "integratedLoudness", "expected": -69.5, "tolerances": [0.1] }]
+  },
+  {
+    "pattern": "^1770(?:-2)?[._-]Comp(?:_2)?[._-]18LKFS_FrequencySweep(?:[._-]|$)",
+    "flags": "i",
+    "rules": [{ "time": 120, "metric": "integratedLoudness", "expected": -18, "tolerances": [0.1] }]
+  },
+  {
+    "pattern": "^1770(?:-2)?[._-]Comp(?:_2)?[._-]24LKFS_(?:25|100|500|1000|2000|10000)Hz_2ch(?:[._-]|$)",
+    "flags": "i",
+    "rules": [{ "time": 29, "metric": "integratedLoudness", "expected": -24, "tolerances": [0.1] }]
+  },
+  {
+    "pattern": "^1770(?:-2)?[._-]Comp(?:_2)?[._-]23LKFS_(?:25|100|500|1000|2000|10000)Hz_2ch(?:[._-]|$)",
+    "flags": "i",
+    "rules": [{ "time": 29, "metric": "integratedLoudness", "expected": -23, "tolerances": [0.1] }]
+  },
+  {
+    "pattern": "^1770(?:-2)?[._-]Comp(?:_2)?[._-]24LKFS_SummingTest(?:[._-]|$)",
+    "flags": "i",
+    "rules": [{ "time": 29, "metric": "integratedLoudness", "expected": -24, "tolerances": [0.1] }]
+  },
+  {
+    "pattern": "^1770(?:-2)?[._-]Comp(?:_2)?[._-]23LKFS_SummingTest(?:[._-]|$)",
+    "flags": "i",
+    "rules": [{ "time": 29, "metric": "integratedLoudness", "expected": -23, "tolerances": [0.1] }]
+  },
+  {
+    "pattern": "^1770(?:-2)?[._-]Comp(?:_2)?[._-]24LKFS_ChannelCheck(?:Left|Right|Centre|Ls|Rs)(?:[._-]|$)",
+    "flags": "i",
+    "rules": [{ "time": 29, "metric": "integratedLoudness", "expected": -24, "tolerances": [0.1] }]
+  },
+  {
+    "pattern": "^1770(?:-2)?[._-]Comp(?:_2)?[._-]23LKFS_ChannelCheck(?:Left|Right|Centre|Ls|Rs)(?:[._-]|$)",
+    "flags": "i",
+    "rules": [{ "time": 29, "metric": "integratedLoudness", "expected": -23, "tolerances": [0.1] }]
+  },
+  {
+    "pattern": "^1770(?:-2)?[._-]Comp(?:_2)?[._-](?:23|24)LKFS_ChannelCheckLFE(?:[._-]|$)",
+    "flags": "i",
+    "rules": [
+      { "time": 29, "metric": "integratedLoudness", "expected": "-Infinity", "tolerances": [0] }
+    ]
+  },
+  {
+    "pattern": "^1770(?:-2)?[._-]Conf(?:_|-)(?:6ch_VinCntr|6ch_VinL\\+R|6ch_VinL-R-C|Stereo_VinL\\+R|Mono_Voice\\+Music)-24LKFS(?:[._-]|$)",
+    "flags": "i",
+    "rules": [{ "time": 83, "metric": "integratedLoudness", "expected": -24, "tolerances": [0.1] }]
+  },
+  {
+    "pattern": "^1770(?:-2)?[._-]Conf(?:_|-)(?:6ch_VinCntr|6ch_VinL\\+R|6ch_VinL-R-C|Stereo_VinL\\+R|Mono_Voice\\+Music)-23LKFS(?:[._-]|$)",
+    "flags": "i",
+    "rules": [{ "time": 83, "metric": "integratedLoudness", "expected": -23, "tolerances": [0.1] }]
+  },
+  {
+    "pattern": "^1770Conf-(?:8|10|12|24)channels?_24LKFS(?:[._-]|$)",
+    "flags": "i",
+    "rules": [{ "time": 29, "metric": "integratedLoudness", "expected": -24, "tolerances": [0.1] }]
+  },
+  {
+    "pattern": "^1770Conf-24LKFS-(?:8|10|12|24)channels?(?:[._-]|$)",
+    "flags": "i",
+    "rules": [{ "time": 29, "metric": "integratedLoudness", "expected": -24, "tolerances": [0.1] }]
+  },
+  {
+    "pattern": "^1770Conf-(?:8|10|12|24)channels?_23LKFS(?:[._-]|$)",
+    "flags": "i",
+    "rules": [{ "time": 29, "metric": "integratedLoudness", "expected": -23, "tolerances": [0.1] }]
+  },
+  {
+    "pattern": "^1770Conf-23LKFS-(?:8|10|12|24)channels?(?:[._-]|$)",
+    "flags": "i",
+    "rules": [{ "time": 29, "metric": "integratedLoudness", "expected": -23, "tolerances": [0.1] }]
+  }
+]
