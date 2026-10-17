@@ -36,7 +36,8 @@ jobs:
 
       - name: Check, Test and Build
         run: |
-          npx vp check
+          npx vp run application#check
+          npx vp run library#check
           npx vp test
           npx vp run library#build
           npx vp run application#build
