@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vite-plus/test";
-import { K_WEIGHTING_COEFFICIENTS, SAMPLE_RATE } from "#common/constants";
-import { retarget } from "#utils/k-weighting";
+import { K_WEIGHTING_COEFFICIENTS, SAMPLE_RATE } from "#src/common/constants";
+import { retarget } from "#src/utils/k-weighting";
 
 describe("retarget", () => {
   test("preserves the BS.1770-5 coefficients at the reference sample rate", () => {

@@ -18,14 +18,14 @@ import {
   ATTENUATION_DB,
   K_WEIGHTING_COEFFICIENTS,
   SAMPLE_RATE,
-} from "#common/constants";
-import type { LoudnessWorkletOptions } from "#common/interfaces";
-import BiquadraticFilter from "#modules/biquadratic-filter";
-import CircularBuffer from "#modules/circular-buffer";
-import Histogram from "#modules/histogram";
-import PolyphaseFiniteImpulseResponseFilter from "#modules/polyphase-finite-impulse-response-filter";
-import { retarget } from "#utils/k-weighting";
-import { energyToLoudness, loudnessToEnergy } from "#utils/loudness";
+} from "#src/common/constants";
+import type { LoudnessWorkletOptions } from "#src/common/interfaces";
+import BiquadraticFilter from "#src/modules/biquadratic-filter";
+import CircularBuffer from "#src/modules/circular-buffer";
+import Histogram from "#src/modules/histogram";
+import PolyphaseFiniteImpulseResponseFilter from "#src/modules/polyphase-finite-impulse-response-filter";
+import { retarget } from "#src/utils/k-weighting";
+import { energyToLoudness, loudnessToEnergy } from "#src/utils/loudness";
 
 /**
  * An AudioWorkletProcessor that implements loudness measurement according to ITU-R BS.1770-5.

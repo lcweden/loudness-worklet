@@ -1,6 +1,5 @@
-import LoudnessNode from "@loudness-worklet/lib";
-import type { LoudnessSnapshot } from "@loudness-worklet/lib";
-import moduleURL from "@loudness-worklet/lib/loudness.worklet?url";
+import LoudnessNode from "loudness-worklet";
+import type { LoudnessSnapshot } from "loudness-worklet";
 
 class AudioAnalyzer {
   decoder = new AudioContext();
@@ -23,7 +22,9 @@ class AudioAnalyzer {
       const { length, sampleRate, numberOfChannels } = this.buffer;
       const context = new OfflineAudioContext(numberOfChannels, length, sampleRate);
 
-      await context.audioWorklet.addModule(moduleURL);
+      await context.audioWorklet.addModule(
+        "https://cdn.jsdelivr.net/npm/loudness-worklet@2.1.0/packages/lib/dist/loudness.worklet.js",
+      );
 
       const source = new AudioBufferSourceNode(context, { buffer: this.buffer });
       const loudness = new LoudnessNode(context);

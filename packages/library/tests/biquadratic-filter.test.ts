@@ -1,5 +1,5 @@
 import { expect, test, describe } from "vite-plus/test";
-import BiquadraticFilter from "#modules/biquadratic-filter";
+import BiquadraticFilter from "#src/modules/biquadratic-filter";
 
 describe("BiquadraticFilter", () => {
   test("should act as an identity filter (bypass) when only b0 is 1", () => {
